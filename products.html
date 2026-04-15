@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Products | Gleamair Enterprises</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue-dark: #0d2f5e;
+    --blue-mid: #1a4a8a;
+    --blue-light: #2563c4;
+    --gold: #c9a227;
+    --gold-light: #e8bc3a;
+    --white: #ffffff;
+    --off-white: #f4f6fa;
+    --text-dark: #0d1f3c;
+    --text-mid: #2c3e60;
+  }
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Barlow', sans-serif; background: var(--white); color: var(--text-dark); overflow-x: hidden; }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; width: 100%; z-index: 100;
+    background: rgba(13,47,94,0.96); backdrop-filter: blur(10px);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 5%; height: 68px; border-bottom: 2px solid var(--gold);
+  }
+  .nav-logo { display: flex; align-items: center; height: 100%; text-decoration: none; }
+  .nav-logo img { height: 42px; width: auto; object-fit: contain; }
+  .nav-links { display: flex; align-items: center; gap: 8px; list-style: none; }
+  .nav-links a { color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.85rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; padding: 8px 14px; border-radius: 3px; transition: color 0.2s, background 0.2s; }
+  .nav-links a:hover, .nav-links a.active { color: var(--gold-light); background: rgba(201,162,39,0.08); }
+  .nav-cta { background: var(--gold) !important; color: var(--blue-dark) !important; font-weight: 700 !important; border-radius: 2px !important; }
+  .nav-cta:hover { background: var(--gold-light) !important; }
+  .hamburger { display: none; flex-direction: column; justify-content: center; gap: 5px; background: none; border: none; cursor: pointer; padding: 8px; z-index: 1100; }
+  .hamburger span { display: block; width: 24px; height: 2px; background: var(--white); border-radius: 2px; transition: transform 0.3s, opacity 0.3s; }
+  .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  .nav-dropdown { position: relative; }
+  .nav-dropdown-trigger { display: flex; align-items: center; gap: 0; }
+  .nav-dropdown-trigger > a { color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.85rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; padding: 8px 8px 8px 14px; border-radius: 3px 0 0 3px; transition: color 0.2s, background 0.2s; }
+  .nav-dropdown-trigger > a:hover, .nav-dropdown-trigger > a.active { color: var(--gold-light); background: rgba(201,162,39,0.08); }
+  .dd-chevron { background: none; border: none; cursor: pointer; padding: 8px 10px 8px 4px; display: flex; align-items: center; border-radius: 0 3px 3px 0; transition: background 0.2s; }
+  .dd-chevron:hover { background: rgba(201,162,39,0.08); }
+  .dd-chevron svg { width: 10px; height: 10px; stroke: rgba(255,255,255,0.7); fill: none; stroke-width: 2.5; transition: transform 0.2s; }
+  .nav-dropdown.dd-open .dd-chevron svg { transform: rotate(180deg); stroke: var(--gold); }
+  .dropdown-menu { display: none; position: absolute; top: calc(100% + 6px); left: 0; min-width: 210px; background: rgba(10,22,40,0.98); backdrop-filter: blur(12px); border: 1px solid rgba(201,162,39,0.25); border-top: 2px solid var(--gold); border-radius: 0 0 4px 4px; padding: 8px 0; z-index: 200; }
+  .nav-dropdown.dd-open .dropdown-menu { display: block; }
+  .dropdown-menu a { display: block; padding: 10px 18px; font-size: 0.78rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.75); text-decoration: none; transition: color 0.2s, background 0.2s; white-space: nowrap; background: none !important; }
+  .dropdown-menu a:hover, .dropdown-menu a.active { color: var(--gold-light); background: rgba(201,162,39,0.08) !important; }
+  .nav-dropdown.mob-open .dropdown-menu { display: block; position: static; border: none; border-left: 3px solid var(--gold); background: rgba(255,255,255,0.04); padding: 4px 0 4px 12px; margin: 0 0 4px 16px; border-radius: 0; min-width: unset; top: auto; }
+  .nav-dropdown.mob-open .dd-chevron svg { transform: rotate(180deg); stroke: var(--gold); }
+
+  /* ─── PAGE HERO (dark) ─── */
+  .page-hero {
+    background: linear-gradient(160deg, var(--blue-dark) 0%, var(--blue-mid) 60%, #0f3c7a 100%);
+    padding: 160px 5% 90px; position: relative; overflow: hidden;
+  }
+  .page-hero::after {
+    content: 'PRODUCTS';
+    position: absolute; right: -20px; bottom: -30px;
+    font-family: 'Bebas Neue', sans-serif; font-size: 160px;
+    color: rgba(255,255,255,0.03); white-space: nowrap; pointer-events: none; letter-spacing: 4px;
+  }
+  .page-hero-inner { max-width: 1300px; margin: 0 auto; }
+  .breadcrumb { font-family: 'Barlow Condensed', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 1.25rem; }
+  .breadcrumb a { color: rgba(255,255,255,0.4); text-decoration: none; transition: color 0.2s; }
+  .breadcrumb a:hover { color: var(--gold); }
+  .page-hero h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3rem, 6vw, 5.5rem); color: var(--white); line-height: 1; letter-spacing: 2px; }
+  .page-hero p { font-size: 1.05rem; line-height: 1.75; color: rgba(255,255,255,0.65); margin-top: 1.25rem; max-width: 600px; font-weight: 300; }
+
+  /* ─── SHARED ─── */
+  .section-inner { max-width: 1300px; margin: 0 auto; }
+  .section-eyebrow { font-family: 'Barlow Condensed', sans-serif; font-size: 0.8rem; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.75rem; }
+  .section-eyebrow::before { content: ''; display: inline-block; width: 28px; height: 2px; background: var(--gold); }
+  .section-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.2rem, 4vw, 3.5rem); line-height: 1; letter-spacing: 1px; margin-bottom: 1.25rem; }
+
+  /* ─── PRODUCT INTRO (light) ─── */
+  .product-intro { background: var(--off-white); padding: 100px 5%; }
+  .product-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 5rem; align-items: start; }
+  .product-copy p { font-size: 0.95rem; line-height: 1.85; color: var(--text-mid); margin-bottom: 1.25rem; font-weight: 300; }
+  .product-badges { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1.75rem; }
+  .badge { background: var(--blue-dark); color: var(--gold); font-family: 'Barlow Condensed', sans-serif; font-size: 0.72rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 7px 14px; border-radius: 2px; }
+  .product-features { background: var(--blue-dark); border-radius: 4px; padding: 2.5rem 2rem; border-left: 4px solid var(--gold); }
+  .product-features h3 { font-family: 'Barlow Condensed', sans-serif; font-size: 1.2rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--gold-light); margin-bottom: 1.25rem; }
+  .pf-list { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+  .pf-list li { display: flex; align-items: flex-start; gap: 0.75rem; font-size: 0.88rem; color: rgba(255,255,255,0.65); line-height: 1.6; }
+  .pf-list li::before { content: ''; display: block; width: 5px; height: 5px; border-radius: 50%; background: var(--gold); flex-shrink: 0; margin-top: 8px; }
+
+  /* ─── PRODUCT RANGE (white) ─── */
+  .product-range { background: var(--white); padding: 100px 5%; }
+  .range-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 3rem; }
+  .range-card { padding: 2rem; background: var(--off-white); border-radius: 4px; border-left: 4px solid var(--gold); }
+  .range-card h3 { font-family: 'Barlow Condensed', sans-serif; font-size: 1.15rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--blue-dark); margin-bottom: 0.6rem; }
+  .range-card p { font-size: 0.88rem; color: var(--text-mid); line-height: 1.65; }
+  .range-card a { color: var(--gold); text-decoration: none; font-weight: 600; }
+  .range-cta { text-align: center; padding: 2.5rem; background: rgba(201,162,39,0.07); border-radius: 4px; border: 1px solid rgba(201,162,39,0.25); }
+  .range-cta p { font-size: 0.95rem; color: var(--blue-dark); line-height: 1.7; margin-bottom: 1.25rem; }
+  .btn-dark { background: var(--blue-dark); color: var(--white); font-size: 0.85rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; text-decoration: none; padding: 1rem 2.5rem; border-radius: 2px; display: inline-block; transition: background 0.2s; }
+  .btn-dark:hover { background: var(--blue-mid); }
+
+  /* ─── SPECS (dark) ─── */
+  .specs-section { background: var(--blue-dark); padding: 100px 5%; }
+  .model-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5px; background: rgba(255,255,255,0.08); margin: 2.5rem 0; }
+  .model-card { background: var(--blue-dark); padding: 2.5rem 2rem; border-bottom: 3px solid transparent; transition: background 0.25s, border-color 0.25s; }
+  .model-card:hover { background: #0f3566; border-bottom-color: var(--gold); }
+  .model-name { display: inline-block; font-family: 'Barlow Condensed', sans-serif; font-size: 0.72rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--blue-dark); background: var(--gold); padding: 4px 12px; border-radius: 2px; margin-bottom: 1.25rem; }
+  .model-card h3 { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--white); letter-spacing: 1px; margin-bottom: 1.25rem; }
+  .spec-row { display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0; border-bottom: 1px solid rgba(255,255,255,0.07); }
+  .spec-row:last-child { border-bottom: none; }
+  .spec-key { font-size: 0.75rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.45); }
+  .spec-val { font-size: 0.88rem; font-weight: 600; color: var(--gold-light); }
+
+  .materials-table { width: 100%; border-collapse: collapse; margin-top: 2.5rem; overflow-x: auto; display: block; }
+  .materials-table th { text-align: left; font-family: 'Barlow Condensed', sans-serif; font-size: 0.72rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); padding: 12px 16px; background: rgba(255,255,255,0.05); border-bottom: 2px solid rgba(201,162,39,0.3); }
+  .materials-table td { font-size: 0.88rem; color: rgba(255,255,255,0.65); padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.07); }
+  .materials-table tr:last-child td { border-bottom: none; }
+  .materials-table tr:hover td { background: rgba(255,255,255,0.03); }
+
+  /* ─── PERFORMANCE TABLES ─── */
+  .perf-tables { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+  .perf-table-title { font-family: 'Barlow Condensed', sans-serif; font-size: 1.1rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--blue-dark); margin-bottom: 0.4rem; }
+  .perf-table-sub { font-size: 0.82rem; color: var(--text-mid); margin-bottom: 1rem; }
+  .perf-table { width: 100%; border-collapse: collapse; background: var(--white); border-radius: 4px; overflow: hidden; box-shadow: 0 2px 16px rgba(0,0,0,0.06); }
+  .perf-table th { text-align: center; font-family: 'Barlow Condensed', sans-serif; font-size: 0.72rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--white); background: var(--blue-dark); padding: 12px 14px; }
+  .perf-table th:first-child { text-align: left; padding-left: 18px; }
+  .perf-table td { text-align: center; font-size: 0.88rem; color: var(--text-mid); padding: 12px 14px; border-bottom: 1px solid #dde3ee; font-weight: 500; }
+  .perf-table td:first-child { font-weight: 700; color: var(--blue-dark); text-align: left; padding-left: 18px; }
+  .perf-table tr:last-child td { border-bottom: none; }
+  .perf-highlight td { background: rgba(201,162,39,0.06) !important; }
+
+  /* ─── PROJECTS ─── */
+  .projects-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
+  .project-card { position: relative; overflow: hidden; border-radius: 4px; aspect-ratio: 1; cursor: pointer; }
+  .project-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; display: block; }
+  .project-card:hover .project-img { transform: scale(1.08); }
+  .project-overlay { position: absolute; inset: 0; background: rgba(13,47,94,0.85); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; }
+  .project-card:hover .project-overlay { opacity: 1; }
+  .project-label { font-family: 'Barlow Condensed', sans-serif; font-size: 1.1rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--gold); text-align: center; padding: 0 1rem; }
+
+  /* ─── PRODUCT IMAGE PLACEHOLDER ─── */
+  .prod-img-placeholder {
+    width: 100%; aspect-ratio: 4/3;
+    background: linear-gradient(135deg, #0d2f5e 0%, #1a4a8a 100%);
+    border-radius: 4px 4px 0 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 0.75rem; border-bottom: 3px solid var(--gold);
+  }
+  .prod-img-placeholder svg { opacity: 0.35; }
+  .prod-img-placeholder span { font-family: 'Barlow Condensed', sans-serif; font-size: 0.72rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,0.3); }
+
+  /* ─── CATEGORY INTRO ─── */
+  .cat-intro { background: var(--blue-dark); padding: 100px 5%; }
+  .cat-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; margin-top: 3rem; }
+  .cat-card {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(201,162,39,0.2);
+    border-radius: 4px; padding: 2.5rem 2rem; text-align: center;
+    text-decoration: none; display: block;
+    border-bottom: 3px solid transparent;
+    transition: background 0.25s, border-color 0.25s, transform 0.2s;
+  }
+  .cat-card:hover { background: rgba(255,255,255,0.08); border-bottom-color: var(--gold); transform: translateY(-4px); }
+  .cat-card-icon { width: 56px; height: 56px; border-radius: 50%; background: rgba(201,162,39,0.12); border: 1px solid rgba(201,162,39,0.3); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem; }
+  .cat-card-icon svg { stroke: var(--gold); fill: none; stroke-width: 1.5; width: 26px; height: 26px; }
+  .cat-card h3 { font-family: 'Barlow Condensed', sans-serif; font-size: 1.2rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--gold-light); margin-bottom: 0.6rem; }
+  .cat-card p { font-size: 0.85rem; color: rgba(255,255,255,0.55); line-height: 1.65; margin-bottom: 1.25rem; }
+  .cat-card-cta { font-family: 'Barlow Condensed', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); }
+
+  /* ─── CALC TABS ─── */
+  .calc-tabs { display: flex; gap: 0; margin-bottom: 2rem; border-radius: 3px; overflow: hidden; border: 1.5px solid #dde3ee; }
+  .calc-tab { flex: 1; padding: 0.75rem 1rem; background: var(--off-white); border: none; cursor: pointer; font-family: 'Barlow Condensed', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--text-mid); transition: background 0.2s, color 0.2s; border-right: 1.5px solid #dde3ee; }
+  .calc-tab:last-child { border-right: none; }
+  .calc-tab.active { background: var(--blue-dark); color: var(--gold); }
+  .calc-panel { display: none; }
+  .calc-panel.active { display: block; }
+  .hp-adjustments { background: var(--off-white); border-radius: 3px; padding: 1.25rem; margin-bottom: 1.5rem; }
+  .hp-adjustments p { font-family: 'Barlow Condensed', sans-serif; font-size: 0.72rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--blue-dark); margin-bottom: 0.75rem; }
+  .hp-check { display: flex; align-items: center; gap: 0.6rem; font-size: 0.88rem; color: var(--text-mid); margin-bottom: 0.5rem; cursor: pointer; }
+  .hp-check input { accent-color: var(--gold); width: 16px; height: 16px; cursor: pointer; }
+  .result-hp { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; color: var(--blue-dark); line-height: 1; }
+  .result-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+  .calc-card { background: var(--white); border-radius: 4px; padding: 3.5rem; box-shadow: 0 2px 16px rgba(0,0,0,0.06); border-top: 3px solid var(--gold); }
+  .calc-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.25rem; margin-bottom: 1.25rem; }
+  .calc-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.5rem; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group label { font-family: 'Barlow Condensed', sans-serif; font-size: 0.72rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--blue-dark); }
+  .form-group input, .form-group select { background: var(--off-white); border: 1.5px solid #dde3ee; border-radius: 3px; font-family: 'Barlow', sans-serif; font-size: 0.9rem; color: var(--text-dark); padding: 0.7rem 1rem; outline: none; transition: border-color 0.2s; }
+  .form-group input:focus, .form-group select:focus { border-color: var(--gold); }
+  .calc-btn { background: var(--gold); color: var(--blue-dark); font-family: 'Barlow', sans-serif; font-size: 0.85rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; border: none; cursor: pointer; padding: 1rem 2rem; border-radius: 2px; transition: background 0.2s; display: block; width: 100%; }
+  .calc-btn:hover { background: var(--gold-light); }
+  .calc-result { margin-top: 2.5rem; padding-top: 2.5rem; border-top: 1px solid #dde3ee; display: none; }
+  .calc-result.show { display: block; }
+  .result-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem; }
+  .result-item { text-align: center; background: var(--off-white); border-radius: 4px; padding: 1.5rem 1rem; border-top: 3px solid var(--gold); }
+  .result-val { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; color: var(--blue-dark); line-height: 1; }
+  .result-label { font-family: 'Barlow Condensed', sans-serif; font-size: 0.72rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--text-mid); margin-top: 6px; }
+  .result-note { font-size: 0.82rem; color: var(--text-mid); text-align: center; margin-top: 1.25rem; line-height: 1.6; }
+
+  /* ─── TESTIMONIALS ─── */
+  .testimonials-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+  .testimonial-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(201,162,39,0.2); border-left: 4px solid var(--gold); border-radius: 4px; padding: 2.5rem 2rem; transition: transform 0.25s; }
+  .testimonial-card:hover { transform: translateY(-4px); }
+  .testimonial-rating { display: flex; gap: 4px; margin-bottom: 1rem; }
+  .testimonial-rating span { color: var(--gold); font-size: 1.1rem; }
+  .testimonial-quote { font-size: 0.95rem; line-height: 1.8; color: rgba(255,255,255,0.75); margin-bottom: 1.5rem; font-style: italic; }
+  .testimonial-name { font-family: 'Barlow Condensed', sans-serif; font-size: 1rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--white); margin-bottom: 0.25rem; }
+  .testimonial-title { font-size: 0.78rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--gold); }
+
+  /* ─── CLIENTS ─── */
+  .clients-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2rem; }
+  .client-card { text-align: center; padding: 2.5rem; background: var(--off-white); border-radius: 4px; border: 1px solid #dde3ee; transition: border-color 0.25s, box-shadow 0.25s; }
+  .client-card:hover { border-color: var(--gold); box-shadow: 0 4px 24px rgba(201,162,39,0.12); }
+  .client-logo { height: 70px; object-fit: contain; margin-bottom: 1.25rem; }
+  .client-name { font-family: 'Barlow Condensed', sans-serif; font-size: 1.1rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--blue-dark); margin-bottom: 0.5rem; }
+  .client-desc { font-size: 0.85rem; color: var(--text-mid); line-height: 1.6; }
+
+  /* ─── CTA + FOOTER ─── */
+  .cta-band { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%); padding: 80px 5%; text-align: center; }
+  .cta-band h2 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem,4vw,3.5rem); color: var(--blue-dark); margin-bottom: 1rem; letter-spacing: 1px; }
+  .cta-band p { font-size: 1rem; color: rgba(13,47,94,0.75); margin-bottom: 2rem; max-width: 460px; margin-left: auto; margin-right: auto; }
+  footer { background: #0a1628; padding: 70px 5% 36px; border-top: 3px solid var(--gold); }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; max-width: 1300px; margin: 0 auto; padding-bottom: 50px; border-bottom: 1px solid rgba(201,162,39,0.15); }
+  .footer-logo-img { height: 70px; width: auto; margin-bottom: 1.25rem; display: block; }
+  .footer-brand-tag { font-family: 'Barlow Condensed', sans-serif; font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 1rem; font-weight: 700; }
+  .footer-brand-desc { font-size: 0.85rem; line-height: 1.7; color: rgba(255,255,255,0.45); margin-bottom: 1.25rem; }
+  .footer-contact-item { font-size: 0.82rem; color: rgba(255,255,255,0.55); margin-bottom: 6px; }
+  .footer-contact-item strong { color: var(--gold); font-weight: 500; }
+  .footer-col-title { font-family: 'Barlow Condensed', sans-serif; font-size: 0.75rem; letter-spacing: 3px; text-transform: uppercase; font-weight: 700; color: var(--gold); margin-bottom: 1.25rem; }
+  .footer-col a { display: block; font-size: 0.85rem; color: rgba(255,255,255,0.5); text-decoration: none; margin-bottom: 0.6rem; transition: color 0.2s; }
+  .footer-col a:hover { color: var(--white); }
+  .footer-bottom { max-width: 1300px; margin: 1.75rem auto 0; display: flex; justify-content: space-between; font-size: 0.78rem; color: rgba(255,255,255,0.28); flex-wrap: wrap; gap: 0.5rem; }
+  .footer-bottom a { color: var(--gold); text-decoration: none; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 900px) {
+    .hamburger { display: flex; }
+    .nav-links { display: none; flex-direction: column; align-items: stretch; gap: 0; position: fixed; top: 68px; left: 0; right: 0; background: rgba(13,47,94,0.99); backdrop-filter: blur(12px); padding: 16px 5% 24px; border-bottom: 2px solid var(--gold); }
+    .nav-links.open { display: flex; }
+    .nav-links a { padding: 14px 16px; font-size: 14px; }
+    .nav-cta { text-align: center; margin-top: 8px; }
+    .nav-dropdown { width: 100%; }
+    .nav-dropdown-trigger { justify-content: stretch; width: 100%; }
+    .nav-dropdown-trigger > a { flex: 1; text-align: left; }
+    .dd-chevron { flex-shrink: 0; border-left: 1px solid rgba(255,255,255,0.12); padding-left: 14px; padding-right: 14px; }
+    .dropdown-menu { display: none !important; }
+    .nav-dropdown.mob-open .dropdown-menu { display: block !important; }
+    .product-grid, .range-grid, .model-grid, .perf-tables, .testimonials-grid { grid-template-columns: 1fr; }
+    .cat-cards { grid-template-columns: 1fr; }
+    .clients-grid { grid-template-columns: 1fr 1fr; }
+    .projects-grid { grid-template-columns: 1fr 1fr; }
+    .calc-grid, .calc-row-2, .result-row, .result-row-2 { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+    .calc-card { padding: 2rem; }
+    .calc-tabs { flex-direction: column; }
+    .calc-tab { border-right: none; border-bottom: 1.5px solid #dde3ee; }
+    .calc-tab:last-child { border-bottom: none; }
+    .perf-table { font-size: 0.78rem; }
+    .perf-table th, .perf-table td { padding: 8px 8px; }
+  }
+  @media (max-width: 600px) {
+    .clients-grid, .projects-grid { grid-template-columns: 1fr; }
+    .range-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">
+    <img src="horizontal_logo.png" alt="Gleamair Enterprises">
+  </a>
+  <button class="hamburger" id="hamburger" aria-label="Toggle navigation">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-links" id="navLinks">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="services.html">Services</a>
+    <div class="nav-dropdown">
+      <div class="nav-dropdown-trigger">
+        <a href="products.html" class="active">Products</a>
+        <button class="dd-chevron" aria-label="Toggle products menu">
+          <svg viewBox="0 0 10 6"><polyline points="1,1 5,5 9,1"/></svg>
+        </button>
+      </div>
+      <div class="dropdown-menu">
+        <a href="product-catalog.html?cat=lighting">Lighting Solutions</a>
+        <a href="product-catalog.html?cat=ventilation">Ventilation Solutions</a>
+        <a href="product-catalog.html?cat=cooling">Cooling Solutions</a>
+      </div>
+    </div>
+    <a href="contact.html" class="nav-cta">Contact Us</a>
+  </div>
+</nav>
+
+<!-- PAGE HERO (dark) -->
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="breadcrumb"><a href="index.html">Home</a> &nbsp;/&nbsp; Products</div>
+    <h1>Our Products</h1>
+    <p>Industry-leading ventilation technology distributed and installed by Gleamair Enterprises across the Philippines.</p>
+  </div>
+</div>
+
+<!-- PRODUCT INTRO (light) -->
+<section class="product-intro">
+  <div class="section-inner">
+    <div class="product-grid">
+      <div class="product-copy">
+        <div class="section-eyebrow">Featured Product</div>
+        <h2 class="section-title" style="color:var(--blue-dark);">Green-Vent Wind &mdash; Wind Driven Roof Ventilators</h2>
+        <p>The Green-Vent Wind is a premium wind-driven roof ventilation system developed using Australian engineering and manufactured locally in the Philippines by SG Eco Industries Inc.</p>
+        <p>Designed to operate without electricity, the Green-Vent Wind uses the natural energy of wind to continuously expel hot, stale air from within a building — replacing it with cooler, fresher air from outside. Even minimal wind speeds are sufficient to activate the system.</p>
+        <p>With a 15-year manufacturer's warranty and a proven track record in demanding Philippine conditions — including heavy monsoon rainfall — the Green-Vent Wind is one of the most reliable roof ventilation solutions available in the market.</p>
+        <div class="product-badges">
+          <span class="badge">Australian Technology</span>
+          <span class="badge">Made in Philippines</span>
+          <span class="badge">15-Year Warranty</span>
+          <span class="badge">Zero Energy Use</span>
+        </div>
+      </div>
+      <div class="product-features">
+        <h3>Product Advantages</h3>
+        <ul class="pf-list">
+          <li>Vertical Vane Technology for superior performance at all wind speeds</li>
+          <li>Up to 3 times the exhaust capacity of conventional round ventilators</li>
+          <li>Lightweight, high-strength aluminium construction — rust-free</li>
+          <li>Available in three sizes for cost-effective specification</li>
+          <li>Operates without electricity — zero ongoing energy cost</li>
+          <li>Year-round ventilation regardless of season</li>
+          <li>High-precision, quality-grade bearing assemblies</li>
+          <li>Larger exhaust openings for enhanced ventilation performance</li>
+          <li>Proven rain resistance — no leakage during heavy rainfall</li>
+          <li>15-year manufacturer's warranty (see terms for details)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCT RANGE (white) -->
+<section class="product-range">
+  <div class="section-inner">
+    <div style="text-align:center;margin-bottom:3rem;">
+      <div class="section-eyebrow" style="justify-content:center;">Complete Range</div>
+      <h2 class="section-title" style="color:var(--blue-dark);">Our Complete Product Portfolio</h2>
+      <p style="font-size:0.95rem;color:var(--text-mid);max-width:550px;margin:0 auto;font-weight:300;">Beyond Green-Vent Wind, Gleamair offers a comprehensive range of ventilation and environmental solutions.</p>
+    </div>
+    <div class="range-grid">
+      <div class="range-card">
+        <h3>Ventilator Ducting Kits</h3>
+        <p>Professional-grade ducting systems designed to optimize air distribution from your Green-Vent Wind ventilators. Engineered for performance and durability across diverse climates.</p>
+      </div>
+      <div class="range-card">
+        <h3>Roof Access Hatchways</h3>
+        <p>Safe, secure, and weatherproof roof access solutions. Weather-resistant across all pitch angles with pad-lockable latches for enhanced security and safety compliance.</p>
+      </div>
+      <div class="range-card">
+        <h3>Sky Tunnel &mdash; Residential</h3>
+        <p>Natural daylighting systems for homes. Available in 343mm, 457mm &amp; 535mm diameters with Flexi-tube or Rigid98 tubing. 7-year manufacturer's warranty. <a href="Brochures/Sky-Tunnel-Brochure-Residential.pdf" target="_blank">View brochure &rarr;</a></p>
+      </div>
+      <div class="range-card">
+        <h3>Sky Tunnel &mdash; Commercial / Industrial</h3>
+        <p>High-performance daylighting for warehouses, factories, offices and retail. Rigid98 Miro-Silver tubing with 98% reflectivity. Proven 20+ year track record. <a href="Brochures/Sky-Tunnel-Brochure-Commercial.pdf" target="_blank">View brochure &rarr;</a></p>
+      </div>
+      <div class="range-card">
+        <h3>Green-Vent Solar 15W (GVS-15W)</h3>
+        <p>Solar-powered attic extraction fan with 15W polycrystalline panel, 38V DC motor, and optional Environment Control System. Thermostat included. <a href="Brochures/GVS 15W.pdf" target="_blank">View brochure &rarr;</a></p>
+      </div>
+      <div class="range-card">
+        <h3>Green-Vent Solar 30W (GVS-30W)</h3>
+        <p>High-power 30W solar attic fan with ECS included as standard. Wider 350mm throat, mains power backup via transformer, and superior low-light performance. <a href="Brochures/GVS-30W Flyer.pdf" target="_blank">View brochure &rarr;</a></p>
+      </div>
+      <div class="range-card">
+        <h3>CCTV Security Systems</h3>
+        <p>Reliable security camera systems that enhance surveillance and provide reliable monitoring of your commercial and residential facilities.</p>
+      </div>
+      <div class="range-card">
+        <h3>Aircon Installation &amp; Maintenance</h3>
+        <p>Complete air conditioning supply, installation, and preventive maintenance services. Our team ensures units remain clean and efficient through expert upkeep.</p>
+      </div>
+      <div class="range-card">
+        <h3>Industrial Exhaust Fans</h3>
+        <p>Wall-mounted and roof-mounted industrial exhaust solutions for high-performance ventilation in manufacturing and warehouse environments. <a href="Brochures/Copy of GA INDUSTRIAL WALL MOUNTED EXHAUST FAN.pdf" target="_blank">View specifications &rarr;</a></p>
+      </div>
+    </div>
+    <div class="range-cta">
+      <p>Looking for a specific solution? Our team can customize installations to match your exact requirements and budget.</p>
+      <a href="contact.html" class="btn-dark">Request Product Information</a>
+    </div>
+  </div>
+</section>
+
+<!-- CATEGORY INTRO (dark) -->
+<section class="cat-intro">
+  <div class="section-inner">
+    <div style="text-align:center;">
+      <div class="section-eyebrow" style="justify-content:center;">Browse by Category</div>
+      <h2 class="section-title" style="color:var(--white);">Explore Our Product Catalog</h2>
+      <p style="font-size:0.95rem;color:rgba(255,255,255,0.6);max-width:520px;margin:0 auto;font-weight:300;">Browse our full range of products organized by solution type. Each category includes detailed specifications and brochure downloads.</p>
+    </div>
+    <div class="cat-cards">
+      <a href="product-catalog.html?cat=lighting" class="cat-card">
+        <div class="cat-card-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </div>
+        <h3>Lighting Solutions</h3>
+        <p>Sky Tunnel daylighting systems for residential and commercial applications. Natural light, zero energy cost.</p>
+        <span class="cat-card-cta">Browse Lighting &rarr;</span>
+      </a>
+      <a href="product-catalog.html?cat=ventilation" class="cat-card">
+        <div class="cat-card-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 8v4l3 3"/><path d="M18 2v4h4"/></svg>
+        </div>
+        <h3>Ventilation Solutions</h3>
+        <p>Green-Vent Wind, Green-Vent Solar (15W &amp; 30W), and Industrial Exhaust Fans for every ventilation need.</p>
+        <span class="cat-card-cta">Browse Ventilation &rarr;</span>
+      </a>
+      <a href="product-catalog.html?cat=cooling" class="cat-card">
+        <div class="cat-card-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07"/></svg>
+        </div>
+        <h3>Cooling Solutions</h3>
+        <p>Professional aircon installation and maintenance services for residential and commercial facilities.</p>
+        <span class="cat-card-cta">Browse Cooling &rarr;</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- SPECS (dark) -->
+<section class="specs-section" id="specs">
+  <div class="section-inner">
+    <div class="section-eyebrow">Technical Specifications</div>
+    <h2 class="section-title" style="color:var(--white);">Three Sizes. One Proven System.</h2>
+    <p style="font-size:0.95rem;color:rgba(255,255,255,0.6);max-width:580px;font-weight:300;">The Green-Vent Wind is available in three diameter sizes to suit a range of building types, volumes, and ventilation requirements.</p>
+    <div class="model-grid">
+      <div class="model-card">
+        <div class="model-name">GVW300</div>
+        <h3>300mm Diameter</h3>
+        <div class="spec-row"><span class="spec-key">Overall Diameter</span><span class="spec-val">480mm</span></div>
+        <div class="spec-row"><span class="spec-key">Overall Height</span><span class="spec-val">480mm</span></div>
+        <div class="spec-row"><span class="spec-key">Throat Diameter</span><span class="spec-val">300mm</span></div>
+        <div class="spec-row"><span class="spec-key">Flashing Size</span><span class="spec-val">500 x 600mm</span></div>
+        <div class="spec-row"><span class="spec-key">Throat Area</span><span class="spec-val">0.071 m&sup3;</span></div>
+        <div class="spec-row"><span class="spec-key">Total Weight</span><span class="spec-val">5 kg</span></div>
+      </div>
+      <div class="model-card">
+        <div class="model-name">GVW600</div>
+        <h3>600mm Diameter</h3>
+        <div class="spec-row"><span class="spec-key">Overall Diameter</span><span class="spec-val">770mm</span></div>
+        <div class="spec-row"><span class="spec-key">Overall Height</span><span class="spec-val">720mm</span></div>
+        <div class="spec-row"><span class="spec-key">Throat Diameter</span><span class="spec-val">600mm</span></div>
+        <div class="spec-row"><span class="spec-key">Flashing Size</span><span class="spec-val">900 x 900mm</span></div>
+        <div class="spec-row"><span class="spec-key">Throat Area</span><span class="spec-val">0.283 m&sup3;</span></div>
+        <div class="spec-row"><span class="spec-key">Total Weight</span><span class="spec-val">12 kg</span></div>
+      </div>
+      <div class="model-card">
+        <div class="model-name">GVW900</div>
+        <h3>900mm Diameter</h3>
+        <div class="spec-row"><span class="spec-key">Overall Diameter</span><span class="spec-val">1100mm</span></div>
+        <div class="spec-row"><span class="spec-key">Overall Height</span><span class="spec-val">940mm</span></div>
+        <div class="spec-row"><span class="spec-key">Throat Diameter</span><span class="spec-val">900mm</span></div>
+        <div class="spec-row"><span class="spec-key">Flashing Size</span><span class="spec-val">1200 x 1200mm</span></div>
+        <div class="spec-row"><span class="spec-key">Throat Area</span><span class="spec-val">0.636 m&sup3;</span></div>
+        <div class="spec-row"><span class="spec-key">Total Weight</span><span class="spec-val">25 kg</span></div>
+      </div>
+    </div>
+
+    <div class="section-eyebrow" style="margin-top:2rem;">Material Specifications</div>
+    <table class="materials-table">
+      <thead>
+        <tr><th>Component</th><th>Material</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Vanes</td><td>Aluminium 5005 H34</td><td>All models</td></tr>
+        <tr><td>Plates</td><td>Aluminium 5005 H34</td><td>All models</td></tr>
+        <tr><td>Angle Adaptor</td><td>Aluminium 5005 H34</td><td>All models</td></tr>
+        <tr><td>Flashing</td><td>Aluminium 5005 H34</td><td>All models</td></tr>
+        <tr><td>Dome</td><td>Aluminium 1200 H0</td><td>All models</td></tr>
+        <tr><td>Brackets</td><td>Aluminium 6060 T591</td><td>All models</td></tr>
+        <tr><td>Tri-bracket</td><td>Powdercoated Mild Steel</td><td>GVW900 only</td></tr>
+        <tr><td>Shaft</td><td>304 Stainless Steel</td><td>All models</td></tr>
+        <tr><td>Upper Bearing</td><td>Double row ball bearing BWF30-119Z</td><td>All models</td></tr>
+        <tr><td>Lower Bearing</td><td>Single row ball bearing SB204-12C</td><td>GVW900 only</td></tr>
+        <tr><td>Upper Bearing Assembly</td><td>Glass Reinforced ASA</td><td>All models</td></tr>
+        <tr><td>Lower Bearing Protectors</td><td>304 Stainless Steel</td><td>GVW900 only</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- PERFORMANCE (light) -->
+<section style="background:var(--off-white);padding:100px 5%;">
+  <div class="section-inner">
+    <div class="section-eyebrow">Performance Data</div>
+    <h2 class="section-title" style="color:var(--blue-dark);">Exhaust Capacity by Wind Speed</h2>
+    <p style="font-size:0.95rem;color:var(--text-mid);max-width:560px;margin-bottom:2.5rem;font-weight:300;">Capacity figures are based on tested exhaust performance at various wind speeds for each model size.</p>
+    <div class="perf-tables">
+      <div>
+        <div class="perf-table-title">Metric Performance Table</div>
+        <div class="perf-table-sub">Exhaust Capacity (L/sec) at Various Wind Speeds</div>
+        <table class="perf-table">
+          <thead><tr><th>Ventilator</th><th>Diameter</th><th>6 km/hr</th><th>12 km/hr</th><th>16 km/hr</th></tr></thead>
+          <tbody>
+            <tr><td>GVW300</td><td>300mm</td><td>270</td><td>480</td><td>620</td></tr>
+            <tr class="perf-highlight"><td>GVW600</td><td>600mm</td><td>620</td><td>1,104</td><td>1,420</td></tr>
+            <tr><td>GVW900</td><td>900mm</td><td>1,560</td><td>2,700</td><td>3,460</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="perf-table-title">Imperial Performance Table</div>
+        <div class="perf-table-sub">Exhaust Capacity (CFM) at Various Wind Speeds</div>
+        <table class="perf-table">
+          <thead><tr><th>Ventilator</th><th>Diameter</th><th>3.7 mph</th><th>7.5 mph</th><th>10 mph</th></tr></thead>
+          <tbody>
+            <tr><td>GVW300</td><td>12"</td><td>572</td><td>1,017</td><td>1,314</td></tr>
+            <tr class="perf-highlight"><td>GVW600</td><td>24"</td><td>1,314</td><td>2,339</td><td>3,009</td></tr>
+            <tr><td>GVW900</td><td>36"</td><td>3,306</td><td>5,721</td><td>7,332</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS (dark) -->
+<section style="background:var(--blue-dark);padding:100px 5%;">
+  <div class="section-inner">
+    <div style="text-align:center;margin-bottom:3rem;">
+      <div class="section-eyebrow" style="justify-content:center;">Recent Projects</div>
+      <h2 class="section-title" style="color:var(--white);">Our Recent Projects</h2>
+      <p style="font-size:0.95rem;color:rgba(255,255,255,0.6);max-width:550px;margin:0 auto;font-weight:300;">A sampling of successful installations across residential, commercial, and industrial facilities.</p>
+    </div>
+    <div class="projects-grid">
+      <div class="project-card">
+        <img src="CLIENT PHOTOS/SG Eco Industries Inc/Copy_of_IMG_1915.jpg" alt="SG Eco Industries" class="project-img" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22%3E%3Crect fill=%22%230d2f5e%22 width=%22400%22 height=%22400%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2218%22 fill=%22%23c9a227%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22%3EIndustrial Ventilation%3C/text%3E%3C/svg%3E'">
+        <div class="project-overlay"><div class="project-label">SG Eco Industries Inc</div></div>
+      </div>
+      <div class="project-card">
+        <img src="CLIENT PHOTOS/CEVA Logistics/Copy of 33a5533f40e3fbc51e7e54edb28bd2cf.jpeg" alt="CEVA Logistics" class="project-img" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22%3E%3Crect fill=%22%230d2f5e%22 width=%22400%22 height=%22400%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2218%22 fill=%22%23c9a227%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22%3ECEVA Logistics%3C/text%3E%3C/svg%3E'">
+        <div class="project-overlay"><div class="project-label">CEVA Logistics Facility</div></div>
+      </div>
+      <div class="project-card">
+        <img src="CLIENT PHOTOS/Residential Bulacan/Copy_of_IMG_1251.jpg" alt="Residential Bulacan" class="project-img" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22%3E%3Crect fill=%22%230d2f5e%22 width=%22400%22 height=%22400%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2218%22 fill=%22%23c9a227%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22%3EResidential Project%3C/text%3E%3C/svg%3E'">
+        <div class="project-overlay"><div class="project-label">Residential - Bulacan</div></div>
+      </div>
+      <div class="project-card">
+        <img src="CLIENT PHOTOS/anthony lozado residential 2025/Copy of viber_image_2025-09-12_13-32-19-759.jpg" alt="Sky Tunnel" class="project-img" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22%3E%3Crect fill=%22%230d2f5e%22 width=%22400%22 height=%22400%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2218%22 fill=%22%23c9a227%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22%3ESky Tunnel%3C/text%3E%3C/svg%3E'">
+        <div class="project-overlay"><div class="project-label">Sky Tunnel - Residential</div></div>
+      </div>
+      <div class="project-card">
+        <img src="CLIENT PHOTOS/Newbridge Cebu/Copy_of_IMG_1883.jpg" alt="Newbridge Cebu" class="project-img" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22%3E%3Crect fill=%22%230d2f5e%22 width=%22400%22 height=%22400%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2218%22 fill=%22%23c9a227%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22%3ENewbridge Cebu%3C/text%3E%3C/svg%3E'">
+        <div class="project-overlay"><div class="project-label">Newbridge Cebu</div></div>
+      </div>
+      <div class="project-card">
+        <img src="CLIENT PHOTOS/Residential Mabalacat/Copy of 629c53801f5feaf754f25cefcc062951.jpeg" alt="Mabalacat" class="project-img" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22%3E%3Crect fill=%22%230d2f5e%22 width=%22400%22 height=%22400%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2218%22 fill=%22%23c9a227%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22%3EMabalacat Project%3C/text%3E%3C/svg%3E'">
+        <div class="project-overlay"><div class="project-label">Residential - Mabalacat</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CALCULATOR (light) -->
+<section style="background:var(--off-white);padding:100px 5%;" id="calculator">
+  <div class="section-inner" style="max-width:900px;">
+    <div style="text-align:center;margin-bottom:3rem;">
+      <div class="section-eyebrow" style="justify-content:center;">GLEAMAIR Tools</div>
+      <h2 class="section-title" style="color:var(--blue-dark);">Product Calculator</h2>
+      <p style="font-size:0.95rem;color:var(--text-mid);font-weight:300;">Select a calculator type to estimate requirements for your specific product.</p>
+    </div>
+    <div class="calc-card">
+      <div class="calc-tabs">
+        <button class="calc-tab active" onclick="switchTab('ventilator',this)">Ventilator Sizing</button>
+        <button class="calc-tab" onclick="switchTab('solar',this)">Solar Attic Fan</button>
+        <button class="calc-tab" onclick="switchTab('aircon',this)">Aircon HP</button>
+      </div>
+
+      <!-- PANEL 1: VENTILATOR -->
+      <div class="calc-panel active" id="panel-ventilator">
+        <div class="calc-grid">
+          <div class="form-group"><label>Length (metres)</label><input type="number" id="v-length" placeholder="e.g. 40" min="0"></div>
+          <div class="form-group"><label>Width (metres)</label><input type="number" id="v-width" placeholder="e.g. 20" min="0"></div>
+          <div class="form-group"><label>Height (metres)</label><input type="number" id="v-height" placeholder="e.g. 5" min="0"></div>
+        </div>
+        <div class="calc-row-2">
+          <div class="form-group">
+            <label>Building Usage</label>
+            <select id="v-usage">
+              <option value="7.5">Factory / Warehouse (7.5 ACH)</option>
+              <option value="5">Office / Commercial (5 ACH)</option>
+              <option value="3">Residential (3 ACH)</option>
+              <option value="10">Industrial / Heavy Use (10 ACH)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Ventilator Size</label>
+            <select id="v-size">
+              <option value="270">GVW300 &mdash; 300mm (270 L/s)</option>
+              <option value="620" selected>GVW600 &mdash; 600mm (620 L/s)</option>
+              <option value="1560">GVW900 &mdash; 900mm (1,560 L/s)</option>
+            </select>
+          </div>
+        </div>
+        <button class="calc-btn" onclick="calcVentilator()">Calculate Requirements</button>
+        <div class="calc-result" id="res-ventilator">
+          <div class="result-row">
+            <div class="result-item"><div class="result-val" id="v-resVolume">—</div><div class="result-label">Building Volume (m&sup3;)</div></div>
+            <div class="result-item"><div class="result-val" id="v-resFlow">—</div><div class="result-label">Required Airflow (L/s)</div></div>
+            <div class="result-item"><div class="result-val" id="v-resUnits">—</div><div class="result-label">Units Required</div></div>
+          </div>
+          <p class="result-note">Estimate based on standard air change rates. Contact us for a detailed site assessment.</p>
+        </div>
+      </div>
+
+      <!-- PANEL 2: SOLAR ATTIC FAN -->
+      <div class="calc-panel" id="panel-solar">
+        <div class="calc-row-2">
+          <div class="form-group"><label>Attic Floor Length (metres)</label><input type="number" id="s-length" placeholder="e.g. 15" min="0"></div>
+          <div class="form-group"><label>Attic Floor Width (metres)</label><input type="number" id="s-width" placeholder="e.g. 10" min="0"></div>
+        </div>
+        <div class="calc-row-2">
+          <div class="form-group">
+            <label>Roof Pitch</label>
+            <select id="s-pitch">
+              <option value="low">Low &mdash; up to 18&deg; (4/12)</option>
+              <option value="med">Medium &mdash; up to 33&deg; (8/12)</option>
+              <option value="high">High &mdash; up to 45&deg; (12/12)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Fan Model</label>
+            <select id="s-model">
+              <option value="15">GVS-15W (15 Watt)</option>
+              <option value="30">GVS-30W (30 Watt)</option>
+            </select>
+          </div>
+        </div>
+        <button class="calc-btn" onclick="calcSolar()">Calculate Requirements</button>
+        <div class="calc-result" id="res-solar">
+          <div class="result-row-2">
+            <div class="result-item"><div class="result-val" id="s-resArea">—</div><div class="result-label">Attic Floor Area (m&sup2;)</div></div>
+            <div class="result-item"><div class="result-val" id="s-resUnits">—</div><div class="result-label">Fans Required</div></div>
+          </div>
+          <p class="result-note" id="s-resNote"></p>
+        </div>
+      </div>
+
+      <!-- PANEL 3: AIRCON HP -->
+      <div class="calc-panel" id="panel-aircon">
+        <div class="calc-row-2">
+          <div class="form-group"><label>Room Length (metres)</label><input type="number" id="a-length" placeholder="e.g. 5" min="0"></div>
+          <div class="form-group"><label>Room Width (metres)</label><input type="number" id="a-width" placeholder="e.g. 4" min="0"></div>
+        </div>
+        <div class="hp-adjustments">
+          <p>Adjustment Factors</p>
+          <label class="hp-check"><input type="checkbox" id="a-sun"> Direct afternoon sun exposure (+0.5 HP)</label>
+          <label class="hp-check"><input type="checkbox" id="a-occupancy"> More than 2 people regularly use the room (+0.5 HP)</label>
+          <label class="hp-check"><input type="checkbox" id="a-kitchen"> Installing in a kitchen (+0.5 HP)</label>
+        </div>
+        <button class="calc-btn" onclick="calcAircon()">Calculate HP Requirement</button>
+        <div class="calc-result" id="res-aircon">
+          <div class="result-row-2">
+            <div class="result-item"><div class="result-val" id="a-resArea">—</div><div class="result-label">Room Area (m&sup2;)</div></div>
+            <div class="result-item"><div class="result-hp" id="a-resHP">—</div><div class="result-label">Recommended HP</div></div>
+          </div>
+          <p class="result-note" id="a-resNote"></p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS (dark) -->
+<section style="background:var(--blue-dark);padding:100px 5%;">
+  <div class="section-inner">
+    <div style="text-align:center;margin-bottom:3rem;">
+      <div class="section-eyebrow" style="justify-content:center;">Client Feedback</div>
+      <h2 class="section-title" style="color:var(--white);">Trusted by Leading Organizations</h2>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <div class="testimonial-rating"><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span></div>
+        <p class="testimonial-quote">&ldquo;Everything from customer engagement, delivery, installation, and payment was great!&rdquo;</p>
+        <div class="testimonial-name">A******* L*****</div>
+        <div class="testimonial-title">Residential Client &nbsp;&bull;&nbsp; Sky Tunnel Installation</div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-rating"><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span></div>
+        <p class="testimonial-quote">&ldquo;Very satisfied with product quality, installation service, customer support, and delivery timeliness. Highly likely to recommend Gleamair Enterprises to others.&rdquo;</p>
+        <div class="testimonial-name">Villa Escudero Plantation &amp; Resort Inc.</div>
+        <div class="testimonial-title">Resort Client &nbsp;&bull;&nbsp; Solar Lighting Project</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CLIENTS (white) -->
+<section style="background:var(--white);padding:100px 5%;">
+  <div class="section-inner">
+    <div style="text-align:center;margin-bottom:3rem;">
+      <div class="section-eyebrow" style="justify-content:center;">Organizations That Trust Us</div>
+      <h2 class="section-title" style="color:var(--blue-dark);">Our Clients</h2>
+    </div>
+    <div class="clients-grid">
+      <div class="client-card"><img src="otherbusinesses/villa_escudero_logo.png" alt="Villa Escudero" class="client-logo"><div class="client-name">Villa Escudero</div><div class="client-desc">Premium eco-tourism resort in Tiaong, Quezon featuring our solar lighting systems.</div></div>
+      <div class="client-card"><img src="otherbusinesses/ceva-logistics_logo.png" alt="CEVA Logistics" class="client-logo"><div class="client-name">CEVA Logistics</div><div class="client-desc">International logistics provider relying on our HVAC and ventilation solutions.</div></div>
+      <div class="client-card"><img src="otherbusinesses/3rshane_logo.png" alt="3R Shane Rice Mills" class="client-logo"><div class="client-name">3R Shane Rice Mills</div><div class="client-desc">Leading rice mill facility utilizing our industrial ventilation systems.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BAND (gold) -->
+<div class="cta-band">
+  <h2>Ready to Order or Inquire?</h2>
+  <p>Contact our team to discuss product availability, pricing, and installation requirements.</p>
+  <a href="contact.html" class="btn-dark">Request a Quote</a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <img src="square_logo.png" alt="Gleamair Enterprises" class="footer-logo-img">
+      <div class="footer-brand-tag">HVAC &amp; Building Solutions</div>
+      <p class="footer-brand-desc">A leading provider of heating, ventilation, air conditioning, and building solutions serving residential and commercial clients with integrity and professionalism.</p>
+      <div class="footer-contact-item"><strong>Address:</strong> 12 Domingo St., Gordon Heights, Olongapo City</div>
+      <div class="footer-contact-item"><strong>Email:</strong> salesgleamair@gmail.com</div>
+      <div class="footer-contact-item"><strong>Phone:</strong> 0912-301-5388</div>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-title">Company</div>
+      <a href="about.html">About Us</a>
+      <a href="about.html#mission">Mission &amp; Vision</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-title">Services</div>
+      <a href="services.html#aircon">Aircon Services</a>
+      <a href="services.html#ventilation">Roof Ventilation</a>
+      <a href="services.html#skylights">Sky Tunnels</a>
+      <a href="services.html#solar">Solar Lighting</a>
+      <a href="services.html#hatchways">Roof Hatchways</a>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-title">Products</div>
+      <a href="products.html">Green-Vent Wind</a>
+      <a href="products.html#specs">Specifications</a>
+      <a href="products.html#calculator">Sizing Calculator</a>
+      <a href="contact.html">Request Quote</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>&copy; 2026 Gleamair Enterprises. All rights reserved.</span>
+    <span>Shopee: <a href="https://shopee.ph/gleamairenterprises_" target="_blank">gleamairenterprises_</a></span>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('hamburger').addEventListener('click', function() {
+    this.classList.toggle('open');
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+  var ddTimeout = null;
+  document.querySelectorAll('.nav-dropdown').forEach(function(dd) {
+    dd.addEventListener('mouseenter', function() {
+      if (window.innerWidth > 900) {
+        clearTimeout(ddTimeout);
+        document.querySelectorAll('.nav-dropdown').forEach(function(d){ d.classList.remove('dd-open'); });
+        dd.classList.add('dd-open');
+      }
+    });
+    dd.addEventListener('mouseleave', function() {
+      if (window.innerWidth > 900) {
+        ddTimeout = setTimeout(function(){ dd.classList.remove('dd-open'); }, 200);
+      }
+    });
+  });
+  document.querySelectorAll('.dd-chevron').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      if (window.innerWidth <= 900) {
+        e.stopPropagation();
+        this.closest('.nav-dropdown').classList.toggle('mob-open');
+      }
+    });
+  });
+  document.addEventListener('click', function(e) {
+    if (window.innerWidth > 900 && !e.target.closest('.nav-dropdown')) {
+      clearTimeout(ddTimeout);
+      document.querySelectorAll('.nav-dropdown').forEach(function(d){ d.classList.remove('dd-open'); });
+    }
+  });
+
+  function switchTab(name, btn) {
+    document.querySelectorAll('.calc-tab').forEach(function(t){ t.classList.remove('active'); });
+    document.querySelectorAll('.calc-panel').forEach(function(p){ p.classList.remove('active'); });
+    btn.classList.add('active');
+    document.getElementById('panel-' + name).classList.add('active');
+  }
+
+  function calcVentilator() {
+    var l = parseFloat(document.getElementById('v-length').value) || 0;
+    var w = parseFloat(document.getElementById('v-width').value) || 0;
+    var h = parseFloat(document.getElementById('v-height').value) || 0;
+    var ach = parseFloat(document.getElementById('v-usage').value);
+    var cap = parseFloat(document.getElementById('v-size').value);
+    if (!l || !w || !h) return;
+    var volume = l * w * h;
+    var flowLs = (volume * ach / 3600) * 1000;
+    var units = Math.ceil(flowLs / cap);
+    document.getElementById('v-resVolume').textContent = volume.toFixed(0);
+    document.getElementById('v-resFlow').textContent = flowLs.toFixed(0);
+    document.getElementById('v-resUnits').textContent = units;
+    document.getElementById('res-ventilator').classList.add('show');
+  }
+
+  // Solar attic fan table: [area_max, {low, med, high}] from brochure
+  // model 15W table
+  var solarTable15 = [
+    [100, {low:1, med:1, high:2}],
+    [150, {low:1, med:1, high:2}],
+    [200, {low:1, med:2, high:3}],
+    [250, {low:2, med:2, high:3}],
+    [300, {low:2, med:3, high:4}]
+  ];
+  // model 30W table
+  var solarTable30 = [
+    [100, {low:1, med:1, high:1}],
+    [150, {low:1, med:1, high:1}],
+    [200, {low:1, med:1, high:2}],
+    [250, {low:1, med:1, high:2}],
+    [300, {low:1, med:1, high:3}]
+  ];
+
+  function calcSolar() {
+    var l = parseFloat(document.getElementById('s-length').value) || 0;
+    var w = parseFloat(document.getElementById('s-width').value) || 0;
+    var pitch = document.getElementById('s-pitch').value;
+    var model = document.getElementById('s-model').value;
+    if (!l || !w) return;
+    var area = l * w;
+    var table = model === '15' ? solarTable15 : solarTable30;
+    var fans = null;
+    for (var i = 0; i < table.length; i++) {
+      if (area <= table[i][0]) { fans = table[i][1][pitch]; break; }
+    }
+    if (fans === null) fans = table[table.length - 1][1][pitch];
+    document.getElementById('s-resArea').textContent = area.toFixed(0);
+    document.getElementById('s-resUnits').textContent = fans;
+    document.getElementById('s-resNote').textContent =
+      'Minimum recommended fans for a ' + area.toFixed(0) + ' m² attic with ' +
+      pitch + ' pitch roof using GVS-' + model + 'W. Contact us for a site assessment.';
+    document.getElementById('res-solar').classList.add('show');
+  }
+
+  function calcAircon() {
+    var l = parseFloat(document.getElementById('a-length').value) || 0;
+    var w = parseFloat(document.getElementById('a-width').value) || 0;
+    if (!l || !w) return;
+    var area = l * w;
+    var baseHP;
+    if (area <= 11) baseHP = 0.5;
+    else if (area <= 14) baseHP = 0.75;
+    else if (area <= 21) baseHP = 1.0;
+    else if (area <= 25) baseHP = 1.5;
+    else if (area <= 28) baseHP = 2.0;
+    else if (area <= 48) baseHP = 2.5;
+    else baseHP = 3.0;
+    var adj = 0;
+    if (document.getElementById('a-sun').checked) adj += 0.5;
+    if (document.getElementById('a-occupancy').checked) adj += 0.5;
+    if (document.getElementById('a-kitchen').checked) adj += 0.5;
+    var totalHP = baseHP + adj;
+    // round to nearest standard HP
+    var standards = [0.5, 0.75, 1.0, 1.5, 2.0, 2.5, 3.0];
+    var finalHP = standards.reduce(function(prev, curr) {
+      return Math.abs(curr - totalHP) < Math.abs(prev - totalHP) ? curr : prev;
+    });
+    if (totalHP > finalHP) finalHP = standards[Math.min(standards.indexOf(finalHP) + 1, standards.length - 1)];
+    document.getElementById('a-resArea').textContent = area.toFixed(1);
+    document.getElementById('a-resHP').textContent = finalHP + ' HP';
+    var noteAdj = adj > 0 ? ' Includes +' + adj + ' HP adjustment for selected factors.' : '';
+    document.getElementById('a-resNote').textContent =
+      'Base recommendation for ' + area.toFixed(1) + ' m² is ' + baseHP + ' HP.' + noteAdj +
+      ' Final recommendation: ' + finalHP + ' HP. Consult our team for a full assessment.';
+    document.getElementById('res-aircon').classList.add('show');
+  }
+</script>
+</body>
+</html>

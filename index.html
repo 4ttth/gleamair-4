@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gleamair Enterprises | HVAC & Building Solutions</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue-dark: #0d2f5e;
+    --blue-mid: #1a4a8a;
+    --blue-light: #2563c4;
+    --gold: #c9a227;
+    --gold-light: #e8bc3a;
+    --gold-pale: #f5d97a;
+    --white: #ffffff;
+    --off-white: #f4f6fa;
+    --text-dark: #0d1f3c;
+    --text-mid: #2c3e60;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Barlow', sans-serif;
+    background: var(--white);
+    color: var(--text-dark);
+    overflow-x: hidden;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; width: 100%; z-index: 100;
+    background: rgba(13,47,94,0.96);
+    backdrop-filter: blur(10px);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 5%;
+    height: 68px;
+    border-bottom: 2px solid var(--gold);
+  }
+  .nav-logo { display: flex; align-items: center; height: 100%; text-decoration: none; }
+  .nav-logo img { height: 42px; width: auto; object-fit: contain; }
+  .nav-links { display: flex; align-items: center; gap: 8px; list-style: none; }
+  .nav-links a { color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.85rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; padding: 8px 14px; border-radius: 3px; transition: color 0.2s, background 0.2s; }
+  .nav-links a:hover, .nav-links a.active { color: var(--gold-light); background: rgba(201,162,39,0.08); }
+  .nav-cta { background: var(--gold) !important; color: var(--blue-dark) !important; font-weight: 700 !important; border-radius: 2px !important; }
+  .nav-cta:hover { background: var(--gold-light) !important; }
+  .hamburger { display: none; flex-direction: column; justify-content: center; gap: 5px; background: none; border: none; cursor: pointer; padding: 8px; z-index: 1100; }
+  .hamburger span { display: block; width: 24px; height: 2px; background: var(--white); border-radius: 2px; transition: transform 0.3s, opacity 0.3s; }
+  .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  /* ─── NAV DROPDOWN ─── */
+  .nav-dropdown { position: relative; }
+  .nav-dropdown-trigger { display: flex; align-items: center; gap: 0; }
+  .nav-dropdown-trigger > a { color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.85rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; padding: 8px 8px 8px 14px; border-radius: 3px 0 0 3px; transition: color 0.2s, background 0.2s; }
+  .nav-dropdown-trigger > a:hover, .nav-dropdown-trigger > a.active { color: var(--gold-light); background: rgba(201,162,39,0.08); }
+  .dd-chevron { background: none; border: none; cursor: pointer; padding: 8px 10px 8px 4px; display: flex; align-items: center; border-radius: 0 3px 3px 0; transition: background 0.2s; }
+  .dd-chevron:hover { background: rgba(201,162,39,0.08); }
+  .dd-chevron svg { width: 10px; height: 10px; stroke: rgba(255,255,255,0.7); fill: none; stroke-width: 2.5; transition: transform 0.2s; }
+  .nav-dropdown.dd-open .dd-chevron svg { transform: rotate(180deg); stroke: var(--gold); }
+  .dropdown-menu { display: none; position: absolute; top: calc(100% + 6px); left: 0; min-width: 210px; background: rgba(10,22,40,0.98); backdrop-filter: blur(12px); border: 1px solid rgba(201,162,39,0.25); border-top: 2px solid var(--gold); border-radius: 0 0 4px 4px; padding: 8px 0; z-index: 200; }
+  .nav-dropdown.dd-open .dropdown-menu { display: block; }
+  .dropdown-menu a { display: block; padding: 10px 18px; font-size: 0.78rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.75); text-decoration: none; transition: color 0.2s, background 0.2s; white-space: nowrap; background: none !important; }
+  .dropdown-menu a:hover, .dropdown-menu a.active { color: var(--gold-light); background: rgba(201,162,39,0.08) !important; }
+  /* mobile */
+  .nav-dropdown.mob-open .dropdown-menu { display: block; position: static; border: none; border-left: 3px solid var(--gold); background: rgba(255,255,255,0.04); padding: 4px 0 4px 12px; margin: 0 0 4px 16px; border-radius: 0; min-width: unset; top: auto; }
+  .nav-dropdown.mob-open .dd-chevron svg { transform: rotate(180deg); stroke: var(--gold); }
+
+  /* ─── HERO ─── */
+  .hero {
+    min-height: 100vh;
+    background: linear-gradient(160deg, var(--blue-dark) 0%, var(--blue-mid) 55%, #0f3c7a 100%);
+    display: flex; align-items: center;
+    padding: 120px 5% 80px;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23c9a227' fill-opacity='0.04'%3E%3Cpath d='M0 0h40v40H0V0zm40 40h40v40H40V40z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  .hero::after {
+    content: '';
+    position: absolute; right: -80px; top: -80px;
+    width: 520px; height: 520px;
+    border: 60px solid rgba(201,162,39,0.1);
+    border-radius: 50%;
+  }
+  .hero-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 80px; align-items: center;
+    max-width: 1300px; margin: 0 auto; width: 100%;
+    position: relative; z-index: 1;
+  }
+  .hero-eyebrow {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.9rem; font-weight: 700;
+    letter-spacing: 4px; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .hero-eyebrow::before {
+    content: ''; display: inline-block;
+    width: 32px; height: 2px; background: var(--gold);
+  }
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3.5rem, 7vw, 6.5rem);
+    line-height: 0.95; color: var(--white);
+    letter-spacing: 2px; margin-bottom: 1.5rem;
+  }
+  .hero h1 span { color: var(--gold); display: block; }
+  .hero-lead {
+    font-size: 1.05rem; color: rgba(255,255,255,0.75);
+    line-height: 1.7; max-width: 480px;
+    margin-bottom: 2.5rem; font-weight: 300;
+  }
+  .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--gold); color: var(--blue-dark);
+    padding: 0.85rem 2rem; font-weight: 700;
+    font-size: 0.9rem; letter-spacing: 1.5px;
+    text-transform: uppercase; text-decoration: none;
+    border-radius: 2px;
+    box-shadow: 0 4px 20px rgba(201,162,39,0.35);
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(201,162,39,0.45); }
+  .btn-outline {
+    border: 2px solid rgba(255,255,255,0.4); color: var(--white);
+    padding: 0.85rem 2rem; font-weight: 600;
+    font-size: 0.9rem; letter-spacing: 1.5px;
+    text-transform: uppercase; text-decoration: none;
+    border-radius: 2px;
+    transition: border-color 0.2s, background 0.2s;
+    display: inline-block;
+  }
+  .btn-outline:hover { border-color: var(--gold); background: rgba(201,162,39,0.1); }
+
+  .hero-visual {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  }
+  .hero-stat {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(201,162,39,0.2);
+    padding: 28px 24px; border-radius: 4px;
+    backdrop-filter: blur(4px);
+  }
+  .hero-stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem; color: var(--gold); line-height: 1; margin-bottom: 8px;
+  }
+  .hero-stat-label {
+    font-size: 0.78rem; font-weight: 600; letter-spacing: 1px;
+    text-transform: uppercase; color: rgba(255,255,255,0.55);
+  }
+  .hero-stat.wide { grid-column: span 2; }
+
+  /* ─── SECTION BASE ─── */
+  section { padding: 100px 5%; }
+  .section-inner { max-width: 1300px; margin: 0 auto; }
+  .section-eyebrow {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.8rem; font-weight: 700;
+    letter-spacing: 4px; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 0.75rem;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .section-eyebrow::before { content: ''; display: inline-block; width: 28px; height: 2px; background: var(--gold); }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    line-height: 1; letter-spacing: 1px; margin-bottom: 1.25rem;
+  }
+  .section-lead { font-size: 1rem; line-height: 1.75; font-weight: 300; max-width: 580px; }
+
+  /* ─── VIDEO SECTION ─── */
+  .video-section { background: var(--blue-dark); padding: 70px 5%; }
+  .video-wrap { max-width: 860px; margin: 0 auto; }
+  .video-eyebrow { font-family: 'Barlow Condensed', sans-serif; font-size: 0.8rem; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.75rem; justify-content: center; }
+  .video-eyebrow::before { content: ''; display: inline-block; width: 28px; height: 2px; background: var(--gold); }
+  .video-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2rem, 4vw, 3rem); color: var(--white); text-align: center; letter-spacing: 1px; margin-bottom: 2rem; }
+  .video-container { position: relative; width: 100%; border-radius: 4px; overflow: hidden; border: 2px solid rgba(201,162,39,0.3); box-shadow: 0 8px 40px rgba(0,0,0,0.5); }
+  .video-container video { display: block; width: 100%; height: auto; }
+
+  /* ─── SERVICES STRIP (dark) ─── */
+  .services-strip { background: var(--blue-dark); padding: 100px 5%; }
+  .services-strip .section-title { color: var(--white); }
+  .services-strip .section-lead { color: rgba(255,255,255,0.6); }
+  .services-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 3rem; flex-wrap: wrap; gap: 1.5rem; }
+  .services-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1.5px; background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .service-card {
+    background: var(--blue-dark); padding: 2.5rem 2rem;
+    position: relative; overflow: hidden;
+    text-decoration: none; display: block;
+    border-bottom: 3px solid transparent;
+    transition: background 0.25s, border-color 0.25s;
+  }
+  .service-card:hover { background: #0f3566; border-bottom-color: var(--gold); }
+  .service-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.85rem; letter-spacing: 3px;
+    color: var(--gold); margin-bottom: 1.25rem;
+  }
+  .service-card h3 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.3rem; font-weight: 700;
+    letter-spacing: 1px; text-transform: uppercase;
+    color: var(--gold-light); margin-bottom: 0.75rem;
+  }
+  .service-card p { font-size: 0.85rem; color: rgba(255,255,255,0.6); line-height: 1.65; }
+  .service-link {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 0.78rem; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--gold);
+    margin-top: 1.25rem; transition: gap 0.2s;
+  }
+  .service-card:hover .service-link { gap: 12px; }
+
+  /* ─── WHY US (light) ─── */
+  .why-section { background: var(--off-white); padding: 100px 5%; }
+  .why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
+  .why-list { display: flex; flex-direction: column; gap: 0; margin-top: 2.5rem; }
+  .why-item {
+    display: flex; gap: 1.25rem;
+    padding: 1.5rem 0; border-bottom: 1px solid #dde3ee;
+  }
+  .why-item:last-child { border-bottom: none; }
+  .why-check {
+    width: 38px; height: 38px; flex-shrink: 0;
+    background: var(--blue-dark); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--gold); font-size: 1rem; margin-top: 2px;
+  }
+  .why-item-title { font-weight: 700; font-size: 0.95rem; color: var(--blue-dark); margin-bottom: 0.3rem; }
+  .why-item-text { font-size: 0.85rem; color: var(--text-mid); line-height: 1.6; }
+  .why-visual {
+    background: linear-gradient(140deg, var(--blue-dark) 0%, var(--blue-mid) 100%);
+    border-radius: 6px; padding: 3rem 2.5rem; position: relative; overflow: hidden;
+  }
+  .why-visual::after {
+    content: ''; position: absolute; right: -40px; bottom: -40px;
+    width: 200px; height: 200px;
+    border: 40px solid rgba(255,255,255,0.06); border-radius: 50%;
+  }
+  .why-visual-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.2rem; color: var(--white); line-height: 1; margin-bottom: 0.5rem;
+  }
+  .why-visual-title span { color: var(--gold); }
+  .why-visual-sub {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.8rem; font-weight: 700; letter-spacing: 3px;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 2rem;
+  }
+  .why-metric { margin-bottom: 1.25rem; }
+  .why-metric-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 6px; }
+  .why-metric-bar { height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
+  .why-metric-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold-light)); border-radius: 2px; animation: barGrow 1.5s ease-out forwards; width: 0%; }
+  @keyframes barGrow { to { width: var(--pct); } }
+  .why-metric-val { font-family: 'Barlow Condensed', sans-serif; font-size: 0.85rem; font-weight: 700; color: var(--gold); margin-top: 5px; text-align: right; }
+
+  /* ─── TESTIMONIALS (dark) ─── */
+  .testimonials-section { background: var(--blue-dark); padding: 100px 5%; }
+  .testimonials-header { margin-bottom: 3rem; }
+  .testimonials-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+  .testimonial-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(201,162,39,0.2);
+    border-left: 4px solid var(--gold);
+    border-radius: 4px; padding: 2.5rem 2rem;
+    transition: transform 0.25s, box-shadow 0.25s;
+  }
+  .testimonial-card:hover { transform: translateY(-4px); box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+  .testimonial-rating { display: flex; gap: 4px; margin-bottom: 1rem; }
+  .testimonial-rating span { color: var(--gold); font-size: 1.1rem; }
+  .testimonial-quote { font-size: 0.95rem; line-height: 1.8; color: rgba(255,255,255,0.75); margin-bottom: 1.5rem; font-style: italic; }
+  .testimonial-name { font-family: 'Barlow Condensed', sans-serif; font-size: 1rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--white); margin-bottom: 0.25rem; }
+  .testimonial-title { font-size: 0.78rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--gold); }
+
+  /* ─── CLIENTS (light) ─── */
+  .clients-section { background: var(--white); padding: 100px 5%; }
+  .clients-header { text-align: center; margin-bottom: 3.5rem; }
+  .clients-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+  .client-card {
+    text-align: center; padding: 2.5rem;
+    background: var(--off-white); border-radius: 4px;
+    border: 1px solid #dde3ee;
+    transition: border-color 0.25s, box-shadow 0.25s;
+  }
+  .client-card:hover { border-color: var(--gold); box-shadow: 0 4px 24px rgba(201,162,39,0.12); }
+  .client-logo { height: 70px; object-fit: contain; margin-bottom: 1.25rem; }
+  .client-name { font-family: 'Barlow Condensed', sans-serif; font-size: 1.1rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--blue-dark); margin-bottom: 0.5rem; }
+  .client-desc { font-size: 0.85rem; color: var(--text-mid); line-height: 1.6; }
+
+  /* ─── CTA BAND (gold) ─── */
+  .cta-band {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+    padding: 80px 5%; text-align: center;
+  }
+  .cta-band h2 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem, 4vw, 3.5rem); color: var(--blue-dark); margin-bottom: 1rem; letter-spacing: 1px; }
+  .cta-band p { font-size: 1rem; color: rgba(13,47,94,0.75); margin-bottom: 2rem; max-width: 460px; margin-left: auto; margin-right: auto; }
+  .btn-dark {
+    background: var(--blue-dark); color: var(--white);
+    font-size: 0.85rem; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; text-decoration: none;
+    padding: 1rem 2.5rem; border-radius: 2px;
+    display: inline-block; transition: background 0.2s;
+  }
+  .btn-dark:hover { background: var(--blue-mid); }
+
+  /* ─── FOOTER ─── */
+  footer { background: #0a1628; padding: 70px 5% 36px; border-top: 3px solid var(--gold); }
+  .footer-grid {
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 60px; max-width: 1300px; margin: 0 auto;
+    padding-bottom: 50px; border-bottom: 1px solid rgba(201,162,39,0.15);
+  }
+  .footer-logo-img { height: 70px; width: auto; margin-bottom: 1.25rem; display: block; }
+  .footer-brand-tag { font-family: 'Barlow Condensed', sans-serif; font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 1rem; font-weight: 700; }
+  .footer-brand-desc { font-size: 0.85rem; line-height: 1.7; color: rgba(255,255,255,0.45); margin-bottom: 1.25rem; }
+  .footer-contact-item { font-size: 0.82rem; color: rgba(255,255,255,0.55); margin-bottom: 6px; }
+  .footer-contact-item strong { color: var(--gold); font-weight: 500; }
+  .footer-col-title { font-family: 'Barlow Condensed', sans-serif; font-size: 0.75rem; letter-spacing: 3px; text-transform: uppercase; font-weight: 700; color: var(--gold); margin-bottom: 1.25rem; }
+  .footer-col a { display: block; font-size: 0.85rem; color: rgba(255,255,255,0.5); text-decoration: none; margin-bottom: 0.6rem; transition: color 0.2s; }
+  .footer-col a:hover { color: var(--white); }
+  .footer-bottom { max-width: 1300px; margin: 1.75rem auto 0; display: flex; justify-content: space-between; font-size: 0.78rem; color: rgba(255,255,255,0.28); flex-wrap: wrap; gap: 0.5rem; }
+  .footer-bottom a { color: var(--gold); text-decoration: none; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 900px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 50px; }
+    .hero-visual { display: none; }
+    .hamburger { display: flex; }
+    .nav-links {
+      display: none; flex-direction: column; align-items: stretch; gap: 0;
+      position: fixed; top: 68px; left: 0; right: 0;
+      background: rgba(13,47,94,0.99); backdrop-filter: blur(12px);
+      padding: 16px 5% 24px; border-bottom: 2px solid var(--gold);
+    }
+    .nav-links.open { display: flex; }
+    .nav-links a { padding: 14px 16px; font-size: 14px; }
+    .nav-cta { text-align: center; margin-top: 8px; }
+    .nav-dropdown { width: 100%; }
+    .nav-dropdown-trigger { justify-content: stretch; width: 100%; }
+    .nav-dropdown-trigger > a { flex: 1; text-align: left; }
+    .dd-chevron { flex-shrink: 0; border-left: 1px solid rgba(255,255,255,0.12); padding-left: 14px; padding-right: 14px; }
+    .dropdown-menu { display: none !important; }
+    .nav-dropdown.mob-open .dropdown-menu { display: block !important; }
+    .services-grid { grid-template-columns: 1fr; }
+    .why-grid { grid-template-columns: 1fr; }
+    .testimonials-grid { grid-template-columns: 1fr; }
+    .clients-grid { grid-template-columns: 1fr 1fr; }
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+  }
+  @media (max-width: 600px) {
+    .clients-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">
+    <img src="horizontal_logo.png" alt="Gleamair Enterprises">
+  </a>
+  <button class="hamburger" id="hamburger" aria-label="Toggle navigation">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-links" id="navLinks">
+    <a href="index.html" class="active">Home</a>
+    <a href="about.html">About</a>
+    <a href="services.html">Services</a>
+    <div class="nav-dropdown" id="ddProducts">
+      <div class="nav-dropdown-trigger">
+        <a href="products.html">Products</a>
+        <button class="dd-chevron" aria-label="Toggle products menu">
+          <svg viewBox="0 0 10 6"><polyline points="1,1 5,5 9,1"/></svg>
+        </button>
+      </div>
+      <div class="dropdown-menu">
+        <a href="product-catalog.html?cat=lighting">Lighting Solutions</a>
+        <a href="product-catalog.html?cat=ventilation">Ventilation Solutions</a>
+        <a href="product-catalog.html?cat=cooling">Cooling Solutions</a>
+      </div>
+    </div>
+    <a href="contact.html" class="nav-cta">Contact Us</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-grid">
+    <div>
+      <div class="hero-eyebrow">Trusted HVAC Solutions</div>
+      <h1>Engineering <span>Comfort</span> For Every Space</h1>
+      <p class="hero-lead">Gleamair Enterprises delivers professional heating, ventilation, air conditioning, and building solutions for residential and commercial clients across the Philippines.</p>
+      <div class="hero-actions">
+        <a href="services.html" class="btn-primary">Explore Services</a>
+        <a href="contact.html" class="btn-outline">Request a Consultation</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-stat">
+        <div class="hero-stat-num">8+</div>
+        <div class="hero-stat-label">Years of Industry Experience</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">5</div>
+        <div class="hero-stat-label">Core Service Divisions</div>
+      </div>
+      <div class="hero-stat wide">
+        <div class="hero-stat-num">100%</div>
+        <div class="hero-stat-label">Committed to Quality, Safety & Satisfaction</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VIDEO SECTION -->
+<section class="video-section">
+  <div class="video-wrap">
+    <div class="video-eyebrow">See Us In Action</div>
+    <div class="video-title">Gleamair Enterprises at Work</div>
+    <div class="video-container">
+      <video autoplay muted loop playsinline>
+        <source src="hero_video.mp4" type="video/mp4">
+      </video>
+    </div>
+  </div>
+</section>
+
+<section class="services-strip">
+  <div class="section-inner">
+    <div class="services-header">
+      <div>
+        <div class="section-eyebrow">What We Do</div>
+        <h2 class="section-title">Integrated Building Solutions</h2>
+        <p class="section-lead">From air conditioning to daylighting, we provide end-to-end solutions that enhance comfort, efficiency, and sustainability.</p>
+      </div>
+      <a href="contact.html" class="btn-primary">Get a Quote &rarr;</a>
+    </div>
+    <div class="services-grid">
+      <a href="services.html#aircon" class="service-card">
+        <div class="service-num">01</div>
+        <h3>Aircon Services</h3>
+        <p>Supply, installation, maintenance, and emergency services to deliver optimal indoor air quality for your space.</p>
+        <span class="service-link">Learn More &rarr;</span>
+      </a>
+      <a href="services.html#ventilation" class="service-card">
+        <div class="service-num">02</div>
+        <h3>Roof Ventilation</h3>
+        <p>Installation and maintenance to improve airflow, minimize moisture, and enhance circulation. Custom solutions available.</p>
+        <span class="service-link">Learn More &rarr;</span>
+      </a>
+      <a href="services.html#skylights" class="service-card">
+        <div class="service-num">03</div>
+        <h3>Sky Tunnels</h3>
+        <p>Daylight system installation and maintenance for energy efficiency and naturally brighter interior spaces.</p>
+        <span class="service-link">Learn More &rarr;</span>
+      </a>
+      <a href="services.html#solar" class="service-card">
+        <div class="service-num">04</div>
+        <h3>Solar Lighting</h3>
+        <p>Installation and maintenance of solar-powered lighting systems for sustainable, cost-effective illumination.</p>
+        <span class="service-link">Learn More &rarr;</span>
+      </a>
+      <a href="services.html#hatchways" class="service-card">
+        <div class="service-num">05</div>
+        <h3>Roof Access Hatchways</h3>
+        <p>Professional installation of safe, compliant access points for roof and building maintenance requirements.</p>
+        <span class="service-link">Learn More &rarr;</span>
+      </a>
+      <a href="contact.html" class="service-card">
+        <div class="service-num">06</div>
+        <h3>Other Solutions</h3>
+        <p>We offer a broad range of additional building and HVAC solutions. Reach out to discuss your specific requirements.</p>
+        <span class="service-link">Inquire Now &rarr;</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="why-section">
+  <div class="section-inner">
+    <div class="why-grid">
+      <div>
+        <div class="section-eyebrow">Why Choose Us</div>
+        <h2 class="section-title" style="color:var(--blue-dark);">Built on Expertise,<br>Driven by Results</h2>
+        <p class="section-lead" style="color:var(--text-mid);">With over eight years of hands-on experience, we combine technical proficiency with a genuine commitment to client success.</p>
+        <div class="why-list">
+          <div class="why-item">
+            <div class="why-check">&#10003;</div>
+            <div>
+              <div class="why-item-title">Professional HVAC Expertise</div>
+              <div class="why-item-text">Our team brings specialized knowledge across all aspects of HVAC and building systems, ensuring solutions are engineered to perform.</div>
+            </div>
+          </div>
+          <div class="why-item">
+            <div class="why-check">&#10003;</div>
+            <div>
+              <div class="why-item-title">Energy-Efficient Solutions</div>
+              <div class="why-item-text">We prioritize sustainable products and practices that reduce energy consumption and long-term operational costs for your facility.</div>
+            </div>
+          </div>
+          <div class="why-item">
+            <div class="why-check">&#10003;</div>
+            <div>
+              <div class="why-item-title">Reliable After-Sales Support</div>
+              <div class="why-item-text">Our relationship with clients extends beyond installation. We provide ongoing maintenance programs to protect your investment.</div>
+            </div>
+          </div>
+          <div class="why-item">
+            <div class="why-check">&#10003;</div>
+            <div>
+              <div class="why-item-title">Customized Approach</div>
+              <div class="why-item-text">Every project is unique. We tailor solutions to the specific needs, constraints, and objectives of each client.</div>
+            </div>
+          </div>
+          <div class="why-item">
+            <div class="why-check">&#10003;</div>
+            <div>
+              <div class="why-item-title">Quality, Safety & Satisfaction</div>
+              <div class="why-item-text">We are committed to delivering safe, high-quality work with a focus on customer satisfaction at every step of the process.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="why-visual">
+        <div class="why-visual-title">Performance You Can <span>Measure</span></div>
+        <p class="why-visual-sub">Impact of Proper Ventilation</p>
+        <div class="why-metric">
+          <div class="why-metric-label">Reduction in AC Energy Load</div>
+          <div class="why-metric-bar"><div class="why-metric-fill" style="--pct:70%;"></div></div>
+          <div class="why-metric-val">Up to 70%</div>
+        </div>
+        <div class="why-metric">
+          <div class="why-metric-label">Improvement in Worker Productivity</div>
+          <div class="why-metric-bar"><div class="why-metric-fill" style="--pct:55%;"></div></div>
+          <div class="why-metric-val">Up to 5%</div>
+        </div>
+        <div class="why-metric">
+          <div class="why-metric-label">Reduction in Sick Leave Rates</div>
+          <div class="why-metric-bar"><div class="why-metric-fill" style="--pct:65%;"></div></div>
+          <div class="why-metric-val">Significant</div>
+        </div>
+        <div class="why-metric">
+          <div class="why-metric-label">Building Lifespan Extension</div>
+          <div class="why-metric-bar"><div class="why-metric-fill" style="--pct:80%;"></div></div>
+          <div class="why-metric-val">Measurable</div>
+        </div>
+        <p style="font-size:0.78rem;color:rgba(255,255,255,0.4);line-height:1.7;margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid rgba(201,162,39,0.2);">Figures reference industry research on the impact of proper ventilation in commercial and industrial environments.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="testimonials-section">
+  <div class="section-inner">
+    <div class="testimonials-header">
+      <div class="section-eyebrow">Client Feedback</div>
+      <h2 class="section-title" style="color:var(--white);">Trusted by Leading Organizations</h2>
+      <p class="section-lead" style="color:rgba(255,255,255,0.6);">Discover what our clients have to say about their experience with Gleamair Enterprises.</p>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <div class="testimonial-rating"><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span></div>
+        <p class="testimonial-quote">&ldquo;Everything from customer engagement, delivery, installation, and payment was great!&rdquo;</p>
+        <div class="testimonial-name">A******* L*****</div>
+        <div class="testimonial-title">Residential Client &nbsp;&bull;&nbsp; Sky Tunnel Installation</div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-rating"><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span></div>
+        <p class="testimonial-quote">&ldquo;Very satisfied with product quality, installation service, customer support, and delivery timeliness. Highly likely to recommend Gleamair Enterprises to others.&rdquo;</p>
+        <div class="testimonial-name">Villa Escudero Plantation &amp; Resort Inc.</div>
+        <div class="testimonial-title">Resort Client &nbsp;&bull;&nbsp; Solar Lighting Project</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="clients-section">
+  <div class="section-inner">
+    <div class="clients-header">
+      <div class="section-eyebrow" style="justify-content:center;">Organizations That Trust Us</div>
+      <h2 class="section-title" style="color:var(--blue-dark);">Our Clients</h2>
+      <p class="section-lead" style="color:var(--text-mid);margin:0 auto;">We've had the privilege to serve industry leaders and established businesses across the Philippines.</p>
+    </div>
+    <div class="clients-grid">
+      <div class="client-card">
+        <img src="otherbusinesses/villa_escudero_logo.png" alt="Villa Escudero" class="client-logo">
+        <div class="client-name">Villa Escudero</div>
+        <div class="client-desc">Premium eco-tourism resort in Tiaong, Quezon featuring our solar lighting systems.</div>
+      </div>
+      <div class="client-card">
+        <img src="otherbusinesses/ceva-logistics_logo.png" alt="CEVA Logistics" class="client-logo">
+        <div class="client-name">CEVA Logistics</div>
+        <div class="client-desc">International logistics provider relying on our HVAC and ventilation solutions.</div>
+      </div>
+      <div class="client-card">
+        <img src="otherbusinesses/3rshane_logo.png" alt="3R Shane Rice Mills" class="client-logo">
+        <div class="client-name">3R Shane Rice Mills</div>
+        <div class="client-desc">Leading rice mill facility utilizing our industrial ventilation systems.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="cta-band">
+  <h2>Ready to Improve Your Building's Performance?</h2>
+  <p>Speak with our team to discuss a solution tailored to your facility's requirements.</p>
+  <a href="contact.html" class="btn-dark">Request a Consultation</a>
+</div>
+
+<footer>
+  <div class="footer-grid">
+    <div>
+      <img src="square_logo.png" alt="Gleamair Enterprises" class="footer-logo-img">
+      <div class="footer-brand-tag">HVAC &amp; Building Solutions</div>
+      <p class="footer-brand-desc">A leading provider of heating, ventilation, air conditioning, and building solutions serving residential and commercial clients with integrity and professionalism.</p>
+      <div class="footer-contact-item"><strong>Address:</strong> 12 Domingo St., Gordon Heights, Olongapo City</div>
+      <div class="footer-contact-item"><strong>Email:</strong> salesgleamair@gmail.com</div>
+      <div class="footer-contact-item"><strong>Phone:</strong> 0912-301-5388</div>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-title">Company</div>
+      <a href="about.html">About Us</a>
+      <a href="about.html#mission">Mission &amp; Vision</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-title">Services</div>
+      <a href="services.html#aircon">Aircon Services</a>
+      <a href="services.html#ventilation">Roof Ventilation</a>
+      <a href="services.html#skylights">Sky Tunnels</a>
+      <a href="services.html#solar">Solar Lighting</a>
+      <a href="services.html#hatchways">Roof Hatchways</a>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-title">Products</div>
+      <a href="products.html">Green-Vent Wind</a>
+      <a href="products.html#specs">Specifications</a>
+      <a href="products.html#calculator">Sizing Calculator</a>
+      <a href="contact.html">Request Quote</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>&copy; 2026 Gleamair Enterprises. All rights reserved.</span>
+    <span>Shopee: <a href="https://shopee.ph/gleamairenterprises_" target="_blank">gleamairenterprises_</a></span>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('hamburger').addEventListener('click', function() {
+    this.classList.toggle('open');
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+  // Desktop: hover with delay
+  var ddTimeout = null;
+  document.querySelectorAll('.nav-dropdown').forEach(function(dd) {
+    dd.addEventListener('mouseenter', function() {
+      if (window.innerWidth > 900) {
+        clearTimeout(ddTimeout);
+        document.querySelectorAll('.nav-dropdown').forEach(function(d){ d.classList.remove('dd-open'); });
+        dd.classList.add('dd-open');
+      }
+    });
+    dd.addEventListener('mouseleave', function() {
+      if (window.innerWidth > 900) {
+        ddTimeout = setTimeout(function(){ dd.classList.remove('dd-open'); }, 200);
+      }
+    });
+  });
+  // Mobile: chevron toggles submenu, link navigates
+  document.querySelectorAll('.dd-chevron').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      if (window.innerWidth <= 900) {
+        e.stopPropagation();
+        var dd = this.closest('.nav-dropdown');
+        dd.classList.toggle('mob-open');
+      }
+    });
+  });
+  // Close on outside click
+  document.addEventListener('click', function(e) {
+    if (window.innerWidth > 900 && !e.target.closest('.nav-dropdown')) {
+      clearTimeout(ddTimeout);
+      document.querySelectorAll('.nav-dropdown').forEach(function(d){ d.classList.remove('dd-open'); });
+    }
+  });
+</script>
+</body>
+</html>

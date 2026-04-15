@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Services | Gleamair Enterprises</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue-dark: #0d2f5e;
+    --blue-mid: #1a4a8a;
+    --blue-light: #2563c4;
+    --gold: #c9a227;
+    --gold-light: #e8bc3a;
+    --white: #ffffff;
+    --off-white: #f4f6fa;
+    --text-dark: #0d1f3c;
+    --text-mid: #2c3e60;
+  }
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Barlow', sans-serif; background: var(--white); color: var(--text-dark); overflow-x: hidden; }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; width: 100%; z-index: 100;
+    background: rgba(13,47,94,0.96); backdrop-filter: blur(10px);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 5%; height: 68px; border-bottom: 2px solid var(--gold);
+  }
+  .nav-logo { display: flex; align-items: center; height: 100%; text-decoration: none; }
+  .nav-logo img { height: 42px; width: auto; object-fit: contain; }
+  .nav-links { display: flex; align-items: center; gap: 8px; list-style: none; }
+  .nav-links a { color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.85rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; padding: 8px 14px; border-radius: 3px; transition: color 0.2s, background 0.2s; }
+  .nav-links a:hover, .nav-links a.active { color: var(--gold-light); background: rgba(201,162,39,0.08); }
+  .nav-cta { background: var(--gold) !important; color: var(--blue-dark) !important; font-weight: 700 !important; border-radius: 2px !important; }
+  .nav-cta:hover { background: var(--gold-light) !important; }
+  .hamburger { display: none; flex-direction: column; justify-content: center; gap: 5px; background: none; border: none; cursor: pointer; padding: 8px; z-index: 1100; }
+  .hamburger span { display: block; width: 24px; height: 2px; background: var(--white); border-radius: 2px; transition: transform 0.3s, opacity 0.3s; }
+  .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  .nav-dropdown { position: relative; }
+  .nav-dropdown-trigger { display: flex; align-items: center; gap: 0; }
+  .nav-dropdown-trigger > a { color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.85rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; padding: 8px 8px 8px 14px; border-radius: 3px 0 0 3px; transition: color 0.2s, background 0.2s; }
+  .nav-dropdown-trigger > a:hover, .nav-dropdown-trigger > a.active { color: var(--gold-light); background: rgba(201,162,39,0.08); }
+  .dd-chevron { background: none; border: none; cursor: pointer; padding: 8px 10px 8px 4px; display: flex; align-items: center; border-radius: 0 3px 3px 0; transition: background 0.2s; }
+  .dd-chevron:hover { background: rgba(201,162,39,0.08); }
+  .dd-chevron svg { width: 10px; height: 10px; stroke: rgba(255,255,255,0.7); fill: none; stroke-width: 2.5; transition: transform 0.2s; }
+  .nav-dropdown.dd-open .dd-chevron svg { transform: rotate(180deg); stroke: var(--gold); }
+  .dropdown-menu { display: none; position: absolute; top: calc(100% + 6px); left: 0; min-width: 210px; background: rgba(10,22,40,0.98); backdrop-filter: blur(12px); border: 1px solid rgba(201,162,39,0.25); border-top: 2px solid var(--gold); border-radius: 0 0 4px 4px; padding: 8px 0; z-index: 200; }
+  .nav-dropdown.dd-open .dropdown-menu { display: block; }
+  .dropdown-menu a { display: block; padding: 10px 18px; font-size: 0.78rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.75); text-decoration: none; transition: color 0.2s, background 0.2s; white-space: nowrap; background: none !important; }
+  .dropdown-menu a:hover, .dropdown-menu a.active { color: var(--gold-light); background: rgba(201,162,39,0.08) !important; }
+  .nav-dropdown.mob-open .dropdown-menu { display: block; position: static; border: none; border-left: 3px solid var(--gold); background: rgba(255,255,255,0.04); padding: 4px 0 4px 12px; margin: 0 0 4px 16px; border-radius: 0; min-width: unset; top: auto; }
+  .nav-dropdown.mob-open .dd-chevron svg { transform: rotate(180deg); stroke: var(--gold); }
+
+  /* ─── PAGE HERO (dark) ─── */
+  .page-hero {
+    background: linear-gradient(160deg, var(--blue-dark) 0%, var(--blue-mid) 60%, #0f3c7a 100%);
+    padding: 160px 5% 90px; position: relative; overflow: hidden;
+  }
+  .page-hero::after {
+    content: 'SERVICES';
+    position: absolute; right: -20px; bottom: -30px;
+    font-family: 'Bebas Neue', sans-serif; font-size: 160px;
+    color: rgba(255,255,255,0.03); white-space: nowrap; pointer-events: none; letter-spacing: 4px;
+  }
+  .page-hero-inner { max-width: 1300px; margin: 0 auto; }
+  .breadcrumb { font-family: 'Barlow Condensed', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 1.25rem; }
+  .breadcrumb a { color: rgba(255,255,255,0.4); text-decoration: none; transition: color 0.2s; }
+  .breadcrumb a:hover { color: var(--gold); }
+  .page-hero h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3rem, 6vw, 5.5rem); color: var(--white); line-height: 1; letter-spacing: 2px; }
+  .page-hero p { font-size: 1.05rem; line-height: 1.75; color: rgba(255,255,255,0.65); margin-top: 1.25rem; max-width: 600px; font-weight: 300; }
+
+  /* ─── SHARED ─── */
+  .section-inner { max-width: 1300px; margin: 0 auto; }
+  .section-eyebrow { font-family: 'Barlow Condensed', sans-serif; font-size: 0.8rem; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.75rem; }
+  .section-eyebrow::before { content: ''; display: inline-block; width: 28px; height: 2px; background: var(--gold); }
+  .section-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.2rem, 4vw, 3.5rem); line-height: 1; letter-spacing: 1px; margin-bottom: 1.25rem; }
+  .btn-primary { background: var(--gold); color: var(--blue-dark); padding: 0.85rem 2rem; font-weight: 700; font-size: 0.85rem; letter-spacing: 1.5px; text-transform: uppercase; text-decoration: none; border-radius: 2px; display: inline-block; transition: background 0.2s, transform 0.15s; }
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-1px); }
+
+  /* ─── SERVICE SECTIONS ─── */
+  .service-section { padding: 100px 5%; }
+  .service-section.light { background: var(--off-white); }
+  .service-section.dark { background: var(--blue-dark); }
+  .service-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+  .service-layout.reverse { direction: rtl; }
+  .service-layout.reverse > * { direction: ltr; }
+
+  .service-copy p { font-size: 0.95rem; line-height: 1.85; margin-bottom: 1.5rem; font-weight: 300; }
+  .service-copy.light p { color: var(--text-mid); }
+  .service-copy.dark p { color: rgba(255,255,255,0.65); }
+  .feature-list { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 2rem; }
+  .feature-list li { display: flex; align-items: flex-start; gap: 0.75rem; font-size: 0.88rem; line-height: 1.6; }
+  .feature-list.light li { color: var(--text-mid); }
+  .feature-list.dark li { color: rgba(255,255,255,0.65); }
+  .feature-list li::before { content: ''; display: block; width: 6px; height: 6px; border-radius: 50%; background: var(--gold); flex-shrink: 0; margin-top: 7px; }
+
+  .service-img-wrap { width: 100%; border-radius: 4px; overflow: hidden; border: 3px solid rgba(201,162,39,0.35); margin-bottom: 1.5rem; box-shadow: 0 4px 24px rgba(0,0,0,0.22); }
+  .service-img-wrap img { width: 100%; height: 220px; object-fit: cover; display: block; transition: transform 0.4s; }
+  .service-img-wrap img:hover { transform: scale(1.04); }
+
+  .service-visual {
+    border-radius: 4px; padding: 3rem 2.5rem;
+    position: relative; overflow: hidden;
+  }
+  .service-visual.light { background: linear-gradient(140deg, var(--blue-dark) 0%, var(--blue-mid) 100%); }
+  .service-visual.dark { background: rgba(255,255,255,0.05); border: 1px solid rgba(201,162,39,0.2); }
+  .service-visual::after { content: ''; position: absolute; bottom: -40px; right: -40px; width: 180px; height: 180px; border-radius: 50%; border: 40px solid rgba(201,162,39,0.08); }
+  .service-tag { display: inline-block; font-family: 'Barlow Condensed', sans-serif; font-size: 0.7rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--blue-dark); background: var(--gold); padding: 5px 14px; border-radius: 2px; margin-bottom: 1.5rem; }
+  .service-visual h3 { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: var(--white); line-height: 1.1; margin-bottom: 1rem; letter-spacing: 1px; }
+  .service-visual p { font-size: 0.88rem; line-height: 1.75; color: rgba(255,255,255,0.6); margin-bottom: 2rem; }
+  .divider { width: 100%; height: 1px; background: rgba(201,162,39,0.2); margin: 1.5rem 0; }
+  .highlight-row { display: flex; gap: 2rem; flex-wrap: wrap; }
+  .highlight-val { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; color: var(--gold); line-height: 1; }
+  .highlight-label { font-family: 'Barlow Condensed', sans-serif; font-size: 0.72rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.45); margin-top: 4px; }
+
+  /* ─── PROCESS ─── */
+  .process-steps { display: grid; grid-template-columns: repeat(4,1fr); gap: 1.5px; background: rgba(255,255,255,0.08); border-radius: 4px; overflow: hidden; }
+  .process-step { background: var(--blue-dark); padding: 2.5rem 2rem; border-bottom: 3px solid transparent; transition: border-color 0.25s, background 0.25s; }
+  .process-step:hover { background: #0f3566; border-bottom-color: var(--gold); }
+  .process-num { font-family: 'Bebas Neue', sans-serif; font-size: 3.5rem; color: rgba(255,255,255,0.06); line-height: 1; margin-bottom: 1rem; }
+  .process-step h4 { font-family: 'Barlow Condensed', sans-serif; font-size: 1.1rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--gold-light); margin-bottom: 0.6rem; }
+  .process-step p { font-size: 0.85rem; line-height: 1.65; color: rgba(255,255,255,0.6); }
+
+  /* ─── CTA BAND ─── */
+  .cta-band { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%); padding: 80px 5%; text-align: center; }
+  .cta-band h2 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem,4vw,3.5rem); color: var(--blue-dark); margin-bottom: 1rem; letter-spacing: 1px; }
+  .cta-band p { font-size: 1rem; color: rgba(13,47,94,0.75); margin-bottom: 2rem; max-width: 460px; margin-left: auto; margin-right: auto; }
+  .btn-dark { background: var(--blue-dark); color: var(--white); font-size: 0.85rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; text-decoration: none; padding: 1rem 2.5rem; border-radius: 2px; display: inline-block; transition: background 0.2s; }
+  .btn-dark:hover { background: var(--blue-mid); }
+
+  /* ─── FOOTER ─── */
+  footer { background: #0a1628; padding: 70px 5% 36px; border-top: 3px solid var(--gold); }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; max-width: 1300px; margin: 0 auto; padding-bottom: 50px; border-bottom: 1px solid rgba(201,162,39,0.15); }
+  .footer-logo-img { height: 70px; width: auto; margin-bottom: 1.25rem; display: block; }
+  .footer-brand-tag { font-family: 'Barlow Condensed', sans-serif; font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 1rem; font-weight: 700; }
+  .footer-brand-desc { font-size: 0.85rem; line-height: 1.7; color: rgba(255,255,255,0.45); margin-bottom: 1.25rem; }
+  .footer-contact-item { font-size: 0.82rem; color: rgba(255,255,255,0.55); margin-bottom: 6px; }
+  .footer-contact-item strong { color: var(--gold); font-weight: 500; }
+  .footer-col-title { font-family: 'Barlow Condensed', sans-serif; font-size: 0.75rem; letter-spacing: 3px; text-transform: uppercase; font-weight: 700; color: var(--gold); margin-bottom: 1.25rem; }
+  .footer-col a { display: block; font-size: 0.85rem; color: rgba(255,255,255,0.5); text-decoration: none; margin-bottom: 0.6rem; transition: color 0.2s; }
+  .footer-col a:hover { color: var(--white); }
+  .footer-bottom { max-width: 1300px; margin: 1.75rem auto 0; display: flex; justify-content: space-between; font-size: 0.78rem; color: rgba(255,255,255,0.28); flex-wrap: wrap; gap: 0.5rem; }
+  .footer-bottom a { color: var(--gold); text-decoration: none; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 900px) {
+    .hamburger { display: flex; }
+    .nav-links { display: none; flex-direction: column; align-items: stretch; gap: 0; position: fixed; top: 68px; left: 0; right: 0; background: rgba(13,47,94,0.99); backdrop-filter: blur(12px); padding: 16px 5% 24px; border-bottom: 2px solid var(--gold); }
+    .nav-links.open { display: flex; }
+    .nav-links a { padding: 14px 16px; font-size: 14px; }
+    .nav-cta { text-align: center; margin-top: 8px; }
+    .nav-dropdown { width: 100%; }
+    .nav-dropdown-trigger { justify-content: stretch; width: 100%; }
+    .nav-dropdown-trigger > a { flex: 1; text-align: left; }
+    .dd-chevron { flex-shrink: 0; border-left: 1px solid rgba(255,255,255,0.12); padding-left: 14px; padding-right: 14px; }
+    .dropdown-menu { display: none !important; }
+    .nav-dropdown.mob-open .dropdown-menu { display: block !important; }
+    .service-layout, .service-layout.reverse { grid-template-columns: 1fr; direction: ltr; }
+    .process-steps { grid-template-columns: 1fr 1fr; }
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">
+    <img src="horizontal_logo.png" alt="Gleamair Enterprises">
+  </a>
+  <button class="hamburger" id="hamburger" aria-label="Toggle navigation">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-links" id="navLinks">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="services.html" class="active">Services</a>
+    <div class="nav-dropdown">
+      <div class="nav-dropdown-trigger">
+        <a href="products.html">Products</a>
+        <button class="dd-chevron" aria-label="Toggle products menu">
+          <svg viewBox="0 0 10 6"><polyline points="1,1 5,5 9,1"/></svg>
+        </button>
+      </div>
+      <div class="dropdown-menu">
+        <a href="product-catalog.html?cat=lighting">Lighting Solutions</a>
+        <a href="product-catalog.html?cat=ventilation">Ventilation Solutions</a>
+        <a href="product-catalog.html?cat=cooling">Cooling Solutions</a>
+      </div>
+    </div>
+    <a href="contact.html" class="nav-cta">Contact Us</a>
+  </div>
+</nav>
+
+<!-- PAGE HERO (dark) -->
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="breadcrumb"><a href="index.html">Home</a> &nbsp;/&nbsp; Services</div>
+    <h1>Our Services</h1>
+    <p>Comprehensive HVAC and building solutions delivered with technical precision and a commitment to lasting performance.</p>
+  </div>
+</div>
+
+<!-- SERVICE 01: AIRCON (light) -->
+<section class="service-section light" id="aircon">
+  <div class="section-inner">
+    <div class="service-layout">
+      <div class="service-copy light">
+        <div class="section-eyebrow">Service 01</div>
+        <h2 class="section-title" style="color:var(--blue-dark);">Aircon Services</h2>
+        <p>We provide a complete range of air conditioning services designed to ensure your facility maintains optimal indoor air quality year-round. From initial unit selection and supply to full installation, routine maintenance, and emergency response.</p>
+        <ul class="feature-list light">
+          <li>Supply of residential and commercial air conditioning units</li>
+          <li>Professional installation by certified HVAC technicians</li>
+          <li>Scheduled preventive maintenance programs</li>
+          <li>Emergency repair and breakdown response</li>
+          <li>Air quality assessment and improvement consultation</li>
+          <li>System upgrades and efficiency retrofits</li>
+        </ul>
+        <a href="contact.html" class="btn-primary">Request a Quote</a>
+      </div>
+      <div class="service-visual light">
+        <div class="service-img-wrap"><img src="pictures/AirconServices.png" alt="Aircon Services"></div>
+        <div class="service-tag">Aircon Services</div>
+        <h3>Full-Cycle Air Conditioning Solutions</h3>
+        <p>From unit selection to commissioning and long-term maintenance, we manage every stage of your HVAC system's lifecycle.</p>
+        <div class="divider"></div>
+        <div class="highlight-row">
+          <div>
+            <div class="highlight-val">24/7</div>
+            <div class="highlight-label">Emergency Response</div>
+          </div>
+          <div>
+            <div class="highlight-val">100%</div>
+            <div class="highlight-label">Client Satisfaction Focus</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICE 02: ROOF VENTILATION (dark) -->
+<section class="service-section dark" id="ventilation">
+  <div class="section-inner">
+    <div class="service-layout reverse">
+      <div class="service-copy dark">
+        <div class="section-eyebrow">Service 02</div>
+        <h2 class="section-title" style="color:var(--white);">Roof Ventilation Service</h2>
+        <p>Proper roof ventilation is essential for maintaining a healthy building environment. We install and maintain wind-driven ventilators and ventilation systems that improve airflow, control moisture, reduce heat buildup, and lower energy costs — without consuming electricity.</p>
+        <ul class="feature-list dark">
+          <li>Site assessment and ventilation system design</li>
+          <li>Installation of wind-driven roof ventilators</li>
+          <li>Moisture control and condensation management</li>
+          <li>Custom ventilation solutions for specialized applications</li>
+          <li>Maintenance and performance inspections</li>
+          <li>Integration with existing HVAC systems</li>
+        </ul>
+        <a href="contact.html" class="btn-primary">Request a Quote</a>
+      </div>
+      <div class="service-visual dark">
+        <div class="service-img-wrap"><img src="pictures/Ventilation.png" alt="Roof Ventilation"></div>
+        <div class="service-tag">Roof Ventilation</div>
+        <h3>Energy-Free Ventilation That Performs</h3>
+        <p>Wind-driven roof ventilators operate without electricity, reducing energy costs while delivering continuous, reliable airflow in any weather condition.</p>
+        <div class="divider"></div>
+        <div class="highlight-row">
+          <div>
+            <div class="highlight-val">0</div>
+            <div class="highlight-label">Energy Consumption</div>
+          </div>
+          <div>
+            <div class="highlight-val">15yr</div>
+            <div class="highlight-label">Manufacturer Warranty</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICE 03: SKY TUNNELS (light) -->
+<section class="service-section light" id="skylights">
+  <div class="section-inner">
+    <div class="service-layout">
+      <div class="service-copy light">
+        <div class="section-eyebrow">Service 03</div>
+        <h2 class="section-title" style="color:var(--blue-dark);">Sky Tunnels</h2>
+        <p>Sky tunnels — or daylighting systems — channel natural light from rooftops into interior spaces, reducing the need for artificial lighting and improving the ambiance and productivity of your environment. We handle full installation and ongoing maintenance.</p>
+        <ul class="feature-list light">
+          <li>Daylighting system design and placement planning</li>
+          <li>Professional sky tunnel installation</li>
+          <li>Energy efficiency analysis and reporting</li>
+          <li>Integration with existing lighting systems</li>
+          <li>Maintenance and sealing inspections</li>
+        </ul>
+        <a href="contact.html" class="btn-primary">Request a Quote</a>
+      </div>
+      <div class="service-visual light">
+        <div class="service-img-wrap"><img src="pictures/SkyTunnel.png" alt="Sky Tunnels"></div>
+        <div class="service-tag">Sky Tunnels</div>
+        <h3>Natural Light. Zero Energy Consumption.</h3>
+        <p>Daylighting systems reduce dependence on artificial lighting, lowering electricity costs while creating a healthier, more comfortable interior environment.</p>
+        <div class="divider"></div>
+        <div class="highlight-row">
+          <div>
+            <div class="highlight-val">40%</div>
+            <div class="highlight-label">Potential Lighting Savings</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICE 04: SOLAR LIGHTING (dark) -->
+<section class="service-section dark" id="solar">
+  <div class="section-inner">
+    <div class="service-layout reverse">
+      <div class="service-copy dark">
+        <div class="section-eyebrow">Service 04</div>
+        <h2 class="section-title" style="color:var(--white);">Solar Lighting</h2>
+        <p>We install and maintain solar-powered lighting systems that deliver sustainable, cost-effective illumination for both interior and exterior applications. Ideal for facilities seeking to reduce electricity costs and carbon footprint.</p>
+        <ul class="feature-list dark">
+          <li>Solar lighting system design and specification</li>
+          <li>Professional installation of solar-powered units</li>
+          <li>Battery and panel maintenance programs</li>
+          <li>Hybrid lighting system integration</li>
+          <li>Energy performance monitoring and reporting</li>
+        </ul>
+        <a href="contact.html" class="btn-primary">Request a Quote</a>
+      </div>
+      <div class="service-visual dark">
+        <div class="service-img-wrap"><img src="pictures/SolarLighting.png" alt="Solar Lighting"></div>
+        <div class="service-tag">Solar Lighting</div>
+        <h3>Sustainable Illumination for Modern Facilities</h3>
+        <p>Solar lighting systems eliminate grid dependency for lighting, delivering consistent performance while contributing to your facility's sustainability goals.</p>
+        <div class="divider"></div>
+        <div class="highlight-row">
+          <div>
+            <div class="highlight-val">100%</div>
+            <div class="highlight-label">Renewable Energy</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICE 05: ROOF HATCHWAYS (light) -->
+<section class="service-section light" id="hatchways">
+  <div class="section-inner">
+    <div class="service-layout">
+      <div class="service-copy light">
+        <div class="section-eyebrow">Service 05</div>
+        <h2 class="section-title" style="color:var(--blue-dark);">Roof Access Hatchways</h2>
+        <p>Safe and reliable roof access is critical for facilities that require regular maintenance of rooftop equipment. We install professionally engineered access hatchways that meet safety standards and ensure safe, convenient access for building maintenance personnel.</p>
+        <ul class="feature-list light">
+          <li>Assessment of access requirements and placement</li>
+          <li>Supply and installation of roof access hatchways</li>
+          <li>Safety compliance review and documentation</li>
+          <li>Maintenance of existing access systems</li>
+          <li>Custom access solutions for complex roof configurations</li>
+        </ul>
+        <a href="contact.html" class="btn-primary">Request a Quote</a>
+      </div>
+      <div class="service-visual light">
+        <div class="service-img-wrap"><img src="pictures/RoofHatch.png" alt="Roof Access Hatchways"></div>
+        <div class="service-tag">Roof Access Hatchways</div>
+        <h3>Compliant, Safe Roof Access Solutions</h3>
+        <p>Professional roof access systems protect personnel during rooftop maintenance activities and support efficient building upkeep operations.</p>
+        <div class="divider"></div>
+        <div class="highlight-row">
+          <div>
+            <div class="highlight-val">Safe</div>
+            <div class="highlight-label">Compliant Access</div>
+          </div>
+          <div>
+            <div class="highlight-val">Custom</div>
+            <div class="highlight-label">Solutions Available</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS (dark) -->
+<section style="background:var(--blue-dark);padding:100px 5%;">
+  <div class="section-inner">
+    <div style="text-align:center;margin-bottom:3.5rem;">
+      <div class="section-eyebrow" style="justify-content:center;">Our Process</div>
+      <h2 class="section-title" style="color:var(--white);">How We Work</h2>
+      <p style="font-size:0.95rem;color:rgba(255,255,255,0.6);max-width:480px;margin:0 auto;font-weight:300;">A structured, client-centred approach that ensures every project is delivered on time, on budget, and to specification.</p>
+    </div>
+    <div class="process-steps">
+      <div class="process-step">
+        <div class="process-num">01</div>
+        <h4>Consultation</h4>
+        <p>We begin with a thorough review of your facility requirements, objectives, and constraints to properly scope the project.</p>
+      </div>
+      <div class="process-step">
+        <div class="process-num">02</div>
+        <h4>Assessment</h4>
+        <p>Our technical team conducts an on-site assessment to gather the data needed for accurate system design and specification.</p>
+      </div>
+      <div class="process-step">
+        <div class="process-num">03</div>
+        <h4>Proposal</h4>
+        <p>We deliver a detailed proposal outlining recommended solutions, specifications, timelines, and investment requirements.</p>
+      </div>
+      <div class="process-step">
+        <div class="process-num">04</div>
+        <h4>Delivery</h4>
+        <p>Installation is carried out by our qualified team, followed by commissioning, testing, and a full client handover.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BAND (gold) -->
+<div class="cta-band">
+  <h2>Discuss Your Project With Our Team</h2>
+  <p>Our specialists are ready to assess your requirements and recommend the right solution for your facility.</p>
+  <a href="contact.html" class="btn-dark">Contact Us Today</a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <img src="square_logo.png" alt="Gleamair Enterprises" class="footer-logo-img">
+      <div class="footer-brand-tag">HVAC &amp; Building Solutions</div>
+      <p class="footer-brand-desc">A leading provider of heating, ventilation, air conditioning, and building solutions serving residential and commercial clients with integrity and professionalism.</p>
+      <div class="footer-contact-item"><strong>Address:</strong> 12 Domingo St., Gordon Heights, Olongapo City</div>
+      <div class="footer-contact-item"><strong>Email:</strong> salesgleamair@gmail.com</div>
+      <div class="footer-contact-item"><strong>Phone:</strong> 0912-301-5388</div>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-title">Company</div>
+      <a href="about.html">About Us</a>
+      <a href="about.html#mission">Mission &amp; Vision</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-title">Services</div>
+      <a href="services.html#aircon">Aircon Services</a>
+      <a href="services.html#ventilation">Roof Ventilation</a>
+      <a href="services.html#skylights">Sky Tunnels</a>
+      <a href="services.html#solar">Solar Lighting</a>
+      <a href="services.html#hatchways">Roof Hatchways</a>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-title">Products</div>
+      <a href="products.html">Green-Vent Wind</a>
+      <a href="products.html#specs">Specifications</a>
+      <a href="products.html#calculator">Sizing Calculator</a>
+      <a href="contact.html">Request Quote</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>&copy; 2026 Gleamair Enterprises. All rights reserved.</span>
+    <span>Shopee: <a href="https://shopee.ph/gleamairenterprises_" target="_blank">gleamairenterprises_</a></span>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('hamburger').addEventListener('click', function() {
+    this.classList.toggle('open');
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+  var ddTimeout = null;
+  document.querySelectorAll('.nav-dropdown').forEach(function(dd) {
+    dd.addEventListener('mouseenter', function() {
+      if (window.innerWidth > 900) {
+        clearTimeout(ddTimeout);
+        document.querySelectorAll('.nav-dropdown').forEach(function(d){ d.classList.remove('dd-open'); });
+        dd.classList.add('dd-open');
+      }
+    });
+    dd.addEventListener('mouseleave', function() {
+      if (window.innerWidth > 900) {
+        ddTimeout = setTimeout(function(){ dd.classList.remove('dd-open'); }, 200);
+      }
+    });
+  });
+  document.querySelectorAll('.dd-chevron').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      if (window.innerWidth <= 900) {
+        e.stopPropagation();
+        this.closest('.nav-dropdown').classList.toggle('mob-open');
+      }
+    });
+  });
+  document.addEventListener('click', function(e) {
+    if (window.innerWidth > 900 && !e.target.closest('.nav-dropdown')) {
+      clearTimeout(ddTimeout);
+      document.querySelectorAll('.nav-dropdown').forEach(function(d){ d.classList.remove('dd-open'); });
+    }
+  });
+</script>
+</body>
+</html>
