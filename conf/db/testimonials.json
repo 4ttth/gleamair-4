@@ -4,7 +4,7 @@
       "id": "t1",
       "nameDisplay": "A******* L*****",
       "clientType": "Residential Client",
-      "projectType": "Sky Tunnel Installation",
+      "projectType": "Roof Ventilation",
       "rating": 5,
       "quote": "Everything from customer engagement, delivery, installation, and payment was great!"
     },
@@ -12,9 +12,89 @@
       "id": "t2",
       "nameDisplay": "Villa Escudero Plantation & Resort Inc.",
       "clientType": "Resort Client",
-      "projectType": "Solar Lighting Project",
+      "projectType": "Roof Ventilation",
       "rating": 5,
       "quote": "Very satisfied with product quality, installation service, customer support, and delivery timeliness. Highly likely to recommend Gleamair Enterprises to others."
+    },
+    {
+      "id": "t3",
+      "nameDisplay": "L****** S*******",
+      "clientType": "Residential Client",
+      "projectType": "Sky Tunnel Installation",
+      "rating": 5,
+      "quote": "The sky tunnel installation brought so much natural daylight into our home. Fantastic and efficient service from the entire team!"
+    },
+    {
+      "id": "t4",
+      "nameDisplay": "J***** D**** C***",
+      "clientType": "Residential Client",
+      "projectType": "Roof Access Hatchway",
+      "rating": 5,
+      "quote": "Highly satisfied with the roof access hatch installation. It feels very secure, safe, and the workmanship is exactly what we needed."
+    },
+    {
+      "id": "t5",
+      "nameDisplay": "A*** W*****",
+      "clientType": "Professional Client",
+      "projectType": "Roof Access Hatchway",
+      "rating": 5,
+      "quote": "I always trust Gleamair for safe building access solutions in my architectural projects. The hatchway installation was strictly up to code and perfectly executed."
+    },
+    {
+      "id": "t6",
+      "nameDisplay": "R****** S*****",
+      "clientType": "Residential Client",
+      "projectType": "Access Ladder Installation",
+      "rating": 5,
+      "quote": "The access ladder installation was done safely and efficiently. The crew was very professional and delivered a sturdy, high-quality final product."
+    },
+    {
+      "id": "t7",
+      "nameDisplay": "G***** C*******",
+      "clientType": "Residential Client",
+      "projectType": "Aircon Installation",
+      "rating": 5,
+      "quote": "Fast and reliable aircon installation. The technicians were very professional, polite, and left the area spotless!"
+    },
+    {
+      "id": "t8",
+      "nameDisplay": "J***** P****",
+      "clientType": "Residential Client",
+      "projectType": "Aircon & Roof Ventilation",
+      "rating": 5,
+      "quote": "Getting both our aircon and roof vent sorted by Gleamair was the best decision. Our home feels so much cooler and the airflow is incredible."
+    },
+    {
+      "id": "t9",
+      "nameDisplay": "B*** M*** M****",
+      "clientType": "Residential Client",
+      "projectType": "Aircon Services",
+      "rating": 5,
+      "quote": "Excellent aircon servicing. The team arrived on time and made sure our cooling unit was running perfectly before they left."
+    },
+    {
+      "id": "t10",
+      "nameDisplay": "J*** I** L**",
+      "clientType": "Residential Client",
+      "projectType": "Aircon Services",
+      "rating": 5,
+      "quote": "Highly recommend Gleamair for any residential aircon needs. The entire process from quotation to setup was completely smooth and hassle-free."
+    },
+    {
+      "id": "t11",
+      "nameDisplay": "L*** R****",
+      "clientType": "Residential Client",
+      "projectType": "Solar Lighting Project",
+      "rating": 5,
+      "quote": "The solar lights installed by Gleamair are fantastic. It's great to have our outdoor areas brightly illuminated without worrying about the electric bill."
+    },
+    {
+      "id": "t12",
+      "nameDisplay": "M***** B*********",
+      "clientType": "Residential Client",
+      "projectType": "Solar Lighting & Aircon Installation",
+      "rating": 5,
+      "quote": "Great experience with Gleamair! They handled both our new aircon setup and solar lighting perfectly. Fantastic customer support from start to finish."
     }
   ]
 }

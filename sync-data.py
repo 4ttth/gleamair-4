@@ -16,8 +16,11 @@ import json, re, os, sys
 ROOT       = os.path.dirname(os.path.abspath(__file__))
 DB_DIR     = os.path.join(ROOT, "conf", "db")
 LOADER     = os.path.join(ROOT, "assets", "js", "data-loader.js")
+CALC_JS    = os.path.join(ROOT, "assets", "js", "calculator.js")
 MARKER_START = "/* @@DATA_START@@ */"
 MARKER_END   = "/* @@DATA_END@@ */"
+CALC_START   = "/* @@CALC_START@@ */"
+CALC_END     = "/* @@CALC_END@@ */"
 
 def load(filename):
     path = os.path.join(DB_DIR, filename)
@@ -74,6 +77,32 @@ def build_data_block():
     lines = [MARKER_START, "", "var DB = " + to_js(merged, 2) + ";", "", MARKER_END]
     return "\n".join(lines)
 
+def sync_calculator():
+    calc = load("calculator.json")
+
+    # Build JS object string
+    lines = [CALC_START, "", "var CALC = " + to_js(calc, 2) + ";", "", CALC_END]
+    new_block = "\n".join(lines)
+
+    with open(CALC_JS, encoding="utf-8") as f:
+        content = f.read()
+
+    pattern = re.compile(
+        re.escape(CALC_START) + r".*?" + re.escape(CALC_END),
+        re.DOTALL
+    )
+    if pattern.search(content):
+        updated = pattern.sub(new_block, content)
+    else:
+        updated = new_block + "\n\n" + content
+
+    with open(CALC_JS, "w", encoding="utf-8") as f:
+        f.write(updated)
+
+    print("  OK conf/db/calculator.json")
+    print("  -> assets/js/calculator.js updated")
+
+
 def sync():
     with open(LOADER, encoding="utf-8") as f:
         content = f.read()
@@ -106,6 +135,7 @@ def sync():
 if __name__ == "__main__":
     try:
         sync()
+        sync_calculator()
     except FileNotFoundError as e:
         print("Error: " + str(e))
         sys.exit(1)

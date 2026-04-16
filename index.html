@@ -283,8 +283,30 @@
   @keyframes barGrow { to { width: var(--pct); } }
   .why-metric-val { font-family: 'Barlow Condensed', sans-serif; font-size: 0.85rem; font-weight: 700; color: var(--gold); margin-top: 5px; text-align: right; }
 
-  /* ─── TESTIMONIALS (dark) ─── */
-  .testimonials-section { background: var(--blue-dark); padding: 100px 5%; }
+  /* ─── TESTIMONIAL MARQUEE ─── */
+  .testi-marquee-section { background: var(--blue-dark); padding: 80px 0 80px; }
+  .testi-marquee-section > div:first-child { padding: 0 5%; }
+  .testi-marquee-row { display: flex; gap: 1.25rem; width: max-content; margin-bottom: 1.25rem; cursor: grab; }
+  .testi-marquee-row:active { cursor: grabbing; }
+  .testi-marquee-row.row-top { animation: testiScrollLeft 40s linear infinite; }
+  .testi-marquee-row.row-bot { animation: testiScrollLeft 32s linear infinite; }
+  @keyframes testiScrollLeft { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+  .testi-card {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(201,162,39,0.2);
+    border-left: 4px solid var(--gold); border-radius: 4px;
+    padding: 1.5rem 1.75rem; width: 320px; flex-shrink: 0;
+  }
+  .testi-card:hover { background: rgba(255,255,255,0.08); }
+  .testi-stars { display: flex; gap: 3px; margin-bottom: 0.6rem; }
+  .testi-stars span { color: var(--gold); font-size: 0.9rem; }
+  .testi-quote { font-size: 0.85rem; line-height: 1.7; color: rgba(255,255,255,0.72); font-style: italic; margin-bottom: 0.9rem; }
+  .testi-name { font-family: 'Barlow Condensed', sans-serif; font-size: 0.88rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--white); }
+  .testi-type { font-size: 0.72rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--gold); margin-top: 2px; }
+  .testi-row-wrap { overflow: hidden; width: 100%; }
+  @media (max-width: 600px) {
+    .testi-card { width: 240px; padding: 1.1rem 1.25rem; }
+    .testi-quote { font-size: 0.78rem; }
+  }
   .testimonials-header { margin-bottom: 3rem; }
   .testimonials-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
   .testimonial-card {
@@ -440,46 +462,6 @@
   </div>
 </section>
 
-<!-- BRAND CAROUSEL -->
-<section class="carousel-section">
-  <div class="carousel-label">Trusted by Leading Organizations</div>
-  <div class="carousel-track-wrap">
-    <div class="carousel-track">
-      <img src="assets/images/other/otherbusinesses/villa_escudero_logo.png" alt="Villa Escudero">
-      <img src="assets/images/other/otherbusinesses/ceva-logistics_logo.png" alt="CEVA Logistics">
-      <img src="assets/images/other/otherbusinesses/3rshane_logo.png" alt="3R Shane Rice Mills">
-      <img src="assets/images/other/otherbusinesses/SG Eco Logo.webp" alt="SG Eco Industries">
-      <img src="assets/images/other/otherbusinesses/Fujifilm.png" alt="Fujifilm">
-      <img src="assets/images/other/otherbusinesses/MIDC.png" alt="MIDC">
-      <img src="assets/images/other/otherbusinesses/tannph.png" alt="Tann Philippines">
-      <img src="assets/images/other/otherbusinesses/treasureislandcebu.png" alt="Treasure Island Industrial Corp">
-      <img src="assets/images/other/otherbusinesses/altoent.png" alt="Alto Enterprises">
-      <img src="assets/images/other/otherbusinesses/artisan.jpg" alt="Artisan">
-      <img src="assets/images/other/otherbusinesses/eurobelmarketing.png" alt="Eurobel Marketing">
-      <img src="assets/images/other/otherbusinesses/hapimi.png" alt="Hapimi">
-      <img src="assets/images/other/otherbusinesses/jocfabrication&construction.png" alt="JOC Fabrication">
-      <img src="assets/images/other/otherbusinesses/nbelectrical.png" alt="NB Electrical">
-      <img src="assets/images/other/otherbusinesses/trinav.png" alt="Trinav">
-      <!-- duplicated for seamless loop -->
-      <img src="assets/images/other/otherbusinesses/villa_escudero_logo.png" alt="Villa Escudero">
-      <img src="assets/images/other/otherbusinesses/ceva-logistics_logo.png" alt="CEVA Logistics">
-      <img src="assets/images/other/otherbusinesses/3rshane_logo.png" alt="3R Shane Rice Mills">
-      <img src="assets/images/other/otherbusinesses/SG Eco Logo.webp" alt="SG Eco Industries">
-      <img src="assets/images/other/otherbusinesses/Fujifilm.png" alt="Fujifilm">
-      <img src="assets/images/other/otherbusinesses/MIDC.png" alt="MIDC">
-      <img src="assets/images/other/otherbusinesses/tannph.png" alt="Tann Philippines">
-      <img src="assets/images/other/otherbusinesses/treasureislandcebu.png" alt="Treasure Island Industrial Corp">
-      <img src="assets/images/other/otherbusinesses/altoent.png" alt="Alto Enterprises">
-      <img src="assets/images/other/otherbusinesses/artisan.jpg" alt="Artisan">
-      <img src="assets/images/other/otherbusinesses/eurobelmarketing.png" alt="Eurobel Marketing">
-      <img src="assets/images/other/otherbusinesses/hapimi.png" alt="Hapimi">
-      <img src="assets/images/other/otherbusinesses/jocfabrication&construction.png" alt="JOC Fabrication">
-      <img src="assets/images/other/otherbusinesses/nbelectrical.png" alt="NB Electrical">
-      <img src="assets/images/other/otherbusinesses/trinav.png" alt="Trinav">
-    </div>
-  </div>
-</section>
-
 <!-- VIDEO SECTION -->
 <section class="video-section">
   <div class="video-wrap">
@@ -618,15 +600,54 @@
   </div>
 </section>
 
-<section class="testimonials-section">
-  <div class="section-inner">
-    <div class="testimonials-header">
-      <div class="section-eyebrow">Client Feedback</div>
-      <h2 class="section-title" style="color:var(--white);">Trusted by Leading Organizations</h2>
-      <p class="section-lead" style="color:rgba(255,255,255,0.6);">Discover what our clients have to say about their experience with Gleamair Enterprises.</p>
+<!-- BRAND CAROUSEL -->
+<section class="carousel-section">
+  <div class="carousel-label">Trusted by Leading Organizations</div>
+  <div class="carousel-track-wrap">
+    <div class="carousel-track">
+      <img src="assets/images/other/otherbusinesses/villa_escudero_logo.png" alt="Villa Escudero">
+      <img src="assets/images/other/otherbusinesses/ceva-logistics_logo.png" alt="CEVA Logistics">
+      <img src="assets/images/other/otherbusinesses/3rshane_logo.png" alt="3R Shane Rice Mills">
+      <img src="assets/images/other/otherbusinesses/SG Eco Logo.webp" alt="SG Eco Industries">
+      <img src="assets/images/other/otherbusinesses/Fujifilm.png" alt="Fujifilm">
+      <img src="assets/images/other/otherbusinesses/MIDC.png" alt="MIDC">
+      <img src="assets/images/other/otherbusinesses/tannph.png" alt="Tann Philippines">
+      <img src="assets/images/other/otherbusinesses/treasureislandcebu.png" alt="Treasure Island Industrial Corp">
+      <img src="assets/images/other/otherbusinesses/altoent.png" alt="Alto Enterprises">
+      <img src="assets/images/other/otherbusinesses/artisan.jpg" alt="Artisan">
+      <img src="assets/images/other/otherbusinesses/eurobelmarketing.png" alt="Eurobel Marketing">
+      <img src="assets/images/other/otherbusinesses/hapimi.png" alt="Hapimi">
+      <img src="assets/images/other/otherbusinesses/jocfabrication&construction.png" alt="JOC Fabrication">
+      <img src="assets/images/other/otherbusinesses/nbelectrical.png" alt="NB Electrical">
+      <img src="assets/images/other/otherbusinesses/trinav.png" alt="Trinav">
+      <img src="assets/images/other/otherbusinesses/villa_escudero_logo.png" alt="Villa Escudero">
+      <img src="assets/images/other/otherbusinesses/ceva-logistics_logo.png" alt="CEVA Logistics">
+      <img src="assets/images/other/otherbusinesses/3rshane_logo.png" alt="3R Shane Rice Mills">
+      <img src="assets/images/other/otherbusinesses/SG Eco Logo.webp" alt="SG Eco Industries">
+      <img src="assets/images/other/otherbusinesses/Fujifilm.png" alt="Fujifilm">
+      <img src="assets/images/other/otherbusinesses/MIDC.png" alt="MIDC">
+      <img src="assets/images/other/otherbusinesses/tannph.png" alt="Tann Philippines">
+      <img src="assets/images/other/otherbusinesses/treasureislandcebu.png" alt="Treasure Island Industrial Corp">
+      <img src="assets/images/other/otherbusinesses/altoent.png" alt="Alto Enterprises">
+      <img src="assets/images/other/otherbusinesses/artisan.jpg" alt="Artisan">
+      <img src="assets/images/other/otherbusinesses/eurobelmarketing.png" alt="Eurobel Marketing">
+      <img src="assets/images/other/otherbusinesses/hapimi.png" alt="Hapimi">
+      <img src="assets/images/other/otherbusinesses/jocfabrication&construction.png" alt="JOC Fabrication">
+      <img src="assets/images/other/otherbusinesses/nbelectrical.png" alt="NB Electrical">
+      <img src="assets/images/other/otherbusinesses/trinav.png" alt="Trinav">
     </div>
-    <div class="testimonials-grid" id="testimonials-grid"></div>
   </div>
+</section>
+
+<!-- TESTIMONIALS MARQUEE -->
+<section class="testi-marquee-section">
+  <div style="text-align:center;margin-bottom:2.5rem;padding:0 5%;">
+    <div class="section-eyebrow" style="justify-content:center;">Client Feedback</div>
+    <h2 class="section-title" style="color:var(--white);">Trusted by Leading Organizations</h2>
+    <p style="font-size:0.95rem;color:rgba(255,255,255,0.6);font-weight:300;">Discover what our clients have to say about their experience with Gleamair Enterprises.</p>
+  </div>
+  <div class="testi-row-wrap"><div class="testi-marquee-row row-top" id="testi-row-top"></div></div>
+  <div class="testi-row-wrap" style="margin-top:0;"><div class="testi-marquee-row row-bot" id="testi-row-bot"></div></div>
 </section>
 
 <div class="cta-band">
@@ -720,6 +741,46 @@
       clearTimeout(ddTimeout);
       document.querySelectorAll('.nav-dropdown').forEach(function(d){ d.classList.remove('dd-open'); });
     }
+  });
+</script>
+<script>
+  // Drag-to-scroll for testimonial marquee rows
+  document.querySelectorAll('.testi-row-wrap').forEach(function(wrap) {
+    var isDown = false, startX, scrollLeft;
+    wrap.addEventListener('mousedown', function(e) {
+      isDown = true;
+      startX = e.pageX - wrap.offsetLeft;
+      scrollLeft = wrap.scrollLeft;
+      wrap.querySelector('.testi-marquee-row').style.animationPlayState = 'paused';
+    });
+    wrap.addEventListener('mouseleave', function() {
+      isDown = false;
+      wrap.querySelector('.testi-marquee-row').style.animationPlayState = 'running';
+    });
+    wrap.addEventListener('mouseup', function() {
+      isDown = false;
+      wrap.querySelector('.testi-marquee-row').style.animationPlayState = 'running';
+    });
+    wrap.addEventListener('mousemove', function(e) {
+      if (!isDown) return;
+      e.preventDefault();
+      var x = e.pageX - wrap.offsetLeft;
+      wrap.scrollLeft = scrollLeft - (x - startX);
+    });
+    // Touch support
+    var touchStartX, touchScrollLeft;
+    wrap.addEventListener('touchstart', function(e) {
+      touchStartX = e.touches[0].pageX;
+      touchScrollLeft = wrap.scrollLeft;
+      wrap.querySelector('.testi-marquee-row').style.animationPlayState = 'paused';
+    }, { passive: true });
+    wrap.addEventListener('touchend', function() {
+      wrap.querySelector('.testi-marquee-row').style.animationPlayState = 'running';
+    });
+    wrap.addEventListener('touchmove', function(e) {
+      var x = e.touches[0].pageX;
+      wrap.scrollLeft = touchScrollLeft - (x - touchStartX);
+    }, { passive: true });
   });
 </script>
 <script src="assets/js/data-loader.js"></script>

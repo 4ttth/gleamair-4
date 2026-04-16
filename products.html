@@ -120,9 +120,13 @@
   .spec-key { font-size: 0.75rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.45); }
   .spec-val { font-size: 0.88rem; font-weight: 600; color: var(--gold-light); }
 
-  .materials-table { width: 100%; border-collapse: collapse; margin-top: 2.5rem; overflow-x: auto; display: block; }
-  .materials-table th { text-align: left; font-family: 'Barlow Condensed', sans-serif; font-size: 0.72rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); padding: 12px 16px; background: rgba(255,255,255,0.05); border-bottom: 2px solid rgba(201,162,39,0.3); }
-  .materials-table td { font-size: 0.88rem; color: rgba(255,255,255,0.65); padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.07); }
+  .mat-layout { display: grid; grid-template-columns: 1fr 380px; gap: 2.5rem; align-items: start; margin-top: 0; }
+  .mat-img-wrap { border-radius: 4px; overflow: hidden; border: 2px solid rgba(201,162,39,0.25); box-shadow: 0 4px 24px rgba(0,0,0,0.35); position: sticky; top: 90px; }
+  .mat-img { width: 100%; height: 100%; object-fit: cover; display: block; min-height: 280px; }
+  @media (max-width: 900px) { .mat-layout { grid-template-columns: 1fr; } .mat-img-wrap { position: static; } }
+  .materials-table { width: 100%; border-collapse: collapse; display: table; }
+  .materials-table th { text-align: left; font-family: 'Barlow Condensed', sans-serif; font-size: 0.68rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); padding: 7px 12px; background: rgba(255,255,255,0.05); border-bottom: 2px solid rgba(201,162,39,0.3); }
+  .materials-table td { font-size: 0.78rem; color: rgba(255,255,255,0.65); padding: 5px 12px; border-bottom: 1px solid rgba(255,255,255,0.07); line-height: 1.4; }
   .materials-table tr:last-child td { border-bottom: none; }
   .materials-table tr:hover td { background: rgba(255,255,255,0.03); }
 
@@ -205,15 +209,29 @@
   .result-label { font-family: 'Barlow Condensed', sans-serif; font-size: 0.72rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--text-mid); margin-top: 6px; }
   .result-note { font-size: 0.82rem; color: var(--text-mid); text-align: center; margin-top: 1.25rem; line-height: 1.6; }
 
-  /* ─── TESTIMONIALS ─── */
+  .result-rec-box { background: var(--blue-dark); border-radius: 4px; padding: 1.5rem; margin-top: 1.25rem; border-left: 4px solid var(--gold); }
+  .result-rec-label { font-family: 'Barlow Condensed', sans-serif; font-size: 0.68rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 0.4rem; }
+  .result-rec-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--white); letter-spacing: 1px; margin-bottom: 0.5rem; }
+  .result-rec-detail { font-size: 0.85rem; color: rgba(255,255,255,0.65); margin-bottom: 0.25rem; }
+  .result-rec-detail strong { color: var(--gold-light); }
+  /* ─── TESTIMONIAL MARQUEE ─── */
+  .testi-marquee-section { background: var(--blue-dark); padding: 80px 0; }
+  .testi-marquee-section > div:first-child { padding: 0 5%; }
+  .testi-row-wrap { overflow: hidden; width: 100%; margin-bottom: 1.25rem; }
+  .testi-marquee-row { display: flex; gap: 1.25rem; width: max-content; cursor: grab; }
+  .testi-marquee-row:active { cursor: grabbing; }
+  .testi-marquee-row.row-top { animation: testiScrollLeft 40s linear infinite; }
+  .testi-marquee-row.row-bot { animation: testiScrollLeft 32s linear infinite; }
+  @keyframes testiScrollLeft { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+  .testi-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(201,162,39,0.2); border-left: 4px solid var(--gold); border-radius: 4px; padding: 1.5rem 1.75rem; width: 320px; flex-shrink: 0; }
+  .testi-card:hover { background: rgba(255,255,255,0.08); }
+  .testi-stars { display: flex; gap: 3px; margin-bottom: 0.6rem; }
+  .testi-stars span { color: var(--gold); font-size: 0.9rem; }
+  .testi-quote { font-size: 0.85rem; line-height: 1.7; color: rgba(255,255,255,0.72); font-style: italic; margin-bottom: 0.9rem; }
+  .testi-name { font-family: 'Barlow Condensed', sans-serif; font-size: 0.88rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--white); }
+  .testi-type { font-size: 0.72rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--gold); margin-top: 2px; }
+  @media (max-width: 600px) { .testi-card { width: 240px; padding: 1.1rem 1.25rem; } .testi-quote { font-size: 0.78rem; } }
   .testimonials-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
-  .testimonial-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(201,162,39,0.2); border-left: 4px solid var(--gold); border-radius: 4px; padding: 2.5rem 2rem; transition: transform 0.25s; }
-  .testimonial-card:hover { transform: translateY(-4px); }
-  .testimonial-rating { display: flex; gap: 4px; margin-bottom: 1rem; }
-  .testimonial-rating span { color: var(--gold); font-size: 1.1rem; }
-  .testimonial-quote { font-size: 0.95rem; line-height: 1.8; color: rgba(255,255,255,0.75); margin-bottom: 1.5rem; font-style: italic; }
-  .testimonial-name { font-family: 'Barlow Condensed', sans-serif; font-size: 1rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--white); margin-bottom: 0.25rem; }
-  .testimonial-title { font-size: 0.78rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--gold); }
 
   /* ─── CLIENTS ─── */
   .clients-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; }
@@ -478,25 +496,28 @@
     </div>
 
     <div class="section-eyebrow" style="margin-top:2rem;">Material Specifications</div>
-    <table class="materials-table">
-      <thead>
-        <tr><th>Component</th><th>Material</th><th>Notes</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>Vanes</td><td>Aluminium 5005 H34</td><td>All models</td></tr>
-        <tr><td>Plates</td><td>Aluminium 5005 H34</td><td>All models</td></tr>
-        <tr><td>Angle Adaptor</td><td>Aluminium 5005 H34</td><td>All models</td></tr>
-        <tr><td>Flashing</td><td>Aluminium 5005 H34</td><td>All models</td></tr>
-        <tr><td>Dome</td><td>Aluminium 1200 H0</td><td>All models</td></tr>
-        <tr><td>Brackets</td><td>Aluminium 6060 T591</td><td>All models</td></tr>
-        <tr><td>Tri-bracket</td><td>Powdercoated Mild Steel</td><td>GVW900 only</td></tr>
-        <tr><td>Shaft</td><td>304 Stainless Steel</td><td>All models</td></tr>
-        <tr><td>Upper Bearing</td><td>Double row ball bearing BWF30-119Z</td><td>All models</td></tr>
-        <tr><td>Lower Bearing</td><td>Single row ball bearing SB204-12C</td><td>GVW900 only</td></tr>
-        <tr><td>Upper Bearing Assembly</td><td>Glass Reinforced ASA</td><td>All models</td></tr>
-        <tr><td>Lower Bearing Protectors</td><td>304 Stainless Steel</td><td>GVW900 only</td></tr>
-      </tbody>
-    </table>
+    <p style="font-size:0.92rem;color:rgba(255,255,255,0.55);margin:0.75rem 0 2rem;max-width:560px;font-weight:300;line-height:1.7;">Built from aircraft-grade aluminium and precision stainless steel components, every Green-Vent Wind unit is engineered to perform in the harshest Philippine conditions without rust, corrosion, or failure.</p>
+    <div class="mat-layout">
+      <table class="materials-table">
+        <thead>
+          <tr><th>Component</th><th>Material</th><th>Models</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Vanes, Plates, Angle Adaptor, Flashing</td><td>Aluminium 5005 H34</td><td>All</td></tr>
+          <tr><td>Dome</td><td>Aluminium 1200 H0</td><td>All</td></tr>
+          <tr><td>Brackets</td><td>Aluminium 6060 T591</td><td>All</td></tr>
+          <tr><td>Tri-bracket</td><td>Powdercoated Mild Steel</td><td>GVW900</td></tr>
+          <tr><td>Shaft</td><td>304 Stainless Steel</td><td>All</td></tr>
+          <tr><td>Upper Bearing</td><td>Double Row Ball Bearing BWF30-119Z</td><td>All</td></tr>
+          <tr><td>Upper Bearing Assembly</td><td>Glass Reinforced ASA</td><td>All</td></tr>
+          <tr><td>Lower Bearing</td><td>Single Row Ball Bearing SB204-12C</td><td>GVW900</td></tr>
+          <tr><td>Lower Bearing Protectors</td><td>304 Stainless Steel</td><td>GVW900</td></tr>
+        </tbody>
+      </table>
+      <div class="mat-img-wrap">
+        <img src="assets/images/aluminumsheets.jpg" alt="Aircraft-grade aluminium construction" class="mat-img">
+      </div>
+    </div>
   </div>
 </section>
 
@@ -556,117 +577,20 @@
       <p style="font-size:0.95rem;color:var(--text-mid);font-weight:300;">Select a calculator type to estimate requirements for your specific product.</p>
     </div>
     <div class="calc-card">
-      <div class="calc-tabs">
-        <button class="calc-tab active" onclick="switchTab('ventilator',this)">Ventilator Sizing</button>
-        <button class="calc-tab" onclick="switchTab('solar',this)">Solar Attic Fan</button>
-        <button class="calc-tab" onclick="switchTab('aircon',this)">Aircon HP</button>
-      </div>
-
-      <!-- PANEL 1: VENTILATOR -->
-      <div class="calc-panel active" id="panel-ventilator">
-        <div class="calc-grid">
-          <div class="form-group"><label>Length (metres)</label><input type="number" id="v-length" placeholder="e.g. 40" min="0"></div>
-          <div class="form-group"><label>Width (metres)</label><input type="number" id="v-width" placeholder="e.g. 20" min="0"></div>
-          <div class="form-group"><label>Height (metres)</label><input type="number" id="v-height" placeholder="e.g. 5" min="0"></div>
-        </div>
-        <div class="calc-row-2">
-          <div class="form-group">
-            <label>Building Usage</label>
-            <select id="v-usage">
-              <option value="7.5">Factory / Warehouse (7.5 ACH)</option>
-              <option value="5">Office / Commercial (5 ACH)</option>
-              <option value="3">Residential (3 ACH)</option>
-              <option value="10">Industrial / Heavy Use (10 ACH)</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Ventilator Size</label>
-            <select id="v-size">
-              <option value="270">GVW300 &mdash; 300mm (270 L/s)</option>
-              <option value="620" selected>GVW600 &mdash; 600mm (620 L/s)</option>
-              <option value="1560">GVW900 &mdash; 900mm (1,560 L/s)</option>
-            </select>
-          </div>
-        </div>
-        <button class="calc-btn" onclick="calcVentilator()">Calculate Requirements</button>
-        <div class="calc-result" id="res-ventilator">
-          <div class="result-row">
-            <div class="result-item"><div class="result-val" id="v-resVolume">—</div><div class="result-label">Building Volume (m&sup3;)</div></div>
-            <div class="result-item"><div class="result-val" id="v-resFlow">—</div><div class="result-label">Required Airflow (L/s)</div></div>
-            <div class="result-item"><div class="result-val" id="v-resUnits">—</div><div class="result-label">Units Required</div></div>
-          </div>
-          <p class="result-note">Estimate based on standard air change rates. Contact us for a detailed site assessment.</p>
-        </div>
-      </div>
-
-      <!-- PANEL 2: SOLAR ATTIC FAN -->
-      <div class="calc-panel" id="panel-solar">
-        <div class="calc-row-2">
-          <div class="form-group"><label>Attic Floor Length (metres)</label><input type="number" id="s-length" placeholder="e.g. 15" min="0"></div>
-          <div class="form-group"><label>Attic Floor Width (metres)</label><input type="number" id="s-width" placeholder="e.g. 10" min="0"></div>
-        </div>
-        <div class="calc-row-2">
-          <div class="form-group">
-            <label>Roof Pitch</label>
-            <select id="s-pitch">
-              <option value="low">Low &mdash; up to 18&deg; (4/12)</option>
-              <option value="med">Medium &mdash; up to 33&deg; (8/12)</option>
-              <option value="high">High &mdash; up to 45&deg; (12/12)</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Fan Model</label>
-            <select id="s-model">
-              <option value="15">GVS-15W (15 Watt)</option>
-              <option value="30">GVS-30W (30 Watt)</option>
-            </select>
-          </div>
-        </div>
-        <button class="calc-btn" onclick="calcSolar()">Calculate Requirements</button>
-        <div class="calc-result" id="res-solar">
-          <div class="result-row-2">
-            <div class="result-item"><div class="result-val" id="s-resArea">—</div><div class="result-label">Attic Floor Area (m&sup2;)</div></div>
-            <div class="result-item"><div class="result-val" id="s-resUnits">—</div><div class="result-label">Fans Required</div></div>
-          </div>
-          <p class="result-note" id="s-resNote"></p>
-        </div>
-      </div>
-
-      <!-- PANEL 3: AIRCON HP -->
-      <div class="calc-panel" id="panel-aircon">
-        <div class="calc-row-2">
-          <div class="form-group"><label>Room Length (metres)</label><input type="number" id="a-length" placeholder="e.g. 5" min="0"></div>
-          <div class="form-group"><label>Room Width (metres)</label><input type="number" id="a-width" placeholder="e.g. 4" min="0"></div>
-        </div>
-        <div class="hp-adjustments">
-          <p>Adjustment Factors</p>
-          <label class="hp-check"><input type="checkbox" id="a-sun"> Direct afternoon sun exposure (+0.5 HP)</label>
-          <label class="hp-check"><input type="checkbox" id="a-occupancy"> More than 2 people regularly use the room (+0.5 HP)</label>
-          <label class="hp-check"><input type="checkbox" id="a-kitchen"> Installing in a kitchen (+0.5 HP)</label>
-        </div>
-        <button class="calc-btn" onclick="calcAircon()">Calculate HP Requirement</button>
-        <div class="calc-result" id="res-aircon">
-          <div class="result-row-2">
-            <div class="result-item"><div class="result-val" id="a-resArea">—</div><div class="result-label">Room Area (m&sup2;)</div></div>
-            <div class="result-item"><div class="result-hp" id="a-resHP">—</div><div class="result-label">Recommended HP</div></div>
-          </div>
-          <p class="result-note" id="a-resNote"></p>
-        </div>
-      </div>
-
+      <div class="calc-tabs" id="calc-tab-bar"></div>
+      <div id="calc-panels"></div>
     </div>
   </div>
 </section>
 
-<!-- TESTIMONIALS (dark) -->
-<section style="background:var(--blue-dark);padding:100px 5%;">
-  <div class="section-inner">
-    <div style="text-align:center;margin-bottom:3rem;">
-      <div class="section-eyebrow" style="justify-content:center;">Client Feedback</div>
-      <h2 class="section-title" style="color:var(--white);">Trusted by Leading Organizations</h2>
-    </div>
-    <div class="testimonials-grid" id="testimonials-grid"></div>
+<!-- TESTIMONIALS MARQUEE -->
+<section class="testi-marquee-section">
+  <div style="text-align:center;margin-bottom:2.5rem;">
+    <div class="section-eyebrow" style="justify-content:center;">Client Feedback</div>
+    <h2 class="section-title" style="color:var(--white);">Trusted by Leading Organizations</h2>
   </div>
+  <div class="testi-row-wrap"><div class="testi-marquee-row row-top" id="testi-row-top"></div></div>
+  <div class="testi-row-wrap"><div class="testi-marquee-row row-bot" id="testi-row-bot"></div></div>
 </section>
 
 <!-- CLIENTS (white) -->
@@ -770,101 +694,26 @@
       document.querySelectorAll('.nav-dropdown').forEach(function(d){ d.classList.remove('dd-open'); });
     }
   });
-
-  function switchTab(name, btn) {
-    document.querySelectorAll('.calc-tab').forEach(function(t){ t.classList.remove('active'); });
-    document.querySelectorAll('.calc-panel').forEach(function(p){ p.classList.remove('active'); });
-    btn.classList.add('active');
-    document.getElementById('panel-' + name).classList.add('active');
-  }
-
-  function calcVentilator() {
-    var l = parseFloat(document.getElementById('v-length').value) || 0;
-    var w = parseFloat(document.getElementById('v-width').value) || 0;
-    var h = parseFloat(document.getElementById('v-height').value) || 0;
-    var ach = parseFloat(document.getElementById('v-usage').value);
-    var cap = parseFloat(document.getElementById('v-size').value);
-    if (!l || !w || !h) return;
-    var volume = l * w * h;
-    var flowLs = (volume * ach / 3600) * 1000;
-    var units = Math.ceil(flowLs / cap);
-    document.getElementById('v-resVolume').textContent = volume.toFixed(0);
-    document.getElementById('v-resFlow').textContent = flowLs.toFixed(0);
-    document.getElementById('v-resUnits').textContent = units;
-    document.getElementById('res-ventilator').classList.add('show');
-  }
-
-  // Solar attic fan table: [area_max, {low, med, high}] from brochure
-  // model 15W table
-  var solarTable15 = [
-    [100, {low:1, med:1, high:2}],
-    [150, {low:1, med:1, high:2}],
-    [200, {low:1, med:2, high:3}],
-    [250, {low:2, med:2, high:3}],
-    [300, {low:2, med:3, high:4}]
-  ];
-  // model 30W table
-  var solarTable30 = [
-    [100, {low:1, med:1, high:1}],
-    [150, {low:1, med:1, high:1}],
-    [200, {low:1, med:1, high:2}],
-    [250, {low:1, med:1, high:2}],
-    [300, {low:1, med:1, high:3}]
-  ];
-
-  function calcSolar() {
-    var l = parseFloat(document.getElementById('s-length').value) || 0;
-    var w = parseFloat(document.getElementById('s-width').value) || 0;
-    var pitch = document.getElementById('s-pitch').value;
-    var model = document.getElementById('s-model').value;
-    if (!l || !w) return;
-    var area = l * w;
-    var table = model === '15' ? solarTable15 : solarTable30;
-    var fans = null;
-    for (var i = 0; i < table.length; i++) {
-      if (area <= table[i][0]) { fans = table[i][1][pitch]; break; }
-    }
-    if (fans === null) fans = table[table.length - 1][1][pitch];
-    document.getElementById('s-resArea').textContent = area.toFixed(0);
-    document.getElementById('s-resUnits').textContent = fans;
-    document.getElementById('s-resNote').textContent =
-      'Minimum recommended fans for a ' + area.toFixed(0) + ' m² attic with ' +
-      pitch + ' pitch roof using GVS-' + model + 'W. Contact us for a site assessment.';
-    document.getElementById('res-solar').classList.add('show');
-  }
-
-  function calcAircon() {
-    var l = parseFloat(document.getElementById('a-length').value) || 0;
-    var w = parseFloat(document.getElementById('a-width').value) || 0;
-    if (!l || !w) return;
-    var area = l * w;
-    var baseHP;
-    if (area <= 11) baseHP = 0.5;
-    else if (area <= 14) baseHP = 0.75;
-    else if (area <= 21) baseHP = 1.0;
-    else if (area <= 25) baseHP = 1.5;
-    else if (area <= 28) baseHP = 2.0;
-    else if (area <= 48) baseHP = 2.5;
-    else baseHP = 3.0;
-    var adj = 0;
-    if (document.getElementById('a-sun').checked) adj += 0.5;
-    if (document.getElementById('a-occupancy').checked) adj += 0.5;
-    if (document.getElementById('a-kitchen').checked) adj += 0.5;
-    var totalHP = baseHP + adj;
-    // round to nearest standard HP
-    var standards = [0.5, 0.75, 1.0, 1.5, 2.0, 2.5, 3.0];
-    var finalHP = standards.reduce(function(prev, curr) {
-      return Math.abs(curr - totalHP) < Math.abs(prev - totalHP) ? curr : prev;
+</script>
+<script src="assets/js/calculator.js"></script>
+<script>
+  document.querySelectorAll('.testi-row-wrap').forEach(function(wrap) {
+    var isDown = false, startX, scrollLeft;
+    wrap.addEventListener('mousedown', function(e) {
+      isDown = true; startX = e.pageX - wrap.offsetLeft; scrollLeft = wrap.scrollLeft;
+      wrap.querySelector('.testi-marquee-row').style.animationPlayState = 'paused';
     });
-    if (totalHP > finalHP) finalHP = standards[Math.min(standards.indexOf(finalHP) + 1, standards.length - 1)];
-    document.getElementById('a-resArea').textContent = area.toFixed(1);
-    document.getElementById('a-resHP').textContent = finalHP + ' HP';
-    var noteAdj = adj > 0 ? ' Includes +' + adj + ' HP adjustment for selected factors.' : '';
-    document.getElementById('a-resNote').textContent =
-      'Base recommendation for ' + area.toFixed(1) + ' m² is ' + baseHP + ' HP.' + noteAdj +
-      ' Final recommendation: ' + finalHP + ' HP. Consult our team for a full assessment.';
-    document.getElementById('res-aircon').classList.add('show');
-  }
+    wrap.addEventListener('mouseleave', function() { isDown = false; wrap.querySelector('.testi-marquee-row').style.animationPlayState = 'running'; });
+    wrap.addEventListener('mouseup', function() { isDown = false; wrap.querySelector('.testi-marquee-row').style.animationPlayState = 'running'; });
+    wrap.addEventListener('mousemove', function(e) {
+      if (!isDown) return; e.preventDefault();
+      wrap.scrollLeft = scrollLeft - (e.pageX - wrap.offsetLeft - startX);
+    });
+    var tX, tSL;
+    wrap.addEventListener('touchstart', function(e) { tX = e.touches[0].pageX; tSL = wrap.scrollLeft; wrap.querySelector('.testi-marquee-row').style.animationPlayState = 'paused'; }, { passive: true });
+    wrap.addEventListener('touchend', function() { wrap.querySelector('.testi-marquee-row').style.animationPlayState = 'running'; });
+    wrap.addEventListener('touchmove', function(e) { wrap.scrollLeft = tSL - (e.touches[0].pageX - tX); }, { passive: true });
+  });
 </script>
 <script src="assets/js/data-loader.js"></script>
 </body>

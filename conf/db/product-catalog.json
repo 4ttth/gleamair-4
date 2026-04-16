@@ -51,7 +51,9 @@
           "badges": ["Australian Technology", "15-Year Warranty", "Zero Energy"],
           "specs": [
             { "key": "Models", "value": "GVW300, GVW600, GVW900" },
-            { "key": "Max Capacity (GVW900)", "value": "3,460 L/s @ 16 km/h" },
+            { "key": "Capacity GVW300 @ 12km/h", "value": "480 L/s / 1,017 CFM" },
+            { "key": "Capacity GVW600 @ 12km/h", "value": "1,104 L/s / 2,339 CFM" },
+            { "key": "Capacity GVW900 @ 12km/h", "value": "2,700 L/s / 5,721 CFM" },
             { "key": "Material", "value": "Aluminium 5005 H34" },
             { "key": "Shaft", "value": "304 Stainless Steel" }
           ],
@@ -66,6 +68,7 @@
           "badges": ["Solar Powered", "Thermostat Included", "ECS Optional"],
           "specs": [
             { "key": "Solar Panel", "value": "15W Polycrystalline" },
+            { "key": "Capacity @ 12km/h", "value": "240 L/s / 508 CFM" },
             { "key": "Motor", "value": "High Efficiency 38V DC" },
             { "key": "Flashing", "value": "0.55mm (24 Gauge) Steel" },
             { "key": "ECS Temp Trigger", "value": "ON 27°C / OFF 25°C" }
@@ -81,6 +84,7 @@
           "badges": ["30W Solar Panel", "ECS Included", "Mains Backup", "Works at Night"],
           "specs": [
             { "key": "Solar Panel", "value": "30W Polycrystalline" },
+            { "key": "Capacity @ 12km/h", "value": "480 L/s / 1,017 CFM" },
             { "key": "Throat Size", "value": "350mm" },
             { "key": "Motor", "value": "38V DC" },
             { "key": "Mains Runtime", "value": "8 min every 30 min" }
@@ -96,6 +100,7 @@
           "badges": ["Solar + Wind", "Up to 100% More Flow", "Day & Night Operation"],
           "specs": [
             { "key": "Solar Panel", "value": "15W" },
+            { "key": "Capacity @ 12km/h", "value": "420 L/s / 890 CFM" },
             { "key": "Motor", "value": "36V High Performance" },
             { "key": "Includes", "value": "Fan Blade, Collar, 2m Cable & Fixings" },
             { "key": "Finish", "value": "Mill Finish or Coloured Powdercoat" }

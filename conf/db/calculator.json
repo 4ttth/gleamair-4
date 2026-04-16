@@ -1,0 +1,80 @@
+{
+  "ventilator": {
+    "label": "Ventilator Sizing",
+    "description": "Estimate the required ventilator size and quantity for your building using the industrial specification formula.",
+    "usageTypes": [
+      { "label": "Workshops (5–10 ACH)",                    "value": 7.5  },
+      { "label": "Factories with Welding (10–15 ACH)",      "value": 12.5 },
+      { "label": "Warehouses / Storage (5–8 ACH)",          "value": 6.5  },
+      { "label": "Gymnasiums (5–10 ACH)",                   "value": 7.5  },
+      { "label": "Assembly Halls (10–15 ACH)",              "value": 12.5 },
+      { "label": "Garages (10–15 ACH)",                     "value": 12.5 },
+      { "label": "Toilets (12–15 ACH)",                     "value": 13.5 },
+      { "label": "Laundries (12–20 ACH)",                   "value": 16.0 },
+      { "label": "High Smell — Poultry / Piggeries (10–50 ACH)", "value": 30.0 }
+    ],
+    "windspeeds": [
+      { "label": "6 km/hr (Low)",    "value": "6"  },
+      { "label": "12 km/hr (Avg)",   "value": "12" },
+      { "label": "16 km/hr (High)",  "value": "16" }
+    ],
+    "sizes": [
+      { "label": "Whirlwind",            "lps": { "6": 135,  "12": 240,  "16": 310  }, "cfm": { "6": 286,  "12": 508,  "16": 657  } },
+      { "label": "GVS-15W (Solar)",      "lps": { "6": 135,  "12": 240,  "16": 310  }, "cfm": { "6": 286,  "12": 508,  "16": 657  } },
+      { "label": "Whirlwind Plus",       "lps": { "6": 210,  "12": 420,  "16": 540  }, "cfm": { "6": 445,  "12": 890,  "16": 1144 } },
+      { "label": "GVS-30W (Solar)",      "lps": { "6": 220,  "12": 480,  "16": 600  }, "cfm": { "6": 466,  "12": 1017, "16": 1271 } },
+      { "label": "GVW300 — 300mm",       "lps": { "6": 270,  "12": 480,  "16": 620  }, "cfm": { "6": 572,  "12": 1017, "16": 1314 } },
+      { "label": "GVW300 Plus — 300mm+", "lps": { "6": 540,  "12": 960,  "16": 1240 }, "cfm": { "6": 1144, "12": 2034, "16": 2628 } },
+      { "label": "GVW600 — 600mm",       "lps": { "6": 620,  "12": 1104, "16": 1420 }, "cfm": { "6": 1314, "12": 2339, "16": 3009 } },
+      { "label": "GVW900 — 900mm",       "lps": { "6": 1560, "12": 2700, "16": 3460 }, "cfm": { "6": 3305, "12": 5721, "16": 7331 } }
+    ]
+  },
+  "solar": {
+    "label": "Solar Attic Fan Sizing",
+    "description": "Estimate the number of solar attic fan units required for your roof.",
+    "pitchOptions": [
+      { "label": "Low — up to 18° (4/12)",   "value": "low"  },
+      { "label": "Medium — up to 33° (8/12)", "value": "med"  },
+      { "label": "High — up to 45° (12/12)", "value": "high" }
+    ],
+    "models": [
+      { "label": "GVS-15W (15 Watt)", "value": "15" },
+      { "label": "GVS-30W (30 Watt)", "value": "30" }
+    ],
+    "tables": {
+      "15": [
+        { "maxArea": 100, "low": 1, "med": 1, "high": 2 },
+        { "maxArea": 150, "low": 1, "med": 1, "high": 2 },
+        { "maxArea": 200, "low": 1, "med": 2, "high": 3 },
+        { "maxArea": 250, "low": 2, "med": 2, "high": 3 },
+        { "maxArea": 300, "low": 2, "med": 3, "high": 4 }
+      ],
+      "30": [
+        { "maxArea": 100, "low": 1, "med": 1, "high": 1 },
+        { "maxArea": 150, "low": 1, "med": 1, "high": 1 },
+        { "maxArea": 200, "low": 1, "med": 1, "high": 2 },
+        { "maxArea": 250, "low": 1, "med": 1, "high": 2 },
+        { "maxArea": 300, "low": 1, "med": 1, "high": 3 }
+      ]
+    }
+  },
+  "aircon": {
+    "label": "Aircon HP",
+    "description": "Estimate the required aircon horsepower for your room.",
+    "hpTable": [
+      { "maxArea": 11,  "hp": 0.5  },
+      { "maxArea": 14,  "hp": 0.75 },
+      { "maxArea": 21,  "hp": 1.0  },
+      { "maxArea": 25,  "hp": 1.5  },
+      { "maxArea": 28,  "hp": 2.0  },
+      { "maxArea": 48,  "hp": 2.5  },
+      { "maxArea": 999, "hp": 3.0  }
+    ],
+    "adjustments": [
+      { "id": "sun",       "label": "Direct afternoon sun exposure",            "hp": 0.5 },
+      { "id": "occupancy", "label": "More than 2 people regularly use the room", "hp": 0.5 },
+      { "id": "kitchen",   "label": "Installing in a kitchen",                   "hp": 0.5 }
+    ],
+    "standardHP": [0.5, 0.75, 1.0, 1.5, 2.0, 2.5, 3.0]
+  }
+}

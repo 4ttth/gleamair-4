@@ -59,11 +59,6 @@ var DB = {
       logo: "assets/images/other/otherbusinesses/artisan.jpg"
     },
     {
-      id: "eurobelmarketing",
-      name: "Eurobel Marketing",
-      logo: "assets/images/other/otherbusinesses/eurobelmarketing.png"
-    },
-    {
       id: "hapimi",
       name: "Hapimi",
       logo: "assets/images/other/otherbusinesses/hapimi.png"
@@ -89,7 +84,7 @@ var DB = {
       id: "t1",
       nameDisplay: "A******* L*****",
       clientType: "Residential Client",
-      projectType: "Sky Tunnel Installation",
+      projectType: "Roof Ventilation",
       rating: 5,
       quote: "Everything from customer engagement, delivery, installation, and payment was great!"
     },
@@ -97,9 +92,89 @@ var DB = {
       id: "t2",
       nameDisplay: "Villa Escudero Plantation & Resort Inc.",
       clientType: "Resort Client",
-      projectType: "Solar Lighting Project",
+      projectType: "Roof Ventilation",
       rating: 5,
       quote: "Very satisfied with product quality, installation service, customer support, and delivery timeliness. Highly likely to recommend Gleamair Enterprises to others."
+    },
+    {
+      id: "t3",
+      nameDisplay: "L****** S*******",
+      clientType: "Residential Client",
+      projectType: "Sky Tunnel Installation",
+      rating: 5,
+      quote: "The sky tunnel installation brought so much natural daylight into our home. Fantastic and efficient service from the entire team!"
+    },
+    {
+      id: "t4",
+      nameDisplay: "J***** D**** C***",
+      clientType: "Residential Client",
+      projectType: "Roof Access Hatchway",
+      rating: 5,
+      quote: "Highly satisfied with the roof access hatch installation. It feels very secure, safe, and the workmanship is exactly what we needed."
+    },
+    {
+      id: "t5",
+      nameDisplay: "A*** W*****",
+      clientType: "Professional Client",
+      projectType: "Roof Access Hatchway",
+      rating: 5,
+      quote: "I always trust Gleamair for safe building access solutions in my architectural projects. The hatchway installation was strictly up to code and perfectly executed."
+    },
+    {
+      id: "t6",
+      nameDisplay: "R****** S*****",
+      clientType: "Residential Client",
+      projectType: "Access Ladder Installation",
+      rating: 5,
+      quote: "The access ladder installation was done safely and efficiently. The crew was very professional and delivered a sturdy, high-quality final product."
+    },
+    {
+      id: "t7",
+      nameDisplay: "G***** C*******",
+      clientType: "Residential Client",
+      projectType: "Aircon Installation",
+      rating: 5,
+      quote: "Fast and reliable aircon installation. The technicians were very professional, polite, and left the area spotless!"
+    },
+    {
+      id: "t8",
+      nameDisplay: "J***** P****",
+      clientType: "Residential Client",
+      projectType: "Aircon & Roof Ventilation",
+      rating: 5,
+      quote: "Getting both our aircon and roof vent sorted by Gleamair was the best decision. Our home feels so much cooler and the airflow is incredible."
+    },
+    {
+      id: "t9",
+      nameDisplay: "B*** M*** M****",
+      clientType: "Residential Client",
+      projectType: "Aircon Services",
+      rating: 5,
+      quote: "Excellent aircon servicing. The team arrived on time and made sure our cooling unit was running perfectly before they left."
+    },
+    {
+      id: "t10",
+      nameDisplay: "J*** I** L**",
+      clientType: "Residential Client",
+      projectType: "Aircon Services",
+      rating: 5,
+      quote: "Highly recommend Gleamair for any residential aircon needs. The entire process from quotation to setup was completely smooth and hassle-free."
+    },
+    {
+      id: "t11",
+      nameDisplay: "L*** R****",
+      clientType: "Residential Client",
+      projectType: "Solar Lighting Project",
+      rating: 5,
+      quote: "The solar lights installed by Gleamair are fantastic. It's great to have our outdoor areas brightly illuminated without worrying about the electric bill."
+    },
+    {
+      id: "t12",
+      nameDisplay: "M***** B*********",
+      clientType: "Residential Client",
+      projectType: "Solar Lighting & Aircon Installation",
+      rating: 5,
+      quote: "Great experience with Gleamair! They handled both our new aircon setup and solar lighting perfectly. Fantastic customer support from start to finish."
     }
   ],
   projects: [
@@ -284,8 +359,16 @@ var DB = {
               value: "GVW300, GVW600, GVW900"
             },
             {
-              key: "Max Capacity (GVW900)",
-              value: "3,460 L/s @ 16 km/h"
+              key: "Capacity GVW300 @ 12km/h",
+              value: "480 L/s / 1,017 CFM"
+            },
+            {
+              key: "Capacity GVW600 @ 12km/h",
+              value: "1,104 L/s / 2,339 CFM"
+            },
+            {
+              key: "Capacity GVW900 @ 12km/h",
+              value: "2,700 L/s / 5,721 CFM"
             },
             {
               key: "Material",
@@ -313,6 +396,10 @@ var DB = {
             {
               key: "Solar Panel",
               value: "15W Polycrystalline"
+            },
+            {
+              key: "Capacity @ 12km/h",
+              value: "240 L/s / 508 CFM"
             },
             {
               key: "Motor",
@@ -347,6 +434,10 @@ var DB = {
               value: "30W Polycrystalline"
             },
             {
+              key: "Capacity @ 12km/h",
+              value: "480 L/s / 1,017 CFM"
+            },
+            {
               key: "Throat Size",
               value: "350mm"
             },
@@ -376,6 +467,10 @@ var DB = {
             {
               key: "Solar Panel",
               value: "15W"
+            },
+            {
+              key: "Capacity @ 12km/h",
+              value: "420 L/s / 890 CFM"
             },
             {
               key: "Motor",
@@ -564,16 +659,42 @@ function renderClients() {
 }
 
 function renderTestimonials() {
-  var el = document.getElementById('testimonials-grid');
-  if (!el) return;
-  el.innerHTML = DB.testimonials.map(function(t) {
-    return '<div class="testimonial-card">' +
-      '<div class="testimonial-rating">' + _stars(t.rating) + '</div>' +
-      '<p class="testimonial-quote">\u201c' + t.quote + '\u201d</p>' +
-      '<div class="testimonial-name">' + t.nameDisplay + '</div>' +
-      '<div class="testimonial-title">' + t.clientType + ' \u00a0\u2022\u00a0 ' + t.projectType + '</div>' +
-      '</div>';
-  }).join('');
+  // Grid version (products.html)
+  var grid = document.getElementById('testimonials-grid');
+  if (grid) {
+    grid.innerHTML = DB.testimonials.map(function(t) {
+      return '<div class="testimonial-card">' +
+        '<div class="testimonial-rating">' + _stars(t.rating) + '</div>' +
+        '<p class="testimonial-quote">\u201c' + t.quote + '\u201d</p>' +
+        '<div class="testimonial-name">' + t.nameDisplay + '</div>' +
+        '<div class="testimonial-title">' + t.clientType + ' \u00a0\u2022\u00a0 ' + t.projectType + '</div>' +
+        '</div>';
+    }).join('');
+  }
+  // Marquee version (index.html)
+  var rowTop = document.getElementById('testi-row-top');
+  var rowBot = document.getElementById('testi-row-bot');
+  if (rowTop && rowBot) {
+    function makeCard(t) {
+      return '<div class="testi-card">' +
+        '<div class="testi-stars">' + _stars(t.rating) + '</div>' +
+        '<p class="testi-quote">\u201c' + t.quote + '\u201d</p>' +
+        '<div class="testi-name">' + t.nameDisplay + '</div>' +
+        '<div class="testi-type">' + t.clientType + ' \u00a0\u2022\u00a0 ' + t.projectType + '</div>' +
+        '</div>';
+    }
+    var all = DB.testimonials;
+    var half = Math.ceil(all.length / 2);
+    var topCards = all.slice(0, half);
+    var botCards = all.slice(half).length ? all.slice(half) : topCards;
+    var topHtml = '', botHtml = '';
+    for (var i = 0; i < 4; i++) {
+      topCards.forEach(function(t) { topHtml += makeCard(t); });
+      botCards.forEach(function(t) { botHtml += makeCard(t); });
+    }
+    rowTop.innerHTML = topHtml;
+    rowBot.innerHTML = botHtml;
+  }
 }
 
 function renderProjects() {
