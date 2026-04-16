@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Contact Us | Gleamair Enterprises</title>
+  <link rel="icon" type="image/x-icon" href="assets/images/other/favicon_io/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/images/other/favicon_io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/images/other/favicon_io/favicon-16x16.png">
+  <link rel="apple-touch-icon" href="assets/images/other/favicon_io/apple-touch-icon.png">
+  <link rel="manifest" href="assets/images/other/favicon_io/site.webmanifest">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -117,7 +122,7 @@
 
   /* ─── LOCATION (dark) ─── */
   .location-section { background: var(--blue-dark); padding: 100px 5%; }
-  .location-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+  .location-inner { max-width: 600px; }
   .loc-label { font-family: 'Barlow Condensed', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 0.75rem; }
   .loc-title { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; color: var(--white); letter-spacing: 1px; margin-bottom: 1.25rem; line-height: 1; }
   .loc-detail { font-size: 0.92rem; color: rgba(255,255,255,0.6); line-height: 1.8; margin-bottom: 0.6rem; font-weight: 300; }
@@ -163,7 +168,7 @@
 
 <nav>
   <a href="index.html" class="nav-logo">
-    <img src="horizontal_logo.png" alt="Gleamair Enterprises">
+    <img src="assets/images/other/horizontal_logo.png" alt="Gleamair Enterprises">
   </a>
   <button class="hamburger" id="hamburger" aria-label="Toggle navigation">
     <span></span><span></span><span></span>
@@ -183,6 +188,7 @@
         <a href="product-catalog.html?cat=lighting">Lighting Solutions</a>
         <a href="product-catalog.html?cat=ventilation">Ventilation Solutions</a>
         <a href="product-catalog.html?cat=cooling">Cooling Solutions</a>
+        <a href="product-catalog.html?cat=building">Building Solutions</a>
       </div>
     </div>
     <a href="contact.html" class="active nav-cta">Contact Us</a>
@@ -225,7 +231,7 @@
           </div>
           <div>
             <div class="contact-item-label">Email Address</div>
-            <div class="contact-item-val">salesgleamair@gmail.com</div>
+            <div class="contact-item-val">sales@gleamaire.com</div>
           </div>
         </div>
 
@@ -305,12 +311,6 @@
         <p class="loc-detail" style="margin-top:1.25rem;font-size:0.85rem;">We serve clients across Olongapo City, Central Luzon, and surrounding regions. Site assessments can be arranged for qualified project inquiries.</p>
         <p class="loc-detail" style="margin-top:1rem;font-size:0.85rem;color:var(--gold);">salesgleamair@gmail.com &nbsp;&bull;&nbsp; 0912-301-5388</p>
       </div>
-      <div class="loc-map">
-        <iframe
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3838.9!2d120.28!3d14.8317!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3396e1c9b5a2b1c3%3A0xabc123!2s12+Domingo+St%2C+Gordon+Heights%2C+Olongapo+City%2C+Zambales%2C+Philippines!5e0!3m2!1sen!2sph!4v1"
-          allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
-        </iframe>
-      </div>
     </div>
   </div>
 </section>
@@ -319,11 +319,11 @@
 <footer>
   <div class="footer-grid">
     <div>
-      <img src="square_logo.png" alt="Gleamair Enterprises" class="footer-logo-img">
+      <img src="assets/images/other/square_logo.png" alt="Gleamair Enterprises" class="footer-logo-img">
       <div class="footer-brand-tag">HVAC &amp; Building Solutions</div>
-      <p class="footer-brand-desc">A leading provider of heating, ventilation, air conditioning, and building solutions serving residential and commercial clients with integrity and professionalism.</p>
+      <p class="footer-brand-desc">Everything your space needs, in one place &mdash; lighting, ventilation, cooling, and building solutions for residential and commercial clients.</p>
       <div class="footer-contact-item"><strong>Address:</strong> 12 Domingo St., Gordon Heights, Olongapo City</div>
-      <div class="footer-contact-item"><strong>Email:</strong> salesgleamair@gmail.com</div>
+      <div class="footer-contact-item"><strong>Email:</strong> sales@gleamaire.com</div>
       <div class="footer-contact-item"><strong>Phone:</strong> 0912-301-5388</div>
     </div>
     <div class="footer-col">

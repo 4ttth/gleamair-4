@@ -1,0 +1,20 @@
+{
+  "testimonials": [
+    {
+      "id": "t1",
+      "nameDisplay": "A******* L*****",
+      "clientType": "Residential Client",
+      "projectType": "Sky Tunnel Installation",
+      "rating": 5,
+      "quote": "Everything from customer engagement, delivery, installation, and payment was great!"
+    },
+    {
+      "id": "t2",
+      "nameDisplay": "Villa Escudero Plantation & Resort Inc.",
+      "clientType": "Resort Client",
+      "projectType": "Solar Lighting Project",
+      "rating": 5,
+      "quote": "Very satisfied with product quality, installation service, customer support, and delivery timeliness. Highly likely to recommend Gleamair Enterprises to others."
+    }
+  ]
+}

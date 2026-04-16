@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gleamair Enterprises | HVAC & Building Solutions</title>
+  <link rel="icon" type="image/x-icon" href="assets/images/other/favicon_io/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/images/other/favicon_io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/images/other/favicon_io/favicon-16x16.png">
+  <link rel="apple-touch-icon" href="assets/images/other/favicon_io/apple-touch-icon.png">
+  <link rel="manifest" href="assets/images/other/favicon_io/site.webmanifest">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -175,6 +180,18 @@
     line-height: 1; letter-spacing: 1px; margin-bottom: 1.25rem;
   }
   .section-lead { font-size: 1rem; line-height: 1.75; font-weight: 300; max-width: 580px; }
+
+  /* ─── BRAND CAROUSEL ─── */
+  .carousel-section { background: var(--off-white); padding: 36px 5%; border-bottom: 1px solid #dde3ee; }
+  .carousel-label { font-family: 'Barlow Condensed', sans-serif; font-size: 0.72rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--text-mid); text-align: center; margin-bottom: 1.5rem; }
+  .carousel-track-wrap { overflow: hidden; position: relative; }
+  .carousel-track-wrap::before, .carousel-track-wrap::after { content: ''; position: absolute; top: 0; bottom: 0; width: 80px; z-index: 2; }
+  .carousel-track-wrap::before { left: 0; background: linear-gradient(to right, var(--off-white), transparent); }
+  .carousel-track-wrap::after { right: 0; background: linear-gradient(to left, var(--off-white), transparent); }
+  .carousel-track { display: flex; align-items: center; gap: 4rem; animation: carouselScroll 30s linear infinite; width: max-content; }
+  .carousel-track img { height: 44px; width: auto; object-fit: contain; filter: grayscale(100%); opacity: 0.55; transition: opacity 0.2s, filter 0.2s; flex-shrink: 0; }
+  .carousel-track img:hover { opacity: 1; filter: grayscale(0%); }
+  @keyframes carouselScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
   /* ─── VIDEO SECTION ─── */
   .video-section { background: var(--blue-dark); padding: 70px 5%; }
@@ -368,7 +385,7 @@
 
 <nav>
   <a href="index.html" class="nav-logo">
-    <img src="horizontal_logo.png" alt="Gleamair Enterprises">
+    <img src="assets/images/other/horizontal_logo.png" alt="Gleamair Enterprises">
   </a>
   <button class="hamburger" id="hamburger" aria-label="Toggle navigation">
     <span></span><span></span><span></span>
@@ -388,6 +405,7 @@
         <a href="product-catalog.html?cat=lighting">Lighting Solutions</a>
         <a href="product-catalog.html?cat=ventilation">Ventilation Solutions</a>
         <a href="product-catalog.html?cat=cooling">Cooling Solutions</a>
+        <a href="product-catalog.html?cat=building">Building Solutions</a>
       </div>
     </div>
     <a href="contact.html" class="nav-cta">Contact Us</a>
@@ -399,7 +417,7 @@
     <div>
       <div class="hero-eyebrow">Trusted HVAC Solutions</div>
       <h1>Engineering <span>Comfort</span> For Every Space</h1>
-      <p class="hero-lead">Gleamair Enterprises delivers professional heating, ventilation, air conditioning, and building solutions for residential and commercial clients across the Philippines.</p>
+      <p class="hero-lead">Your one-stop partner for integrated lighting, cooling, ventilation, energy, and building solutions.</p>
       <div class="hero-actions">
         <a href="services.html" class="btn-primary">Explore Services</a>
         <a href="contact.html" class="btn-outline">Request a Consultation</a>
@@ -422,6 +440,46 @@
   </div>
 </section>
 
+<!-- BRAND CAROUSEL -->
+<section class="carousel-section">
+  <div class="carousel-label">Trusted by Leading Organizations</div>
+  <div class="carousel-track-wrap">
+    <div class="carousel-track">
+      <img src="assets/images/other/otherbusinesses/villa_escudero_logo.png" alt="Villa Escudero">
+      <img src="assets/images/other/otherbusinesses/ceva-logistics_logo.png" alt="CEVA Logistics">
+      <img src="assets/images/other/otherbusinesses/3rshane_logo.png" alt="3R Shane Rice Mills">
+      <img src="assets/images/other/otherbusinesses/SG Eco Logo.webp" alt="SG Eco Industries">
+      <img src="assets/images/other/otherbusinesses/Fujifilm.png" alt="Fujifilm">
+      <img src="assets/images/other/otherbusinesses/MIDC.png" alt="MIDC">
+      <img src="assets/images/other/otherbusinesses/tannph.png" alt="Tann Philippines">
+      <img src="assets/images/other/otherbusinesses/treasureislandcebu.png" alt="Treasure Island Industrial Corp">
+      <img src="assets/images/other/otherbusinesses/altoent.png" alt="Alto Enterprises">
+      <img src="assets/images/other/otherbusinesses/artisan.jpg" alt="Artisan">
+      <img src="assets/images/other/otherbusinesses/eurobelmarketing.png" alt="Eurobel Marketing">
+      <img src="assets/images/other/otherbusinesses/hapimi.png" alt="Hapimi">
+      <img src="assets/images/other/otherbusinesses/jocfabrication&construction.png" alt="JOC Fabrication">
+      <img src="assets/images/other/otherbusinesses/nbelectrical.png" alt="NB Electrical">
+      <img src="assets/images/other/otherbusinesses/trinav.png" alt="Trinav">
+      <!-- duplicated for seamless loop -->
+      <img src="assets/images/other/otherbusinesses/villa_escudero_logo.png" alt="Villa Escudero">
+      <img src="assets/images/other/otherbusinesses/ceva-logistics_logo.png" alt="CEVA Logistics">
+      <img src="assets/images/other/otherbusinesses/3rshane_logo.png" alt="3R Shane Rice Mills">
+      <img src="assets/images/other/otherbusinesses/SG Eco Logo.webp" alt="SG Eco Industries">
+      <img src="assets/images/other/otherbusinesses/Fujifilm.png" alt="Fujifilm">
+      <img src="assets/images/other/otherbusinesses/MIDC.png" alt="MIDC">
+      <img src="assets/images/other/otherbusinesses/tannph.png" alt="Tann Philippines">
+      <img src="assets/images/other/otherbusinesses/treasureislandcebu.png" alt="Treasure Island Industrial Corp">
+      <img src="assets/images/other/otherbusinesses/altoent.png" alt="Alto Enterprises">
+      <img src="assets/images/other/otherbusinesses/artisan.jpg" alt="Artisan">
+      <img src="assets/images/other/otherbusinesses/eurobelmarketing.png" alt="Eurobel Marketing">
+      <img src="assets/images/other/otherbusinesses/hapimi.png" alt="Hapimi">
+      <img src="assets/images/other/otherbusinesses/jocfabrication&construction.png" alt="JOC Fabrication">
+      <img src="assets/images/other/otherbusinesses/nbelectrical.png" alt="NB Electrical">
+      <img src="assets/images/other/otherbusinesses/trinav.png" alt="Trinav">
+    </div>
+  </div>
+</section>
+
 <!-- VIDEO SECTION -->
 <section class="video-section">
   <div class="video-wrap">
@@ -429,7 +487,7 @@
     <div class="video-title">Gleamair Enterprises at Work</div>
     <div class="video-container">
       <video autoplay muted loop playsinline>
-        <source src="hero_video.mp4" type="video/mp4">
+        <source src="assets/videos/hero_video.mp4" type="video/mp4">
       </video>
     </div>
   </div>
@@ -567,47 +625,7 @@
       <h2 class="section-title" style="color:var(--white);">Trusted by Leading Organizations</h2>
       <p class="section-lead" style="color:rgba(255,255,255,0.6);">Discover what our clients have to say about their experience with Gleamair Enterprises.</p>
     </div>
-    <div class="testimonials-grid">
-      <div class="testimonial-card">
-        <div class="testimonial-rating"><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span></div>
-        <p class="testimonial-quote">&ldquo;Everything from customer engagement, delivery, installation, and payment was great!&rdquo;</p>
-        <div class="testimonial-name">A******* L*****</div>
-        <div class="testimonial-title">Residential Client &nbsp;&bull;&nbsp; Sky Tunnel Installation</div>
-      </div>
-      <div class="testimonial-card">
-        <div class="testimonial-rating"><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span></div>
-        <p class="testimonial-quote">&ldquo;Very satisfied with product quality, installation service, customer support, and delivery timeliness. Highly likely to recommend Gleamair Enterprises to others.&rdquo;</p>
-        <div class="testimonial-name">Villa Escudero Plantation &amp; Resort Inc.</div>
-        <div class="testimonial-title">Resort Client &nbsp;&bull;&nbsp; Solar Lighting Project</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="clients-section">
-  <div class="section-inner">
-    <div class="clients-header">
-      <div class="section-eyebrow" style="justify-content:center;">Organizations That Trust Us</div>
-      <h2 class="section-title" style="color:var(--blue-dark);">Our Clients</h2>
-      <p class="section-lead" style="color:var(--text-mid);margin:0 auto;">We've had the privilege to serve industry leaders and established businesses across the Philippines.</p>
-    </div>
-    <div class="clients-grid">
-      <div class="client-card">
-        <img src="otherbusinesses/villa_escudero_logo.png" alt="Villa Escudero" class="client-logo">
-        <div class="client-name">Villa Escudero</div>
-        <div class="client-desc">Premium eco-tourism resort in Tiaong, Quezon featuring our solar lighting systems.</div>
-      </div>
-      <div class="client-card">
-        <img src="otherbusinesses/ceva-logistics_logo.png" alt="CEVA Logistics" class="client-logo">
-        <div class="client-name">CEVA Logistics</div>
-        <div class="client-desc">International logistics provider relying on our HVAC and ventilation solutions.</div>
-      </div>
-      <div class="client-card">
-        <img src="otherbusinesses/3rshane_logo.png" alt="3R Shane Rice Mills" class="client-logo">
-        <div class="client-name">3R Shane Rice Mills</div>
-        <div class="client-desc">Leading rice mill facility utilizing our industrial ventilation systems.</div>
-      </div>
-    </div>
+    <div class="testimonials-grid" id="testimonials-grid"></div>
   </div>
 </section>
 
@@ -620,11 +638,11 @@
 <footer>
   <div class="footer-grid">
     <div>
-      <img src="square_logo.png" alt="Gleamair Enterprises" class="footer-logo-img">
+      <img src="assets/images/other/square_logo.png" alt="Gleamair Enterprises" class="footer-logo-img">
       <div class="footer-brand-tag">HVAC &amp; Building Solutions</div>
-      <p class="footer-brand-desc">A leading provider of heating, ventilation, air conditioning, and building solutions serving residential and commercial clients with integrity and professionalism.</p>
+      <p class="footer-brand-desc">Integrated solutions for smarter spaces &mdash; lighting, ventilation, cooling, and building solutions for residential and commercial clients.</p>
       <div class="footer-contact-item"><strong>Address:</strong> 12 Domingo St., Gordon Heights, Olongapo City</div>
-      <div class="footer-contact-item"><strong>Email:</strong> salesgleamair@gmail.com</div>
+      <div class="footer-contact-item"><strong>Email:</strong> sales@gleamaire.com</div>
       <div class="footer-contact-item"><strong>Phone:</strong> 0912-301-5388</div>
     </div>
     <div class="footer-col">
@@ -694,5 +712,6 @@
     }
   });
 </script>
+<script src="assets/js/data-loader.js"></script>
 </body>
 </html>

@@ -1,0 +1,86 @@
+
+{
+  "_comment": "MAX OF 9 FILES ONLY (GRID 9) This file contains a list of recently edited projects. It is used to populate the 'Recent Projects' section on the website. Each project has an id, label, folder name, and a list of image paths.",
+  "projects": [
+    {
+      "id": "sg-eco-industries",
+      "label": "SG Eco Industries Inc",
+      "folder": "SG Eco Industries Inc",
+      "images": [
+        "assets/images/client-photos/SG Eco Industries Inc/Copy_of_IMG_1915.jpg"
+      ]
+    },
+    {
+      "id": "ceva-logistics",
+      "label": "CEVA Logistics",
+      "folder": "CEVA Logistics",
+      "images": [
+        "assets/images/client-photos/CEVA Logistics/Copy of 33a5533f40e3fbc51e7e54edb28bd2cf.jpeg"
+      ]
+    },
+    {
+      "id": "residential-bulacan",
+      "label": "Residential - Bulacan",
+      "folder": "Residential - Bulacan",
+      "images": [
+        "assets/images/client-photos/Residential - Bulacan/Copy_of_IMG_1251.jpg"
+      ]
+    },
+    {
+      "id": "anthony-lozado-residential-2025",
+      "label": "Residential - Manila",
+      "folder": "Residential - Manila",
+      "images": [
+        "assets/images/client-photos/Residential - Manila/Copy of viber_image_2025-09-12_13-32-19-759.jpg",
+        "assets/images/client-photos/Residential - Manila/Copy of viber_image_2025-09-12_13-32-28-879.jpg",
+        "assets/images/client-photos/Residential - Manila/Copy of viber_image_2025-09-12_13-32-38-560.jpg",
+        "assets/images/client-photos/Residential - Manila/Copy of viber_image_2025-09-12_13-32-50-578.jpg",
+        "assets/images/client-photos/Residential - Manila/Copy of viber_image_2025-09-12_13-32-58-578.jpg"
+      ]
+    },
+    {
+      "id": "newbridge-cebu",
+      "label": "Newbridge Cebu",
+      "folder": "Newbridge Cebu",
+      "images": [
+        "assets/images/client-photos/Newbridge Cebu/Copy_of_IMG_1883.jpg"
+      ]
+    },
+    {
+      "id": "residential-mabalacat",
+      "label": "Residential - Mabalacat",
+      "folder": "Residential - Mabalacat",
+      "images": [
+        "assets/images/client-photos/Residential - Mabalacat/Copy of 629c53801f5feaf754f25cefcc062951.jpeg",
+        "assets/images/client-photos/Residential - Mabalacat/Copy of b44c4705d4fcf5a93429b4b91dc40340.jpeg"
+      ]
+    },
+    {
+      "id": "leandro-santiago-valenzuela",
+      "label": "Residential - Valenzuela",
+      "folder": "Residential - Valenzuela",
+      "images": [
+        "assets/images/client-photos/Residential - Valenzuela/Copy of IMG_2077.JPG"
+      ]
+    },
+    {
+      "id": "3r-shane-ricemills",
+      "label": "3R Shane RiceMills",
+      "folder": "3R Shane RiceMills",
+      "images": [
+        "assets/images/client-photos/3R Shane RiceMills/Copy of Copy of IMG_2019.JPG",
+        "assets/images/client-photos/3R Shane RiceMills/Copy of Copy of IMG_2020.JPG",
+        "assets/images/client-photos/3R Shane RiceMills/Copy of Copy of IMG_2021.JPG",
+        "assets/images/client-photos/3R Shane RiceMills/Copy of Copy of IMG_2022.JPG"
+      ]
+    },
+    {
+      "id": "residential-bamban",
+      "label": "Residential - Bamban",
+      "folder": "Residential Bamban",
+      "images": [
+        "assets/images/client-photos/Residential - Bamban/Copy_of_IMG_1913.jpg"
+      ]
+    }
+  ]
+}

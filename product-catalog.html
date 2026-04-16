@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Product Catalog | Gleamair Enterprises</title>
+  <link rel="icon" type="image/x-icon" href="assets/images/other/favicon_io/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/images/other/favicon_io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/images/other/favicon_io/favicon-16x16.png">
+  <link rel="apple-touch-icon" href="assets/images/other/favicon_io/apple-touch-icon.png">
+  <link rel="manifest" href="assets/images/other/favicon_io/site.webmanifest">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -195,7 +200,7 @@
 
 <nav>
   <a href="index.html" class="nav-logo">
-    <img src="horizontal_logo.png" alt="Gleamair Enterprises">
+    <img src="assets/images/other/horizontal_logo.png" alt="Gleamair Enterprises">
   </a>
   <button class="hamburger" id="hamburger" aria-label="Toggle navigation">
     <span></span><span></span><span></span>
@@ -215,6 +220,7 @@
         <a href="product-catalog.html?cat=lighting" data-cat="lighting">Lighting Solutions</a>
         <a href="product-catalog.html?cat=ventilation" data-cat="ventilation">Ventilation Solutions</a>
         <a href="product-catalog.html?cat=cooling" data-cat="cooling">Cooling Solutions</a>
+        <a href="product-catalog.html?cat=building" data-cat="building">Building Solutions</a>
       </div>
     </div>
     <a href="contact.html" class="nav-cta">Contact Us</a>
@@ -242,6 +248,7 @@
       <button class="filter-btn" data-filter="lighting" onclick="setCategory('lighting')">&#9788; Lighting Solutions</button>
       <button class="filter-btn" data-filter="ventilation" onclick="setCategory('ventilation')">&#9636; Ventilation Solutions</button>
       <button class="filter-btn" data-filter="cooling" onclick="setCategory('cooling')">&#10052; Cooling Solutions</button>
+      <button class="filter-btn" data-filter="building" onclick="setCategory('building')">&#9632; Building Solutions</button>
     </div>
 
     <!-- ─── LIGHTING SOLUTIONS ─── -->
@@ -250,67 +257,7 @@
         <h2>Lighting Solutions</h2>
         <p>Natural daylighting systems that bring free sunlight into any interior space — residential or commercial.</p>
       </div>
-      <div class="products-grid">
-
-        <!-- Sky Tunnel Residential -->
-        <div class="prod-card">
-          <div class="prod-img-placeholder">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-            <span class="ph-label">Image Coming Soon</span>
-            <span class="ph-name">Sky Tunnel XL2 Residential</span>
-          </div>
-          <div class="prod-body">
-            <span class="prod-cat-tag">Lighting Solutions</span>
-            <div class="prod-name">Sky Tunnel XL2 &mdash; Residential</div>
-            <p class="prod-desc">Natural daylighting system for homes. Channels sunlight from rooftop into bathrooms, kitchens, hallways and living areas. Double-glazed diffuser standard. 7-year manufacturer's warranty.</p>
-            <div class="prod-badges">
-              <span class="prod-badge">Australian Technology</span>
-              <span class="prod-badge">7-Year Warranty</span>
-              <span class="prod-badge">Zero Energy</span>
-            </div>
-            <div class="prod-specs">
-              <div class="prod-spec-row"><span class="prod-spec-key">Sizes Available</span><span class="prod-spec-val">343mm, 457mm, 535mm</span></div>
-              <div class="prod-spec-row"><span class="prod-spec-key">Tubing Options</span><span class="prod-spec-val">Flexi-tube / Rigid98</span></div>
-              <div class="prod-spec-row"><span class="prod-spec-key">Max Flexi Length</span><span class="prod-spec-val">3m</span></div>
-              <div class="prod-spec-row"><span class="prod-spec-key">Dome Material</span><span class="prod-spec-val">Acrylic or Polycarbonate</span></div>
-            </div>
-            <div class="prod-actions">
-              <a href="contact.html" class="prod-btn-primary">Request Quote</a>
-              <a href="Brochures/Sky-Tunnel-Brochure-Residential.pdf" target="_blank" class="prod-btn-outline">View Brochure</a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Sky Tunnel Commercial -->
-        <div class="prod-card">
-          <div class="prod-img-placeholder">
-            <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-            <span class="ph-label">Image Coming Soon</span>
-            <span class="ph-name">Sky Tunnel XL2 Commercial</span>
-          </div>
-          <div class="prod-body">
-            <span class="prod-cat-tag">Lighting Solutions</span>
-            <div class="prod-name">Sky Tunnel XL2 &mdash; Commercial / Industrial</div>
-            <p class="prod-desc">High-performance daylighting for warehouses, factories, offices and retail spaces. Rigid98 Miro-Silver tubing with 98% total reflectivity. Proven 20+ year track record in demanding environments.</p>
-            <div class="prod-badges">
-              <span class="prod-badge">Rigid98 Tubing</span>
-              <span class="prod-badge">98% Reflectivity</span>
-              <span class="prod-badge">7-Year Warranty</span>
-            </div>
-            <div class="prod-specs">
-              <div class="prod-spec-row"><span class="prod-spec-key">Sizes Available</span><span class="prod-spec-val">343mm, 457mm, 535mm</span></div>
-              <div class="prod-spec-row"><span class="prod-spec-key">Tubing</span><span class="prod-spec-val">Rigid98 (Miro-Silver)</span></div>
-              <div class="prod-spec-row"><span class="prod-spec-key">Coverage (535mm)</span><span class="prod-spec-val">Up to 36m&sup2; per unit</span></div>
-              <div class="prod-spec-row"><span class="prod-spec-key">Standards</span><span class="prod-spec-val">BBA &amp; AS4285</span></div>
-            </div>
-            <div class="prod-actions">
-              <a href="contact.html" class="prod-btn-primary">Request Quote</a>
-              <a href="Brochures/Sky-Tunnel-Brochure-Commercial.pdf" target="_blank" class="prod-btn-outline">View Brochure</a>
-            </div>
-          </div>
-        </div>
-
-      </div>
+      <div class="products-grid"></div>
     </div>
 
     <!-- ─── VENTILATION SOLUTIONS ─── -->
@@ -319,125 +266,7 @@
         <h2>Ventilation Solutions</h2>
         <p>Wind-driven, solar-powered, and electric ventilation systems for every building type and climate condition.</p>
       </div>
-      <div class="products-grid">
-
-        <!-- Green-Vent Wind -->
-        <div class="prod-card">
-          <div class="prod-img-placeholder">
-            <svg viewBox="0 0 24 24"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg>
-            <span class="ph-label">Image Coming Soon</span>
-            <span class="ph-name">Green-Vent Wind</span>
-          </div>
-          <div class="prod-body">
-            <span class="prod-cat-tag">Ventilation Solutions</span>
-            <div class="prod-name">Green-Vent Wind &mdash; Wind Driven Roof Ventilator</div>
-            <p class="prod-desc">Premium wind-driven roof ventilator using Australian Vertical Vane Technology. Up to 3× the exhaust capacity of conventional round ventilators. Zero electricity, zero running cost. 15-year manufacturer's warranty.</p>
-            <div class="prod-badges">
-              <span class="prod-badge">Australian Technology</span>
-              <span class="prod-badge">15-Year Warranty</span>
-              <span class="prod-badge">Zero Energy</span>
-            </div>
-            <div class="prod-specs">
-              <div class="prod-spec-row"><span class="prod-spec-key">Models</span><span class="prod-spec-val">GVW300, GVW600, GVW900</span></div>
-              <div class="prod-spec-row"><span class="prod-spec-key">Max Capacity (GVW900)</span><span class="prod-spec-val">3,460 L/s @ 16 km/h</span></div>
-              <div class="prod-spec-row"><span class="prod-spec-key">Material</span><span class="prod-spec-val">Aluminium 5005 H34</span></div>
-              <div class="prod-spec-row"><span class="prod-spec-key">Shaft</span><span class="prod-spec-val">304 Stainless Steel</span></div>
-            </div>
-            <div class="prod-actions">
-              <a href="contact.html" class="prod-btn-primary">Request Quote</a>
-              <a href="products.html#specs" class="prod-btn-outline">View Specs</a>
-            </div>
-          </div>
-        </div>
-
-        <!-- GVS-15W -->
-        <div class="prod-card">
-          <div class="prod-img-placeholder">
-            <svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/><circle cx="12" cy="12" r="4"/></svg>
-            <span class="ph-label">Image Coming Soon</span>
-            <span class="ph-name">Green-Vent Solar 15W</span>
-          </div>
-          <div class="prod-body">
-            <span class="prod-cat-tag">Ventilation Solutions</span>
-            <div class="prod-name">Green-Vent Solar 15W (GVS-15W)</div>
-            <p class="prod-desc">Solar-powered attic extraction fan with a 15W 36-cell polycrystalline panel. Fully adjustable panel tilts and rotates. Thermostat included. Optional Environment Control System (ECS) for temperature and humidity automation.</p>
-            <div class="prod-badges">
-              <span class="prod-badge">Solar Powered</span>
-              <span class="prod-badge">Thermostat Included</span>
-              <span class="prod-badge">ECS Optional</span>
-            </div>
-            <div class="prod-specs">
-              <div class="prod-spec-row"><span class="prod-spec-key">Solar Panel</span><span class="prod-spec-val">15W Polycrystalline</span></div>
-              <div class="prod-spec-row"><span class="prod-spec-key">Motor</span><span class="prod-spec-val">High Efficiency 38V DC</span></div>
-              <div class="prod-spec-row"><span class="prod-spec-key">Flashing</span><span class="prod-spec-val">0.55mm (24 Gauge) Steel</span></div>
-              <div class="prod-spec-row"><span class="prod-spec-key">ECS Temp Trigger</span><span class="prod-spec-val">ON 27&deg;C / OFF 25&deg;C</span></div>
-            </div>
-            <div class="prod-actions">
-              <a href="contact.html" class="prod-btn-primary">Request Quote</a>
-              <a href="Brochures/GVS 15W.pdf" target="_blank" class="prod-btn-outline">View Brochure</a>
-            </div>
-          </div>
-        </div>
-
-        <!-- GVS-30W -->
-        <div class="prod-card">
-          <div class="prod-img-placeholder">
-            <svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/><circle cx="12" cy="12" r="4"/></svg>
-            <span class="ph-label">Image Coming Soon</span>
-            <span class="ph-name">Green-Vent Solar 30W</span>
-          </div>
-          <div class="prod-body">
-            <span class="prod-cat-tag">Ventilation Solutions</span>
-            <div class="prod-name">Green-Vent Solar 30W (GVS-30W)</div>
-            <p class="prod-desc">High-power 30W solar attic extraction fan with ECS included as standard. Wider 350mm throat for better air exchange. Mains power backup transformer included — works even at night when conditions demand it.</p>
-            <div class="prod-badges">
-              <span class="prod-badge">30W Solar Panel</span>
-              <span class="prod-badge">ECS Included</span>
-              <span class="prod-badge">Mains Backup</span>
-              <span class="prod-badge">Works at Night</span>
-            </div>
-            <div class="prod-specs">
-              <div class="prod-spec-row"><span class="prod-spec-key">Solar Panel</span><span class="prod-spec-val">30W Polycrystalline</span></div>
-              <div class="prod-spec-row"><span class="prod-spec-key">Throat Size</span><span class="prod-spec-val">350mm</span></div>
-              <div class="prod-spec-row"><span class="prod-spec-key">Motor</span><span class="prod-spec-val">38V DC</span></div>
-              <div class="prod-spec-row"><span class="prod-spec-key">Mains Runtime</span><span class="prod-spec-val">8 min every 30 min</span></div>
-            </div>
-            <div class="prod-actions">
-              <a href="contact.html" class="prod-btn-primary">Request Quote</a>
-              <a href="Brochures/GVS-30W Flyer.pdf" target="_blank" class="prod-btn-outline">View Brochure</a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Industrial Exhaust Fan -->
-        <div class="prod-card">
-          <div class="prod-img-placeholder">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/><path d="M8 12a4 4 0 0 1 4-4"/></svg>
-            <span class="ph-label">Image Coming Soon</span>
-            <span class="ph-name">Industrial Exhaust Fan</span>
-          </div>
-          <div class="prod-body">
-            <span class="prod-cat-tag">Ventilation Solutions</span>
-            <div class="prod-name">GA Industrial Wall Mounted Exhaust Fan</div>
-            <p class="prod-desc">Heavy-duty wall-mounted industrial exhaust fan engineered for high-performance ventilation in manufacturing plants, warehouses, and commercial facilities. Designed for continuous operation in demanding environments.</p>
-            <div class="prod-badges">
-              <span class="prod-badge">Industrial Grade</span>
-              <span class="prod-badge">Wall Mounted</span>
-              <span class="prod-badge">High Performance</span>
-            </div>
-            <div class="prod-specs">
-              <div class="prod-spec-row"><span class="prod-spec-key">Application</span><span class="prod-spec-val">Industrial / Commercial</span></div>
-              <div class="prod-spec-row"><span class="prod-spec-key">Mount Type</span><span class="prod-spec-val">Wall Mounted</span></div>
-              <div class="prod-spec-row"><span class="prod-spec-key">Full Specs</span><span class="prod-spec-val">See Brochure</span></div>
-            </div>
-            <div class="prod-actions">
-              <a href="contact.html" class="prod-btn-primary">Request Quote</a>
-              <a href="Brochures/Copy of GA INDUSTRIAL WALL MOUNTED EXHAUST FAN.pdf" target="_blank" class="prod-btn-outline">View Brochure</a>
-            </div>
-          </div>
-        </div>
-
-      </div>
+      <div class="products-grid"></div>
     </div>
 
     <!-- ─── COOLING SOLUTIONS ─── -->
@@ -446,67 +275,16 @@
         <h2>Cooling Solutions</h2>
         <p>Professional air conditioning supply, installation, and maintenance services for residential and commercial clients.</p>
       </div>
-      <div class="products-grid">
+      <div class="products-grid"></div>
+    </div>
 
-        <!-- Aircon Installation -->
-        <div class="prod-card">
-          <div class="prod-img-placeholder">
-            <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="8" rx="2"/><path d="M2 11v8a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-8"/><line x1="12" y1="11" x2="12" y2="21"/><line x1="7" y1="16" x2="17" y2="16"/></svg>
-            <span class="ph-label">Image Coming Soon</span>
-            <span class="ph-name">Aircon Installation</span>
-          </div>
-          <div class="prod-body">
-            <span class="prod-cat-tag">Cooling Solutions</span>
-            <div class="prod-name">Aircon Supply &amp; Installation</div>
-            <p class="prod-desc">Complete air conditioning supply and professional installation service for residential and commercial spaces. We handle unit selection, proper sizing, and full installation by certified HVAC technicians.</p>
-            <div class="prod-badges">
-              <span class="prod-badge">Certified Technicians</span>
-              <span class="prod-badge">Residential</span>
-              <span class="prod-badge">Commercial</span>
-            </div>
-            <div class="prod-specs">
-              <div class="prod-spec-row"><span class="prod-spec-key">Service Type</span><span class="prod-spec-val">Supply &amp; Installation</span></div>
-              <div class="prod-spec-row"><span class="prod-spec-key">Unit Types</span><span class="prod-spec-val">Split, Window, Cassette</span></div>
-              <div class="prod-spec-row"><span class="prod-spec-key">Coverage</span><span class="prod-spec-val">Residential &amp; Commercial</span></div>
-              <div class="prod-spec-row"><span class="prod-spec-key">Sizing Tool</span><span class="prod-spec-val"><a href="products.html#calculator" style="color:var(--gold);font-weight:700;">HP Calculator &rarr;</a></span></div>
-            </div>
-            <div class="prod-actions">
-              <a href="contact.html" class="prod-btn-primary">Request Quote</a>
-              <a href="products.html#calculator" class="prod-btn-outline">HP Calculator</a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Aircon Maintenance -->
-        <div class="prod-card">
-          <div class="prod-img-placeholder">
-            <svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-            <span class="ph-label">Image Coming Soon</span>
-            <span class="ph-name">Aircon Maintenance</span>
-          </div>
-          <div class="prod-body">
-            <span class="prod-cat-tag">Cooling Solutions</span>
-            <div class="prod-name">Aircon Preventive Maintenance</div>
-            <p class="prod-desc">Scheduled preventive maintenance programs to keep your air conditioning units running at peak efficiency. Includes cleaning, inspection, refrigerant check, and performance testing. Emergency repair response available.</p>
-            <div class="prod-badges">
-              <span class="prod-badge">Preventive Maintenance</span>
-              <span class="prod-badge">24/7 Emergency</span>
-              <span class="prod-badge">All Brands</span>
-            </div>
-            <div class="prod-specs">
-              <div class="prod-spec-row"><span class="prod-spec-key">Service Type</span><span class="prod-spec-val">Maintenance &amp; Repair</span></div>
-              <div class="prod-spec-row"><span class="prod-spec-key">Schedule</span><span class="prod-spec-val">Quarterly / Annual</span></div>
-              <div class="prod-spec-row"><span class="prod-spec-key">Emergency</span><span class="prod-spec-val">24/7 Response</span></div>
-              <div class="prod-spec-row"><span class="prod-spec-key">Coverage</span><span class="prod-spec-val">All Unit Types &amp; Brands</span></div>
-            </div>
-            <div class="prod-actions">
-              <a href="contact.html" class="prod-btn-primary">Request Quote</a>
-              <a href="services.html#aircon" class="prod-btn-outline">Learn More</a>
-            </div>
-          </div>
-        </div>
-
+    <!-- ─── BUILDING SOLUTIONS ─── -->
+    <div class="cat-block" id="cat-building">
+      <div class="cat-heading">
+        <h2>Building Solutions</h2>
+        <p>Engineered access and structural solutions for safe, compliant, and weatherproof building performance.</p>
       </div>
+      <div class="products-grid"></div>
     </div>
 
   </div><!-- /.section-inner -->
@@ -523,11 +301,11 @@
 <footer>
   <div class="footer-grid">
     <div>
-      <img src="square_logo.png" alt="Gleamair Enterprises" class="footer-logo-img">
+      <img src="assets/images/other/square_logo.png" alt="Gleamair Enterprises" class="footer-logo-img">
       <div class="footer-brand-tag">HVAC &amp; Building Solutions</div>
-      <p class="footer-brand-desc">A leading provider of heating, ventilation, air conditioning, and building solutions serving residential and commercial clients with integrity and professionalism.</p>
+      <p class="footer-brand-desc">Everything your space needs, in one place &mdash; lighting, ventilation, cooling, and building solutions for residential and commercial clients.</p>
       <div class="footer-contact-item"><strong>Address:</strong> 12 Domingo St., Gordon Heights, Olongapo City</div>
-      <div class="footer-contact-item"><strong>Email:</strong> salesgleamair@gmail.com</div>
+      <div class="footer-contact-item"><strong>Email:</strong> sales@gleamaire.com</div>
       <div class="footer-contact-item"><strong>Phone:</strong> 0912-301-5388</div>
     </div>
     <div class="footer-col">
@@ -596,11 +374,12 @@
   });
 
   // ─── CATEGORY FILTER ───
-  var validCats = ['lighting', 'ventilation', 'cooling'];
+  var validCats = ['lighting', 'ventilation', 'cooling', 'building'];
   var heroTitles = {
     lighting:    { title: 'Lighting <span>Solutions</span>',    desc: 'Natural daylighting systems for residential and commercial spaces.', crumb: 'Lighting Solutions' },
     ventilation: { title: 'Ventilation <span>Solutions</span>', desc: 'Wind-driven, solar-powered, and electric ventilation for every building type.', crumb: 'Ventilation Solutions' },
-    cooling:     { title: 'Cooling <span>Solutions</span>',     desc: 'Professional aircon supply, installation, and maintenance services.', crumb: 'Cooling Solutions' }
+    cooling:     { title: 'Cooling <span>Solutions</span>',     desc: 'Professional aircon supply, installation, and maintenance services.', crumb: 'Cooling Solutions' },
+    building:    { title: 'Building <span>Solutions</span>',    desc: 'Engineered access and structural solutions for safe, compliant building performance.', crumb: 'Building Solutions' }
   };
 
   function setCategory(cat) {
@@ -641,5 +420,6 @@
     setCategory(validCats.includes(cat) ? cat : 'lighting');
   })();
 </script>
+<script src="assets/js/data-loader.js"></script>
 </body>
 </html>

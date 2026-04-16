@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Products | Gleamair Enterprises</title>
+  <link rel="icon" type="image/x-icon" href="assets/images/other/favicon_io/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/images/other/favicon_io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/images/other/favicon_io/favicon-16x16.png">
+  <link rel="apple-touch-icon" href="assets/images/other/favicon_io/apple-touch-icon.png">
+  <link rel="manifest" href="assets/images/other/favicon_io/site.webmanifest">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -211,12 +216,11 @@
   .testimonial-title { font-size: 0.78rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--gold); }
 
   /* ─── CLIENTS ─── */
-  .clients-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2rem; }
-  .client-card { text-align: center; padding: 2.5rem; background: var(--off-white); border-radius: 4px; border: 1px solid #dde3ee; transition: border-color 0.25s, box-shadow 0.25s; }
+  .clients-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; }
+  .client-card { display: flex; align-items: center; justify-content: center; padding: 1.25rem; background: var(--off-white); border-radius: 4px; border: 1px solid #dde3ee; transition: border-color 0.25s, box-shadow 0.25s; height: 90px; width: calc(20% - 0.8rem); min-width: 120px; box-sizing: border-box; }
   .client-card:hover { border-color: var(--gold); box-shadow: 0 4px 24px rgba(201,162,39,0.12); }
-  .client-logo { height: 70px; object-fit: contain; margin-bottom: 1.25rem; }
-  .client-name { font-family: 'Barlow Condensed', sans-serif; font-size: 1.1rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--blue-dark); margin-bottom: 0.5rem; }
-  .client-desc { font-size: 0.85rem; color: var(--text-mid); line-height: 1.6; }
+  .client-logo { width: 100%; height: 50px; object-fit: contain; filter: grayscale(30%); transition: filter 0.2s; }
+  .client-card:hover .client-logo { filter: grayscale(0%); }
 
   /* ─── CTA + FOOTER ─── */
   .cta-band { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%); padding: 80px 5%; text-align: center; }
@@ -250,7 +254,8 @@
     .nav-dropdown.mob-open .dropdown-menu { display: block !important; }
     .product-grid, .range-grid, .model-grid, .perf-tables, .testimonials-grid { grid-template-columns: 1fr; }
     .cat-cards { grid-template-columns: 1fr; }
-    .clients-grid { grid-template-columns: 1fr 1fr; }
+    .client-card { width: calc(33.333% - 0.67rem); }
+    .clients-grid { grid-template-columns: unset; }
     .projects-grid { grid-template-columns: 1fr 1fr; }
     .calc-grid, .calc-row-2, .result-row, .result-row-2 { grid-template-columns: 1fr; }
     .footer-grid { grid-template-columns: 1fr 1fr; gap: 2.5rem; }
@@ -262,7 +267,8 @@
     .perf-table th, .perf-table td { padding: 8px 8px; }
   }
   @media (max-width: 600px) {
-    .clients-grid, .projects-grid { grid-template-columns: 1fr; }
+    .client-card { width: calc(50% - 0.5rem); }
+    .projects-grid { grid-template-columns: 1fr; }
     .range-grid { grid-template-columns: 1fr; }
   }
 </style>
@@ -271,7 +277,7 @@
 
 <nav>
   <a href="index.html" class="nav-logo">
-    <img src="horizontal_logo.png" alt="Gleamair Enterprises">
+    <img src="assets/images/other/horizontal_logo.png" alt="Gleamair Enterprises">
   </a>
   <button class="hamburger" id="hamburger" aria-label="Toggle navigation">
     <span></span><span></span><span></span>
@@ -291,6 +297,7 @@
         <a href="product-catalog.html?cat=lighting">Lighting Solutions</a>
         <a href="product-catalog.html?cat=ventilation">Ventilation Solutions</a>
         <a href="product-catalog.html?cat=cooling">Cooling Solutions</a>
+        <a href="product-catalog.html?cat=building">Building Solutions</a>
       </div>
     </div>
     <a href="contact.html" class="nav-cta">Contact Us</a>
@@ -302,7 +309,7 @@
   <div class="page-hero-inner">
     <div class="breadcrumb"><a href="index.html">Home</a> &nbsp;/&nbsp; Products</div>
     <h1>Our Products</h1>
-    <p>Industry-leading ventilation technology distributed and installed by Gleamair Enterprises across the Philippines.</p>
+    <p>From Air to Energy &mdash; we power your space with integrated lighting, ventilation, cooling, and building solutions.</p>
   </div>
 </div>
 
@@ -320,7 +327,6 @@
           <span class="badge">Australian Technology</span>
           <span class="badge">Made in Philippines</span>
           <span class="badge">15-Year Warranty</span>
-          <span class="badge">Zero Energy Use</span>
         </div>
       </div>
       <div class="product-features">
@@ -361,19 +367,19 @@
       </div>
       <div class="range-card">
         <h3>Sky Tunnel &mdash; Residential</h3>
-        <p>Natural daylighting systems for homes. Available in 343mm, 457mm &amp; 535mm diameters with Flexi-tube or Rigid98 tubing. 7-year manufacturer's warranty. <a href="Brochures/Sky-Tunnel-Brochure-Residential.pdf" target="_blank">View brochure &rarr;</a></p>
+        <p>Natural daylighting systems for homes. Available in 343mm, 457mm &amp; 535mm diameters with Flexi-tube or Rigid98 tubing. 7-year manufacturer's warranty. <a href="assets/brochures/Sky-Tunnel-Brochure-Residential.pdf" target="_blank">View brochure &rarr;</a></p>
       </div>
       <div class="range-card">
         <h3>Sky Tunnel &mdash; Commercial / Industrial</h3>
-        <p>High-performance daylighting for warehouses, factories, offices and retail. Rigid98 Miro-Silver tubing with 98% reflectivity. Proven 20+ year track record. <a href="Brochures/Sky-Tunnel-Brochure-Commercial.pdf" target="_blank">View brochure &rarr;</a></p>
+        <p>High-performance daylighting for warehouses, factories, offices and retail. Rigid98 Miro-Silver tubing with 98% reflectivity. Proven 20+ year track record. <a href="assets/brochures/Sky-Tunnel-Brochure-Commercial.pdf" target="_blank">View brochure &rarr;</a></p>
       </div>
       <div class="range-card">
         <h3>Green-Vent Solar 15W (GVS-15W)</h3>
-        <p>Solar-powered attic extraction fan with 15W polycrystalline panel, 38V DC motor, and optional Environment Control System. Thermostat included. <a href="Brochures/GVS 15W.pdf" target="_blank">View brochure &rarr;</a></p>
+        <p>Solar-powered attic extraction fan with 15W polycrystalline panel, 38V DC motor, and optional Environment Control System. Thermostat included. <a href="assets/brochures/GVS 15W.pdf" target="_blank">View brochure &rarr;</a></p>
       </div>
       <div class="range-card">
         <h3>Green-Vent Solar 30W (GVS-30W)</h3>
-        <p>High-power 30W solar attic fan with ECS included as standard. Wider 350mm throat, mains power backup via transformer, and superior low-light performance. <a href="Brochures/GVS-30W Flyer.pdf" target="_blank">View brochure &rarr;</a></p>
+        <p>High-power 30W solar attic fan with ECS included as standard. Wider 350mm throat, mains power backup via transformer, and superior low-light performance. <a href="assets/brochures/GVS-30W Flyer.pdf" target="_blank">View brochure &rarr;</a></p>
       </div>
       <div class="range-card">
         <h3>CCTV Security Systems</h3>
@@ -385,7 +391,7 @@
       </div>
       <div class="range-card">
         <h3>Industrial Exhaust Fans</h3>
-        <p>Wall-mounted and roof-mounted industrial exhaust solutions for high-performance ventilation in manufacturing and warehouse environments. <a href="Brochures/Copy of GA INDUSTRIAL WALL MOUNTED EXHAUST FAN.pdf" target="_blank">View specifications &rarr;</a></p>
+        <p>Wall-mounted and roof-mounted industrial exhaust solutions for high-performance ventilation in manufacturing and warehouse environments. <a href="assets/brochures/Copy of GA INDUSTRIAL WALL MOUNTED EXHAUST FAN.pdf" target="_blank">View specifications &rarr;</a></p>
       </div>
     </div>
     <div class="range-cta">
@@ -537,32 +543,7 @@
       <h2 class="section-title" style="color:var(--white);">Our Recent Projects</h2>
       <p style="font-size:0.95rem;color:rgba(255,255,255,0.6);max-width:550px;margin:0 auto;font-weight:300;">A sampling of successful installations across residential, commercial, and industrial facilities.</p>
     </div>
-    <div class="projects-grid">
-      <div class="project-card">
-        <img src="CLIENT PHOTOS/SG Eco Industries Inc/Copy_of_IMG_1915.jpg" alt="SG Eco Industries" class="project-img" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22%3E%3Crect fill=%22%230d2f5e%22 width=%22400%22 height=%22400%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2218%22 fill=%22%23c9a227%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22%3EIndustrial Ventilation%3C/text%3E%3C/svg%3E'">
-        <div class="project-overlay"><div class="project-label">SG Eco Industries Inc</div></div>
-      </div>
-      <div class="project-card">
-        <img src="CLIENT PHOTOS/CEVA Logistics/Copy of 33a5533f40e3fbc51e7e54edb28bd2cf.jpeg" alt="CEVA Logistics" class="project-img" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22%3E%3Crect fill=%22%230d2f5e%22 width=%22400%22 height=%22400%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2218%22 fill=%22%23c9a227%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22%3ECEVA Logistics%3C/text%3E%3C/svg%3E'">
-        <div class="project-overlay"><div class="project-label">CEVA Logistics Facility</div></div>
-      </div>
-      <div class="project-card">
-        <img src="CLIENT PHOTOS/Residential Bulacan/Copy_of_IMG_1251.jpg" alt="Residential Bulacan" class="project-img" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22%3E%3Crect fill=%22%230d2f5e%22 width=%22400%22 height=%22400%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2218%22 fill=%22%23c9a227%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22%3EResidential Project%3C/text%3E%3C/svg%3E'">
-        <div class="project-overlay"><div class="project-label">Residential - Bulacan</div></div>
-      </div>
-      <div class="project-card">
-        <img src="CLIENT PHOTOS/anthony lozado residential 2025/Copy of viber_image_2025-09-12_13-32-19-759.jpg" alt="Sky Tunnel" class="project-img" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22%3E%3Crect fill=%22%230d2f5e%22 width=%22400%22 height=%22400%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2218%22 fill=%22%23c9a227%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22%3ESky Tunnel%3C/text%3E%3C/svg%3E'">
-        <div class="project-overlay"><div class="project-label">Sky Tunnel - Residential</div></div>
-      </div>
-      <div class="project-card">
-        <img src="CLIENT PHOTOS/Newbridge Cebu/Copy_of_IMG_1883.jpg" alt="Newbridge Cebu" class="project-img" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22%3E%3Crect fill=%22%230d2f5e%22 width=%22400%22 height=%22400%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2218%22 fill=%22%23c9a227%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22%3ENewbridge Cebu%3C/text%3E%3C/svg%3E'">
-        <div class="project-overlay"><div class="project-label">Newbridge Cebu</div></div>
-      </div>
-      <div class="project-card">
-        <img src="CLIENT PHOTOS/Residential Mabalacat/Copy of 629c53801f5feaf754f25cefcc062951.jpeg" alt="Mabalacat" class="project-img" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22%3E%3Crect fill=%22%230d2f5e%22 width=%22400%22 height=%22400%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2218%22 fill=%22%23c9a227%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22%3EMabalacat Project%3C/text%3E%3C/svg%3E'">
-        <div class="project-overlay"><div class="project-label">Residential - Mabalacat</div></div>
-      </div>
-    </div>
+    <div class="projects-grid" id="projects-grid"></div>
   </div>
 </section>
 
@@ -684,20 +665,7 @@
       <div class="section-eyebrow" style="justify-content:center;">Client Feedback</div>
       <h2 class="section-title" style="color:var(--white);">Trusted by Leading Organizations</h2>
     </div>
-    <div class="testimonials-grid">
-      <div class="testimonial-card">
-        <div class="testimonial-rating"><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span></div>
-        <p class="testimonial-quote">&ldquo;Everything from customer engagement, delivery, installation, and payment was great!&rdquo;</p>
-        <div class="testimonial-name">A******* L*****</div>
-        <div class="testimonial-title">Residential Client &nbsp;&bull;&nbsp; Sky Tunnel Installation</div>
-      </div>
-      <div class="testimonial-card">
-        <div class="testimonial-rating"><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span></div>
-        <p class="testimonial-quote">&ldquo;Very satisfied with product quality, installation service, customer support, and delivery timeliness. Highly likely to recommend Gleamair Enterprises to others.&rdquo;</p>
-        <div class="testimonial-name">Villa Escudero Plantation &amp; Resort Inc.</div>
-        <div class="testimonial-title">Resort Client &nbsp;&bull;&nbsp; Solar Lighting Project</div>
-      </div>
-    </div>
+    <div class="testimonials-grid" id="testimonials-grid"></div>
   </div>
 </section>
 
@@ -708,11 +676,7 @@
       <div class="section-eyebrow" style="justify-content:center;">Organizations That Trust Us</div>
       <h2 class="section-title" style="color:var(--blue-dark);">Our Clients</h2>
     </div>
-    <div class="clients-grid">
-      <div class="client-card"><img src="otherbusinesses/villa_escudero_logo.png" alt="Villa Escudero" class="client-logo"><div class="client-name">Villa Escudero</div><div class="client-desc">Premium eco-tourism resort in Tiaong, Quezon featuring our solar lighting systems.</div></div>
-      <div class="client-card"><img src="otherbusinesses/ceva-logistics_logo.png" alt="CEVA Logistics" class="client-logo"><div class="client-name">CEVA Logistics</div><div class="client-desc">International logistics provider relying on our HVAC and ventilation solutions.</div></div>
-      <div class="client-card"><img src="otherbusinesses/3rshane_logo.png" alt="3R Shane Rice Mills" class="client-logo"><div class="client-name">3R Shane Rice Mills</div><div class="client-desc">Leading rice mill facility utilizing our industrial ventilation systems.</div></div>
-    </div>
+    <div class="clients-grid" id="clients-grid"></div>
   </div>
 </section>
 
@@ -727,11 +691,11 @@
 <footer>
   <div class="footer-grid">
     <div>
-      <img src="square_logo.png" alt="Gleamair Enterprises" class="footer-logo-img">
+      <img src="assets/images/other/square_logo.png" alt="Gleamair Enterprises" class="footer-logo-img">
       <div class="footer-brand-tag">HVAC &amp; Building Solutions</div>
-      <p class="footer-brand-desc">A leading provider of heating, ventilation, air conditioning, and building solutions serving residential and commercial clients with integrity and professionalism.</p>
+      <p class="footer-brand-desc">Everything your space needs, in one place &mdash; lighting, ventilation, cooling, and building solutions for residential and commercial clients.</p>
       <div class="footer-contact-item"><strong>Address:</strong> 12 Domingo St., Gordon Heights, Olongapo City</div>
-      <div class="footer-contact-item"><strong>Email:</strong> salesgleamair@gmail.com</div>
+      <div class="footer-contact-item"><strong>Email:</strong> sales@gleamaire.com</div>
       <div class="footer-contact-item"><strong>Phone:</strong> 0912-301-5388</div>
     </div>
     <div class="footer-col">
@@ -892,5 +856,6 @@
     document.getElementById('res-aircon').classList.add('show');
   }
 </script>
+<script src="assets/js/data-loader.js"></script>
 </body>
 </html>
