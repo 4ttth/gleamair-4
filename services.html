@@ -114,11 +114,18 @@
 
   .service-visual {
     border-radius: 4px; padding: 3rem 2.5rem;
-    position: relative; overflow: hidden;
+    position: relative;
   }
   .service-visual.light { background: linear-gradient(140deg, var(--blue-dark) 0%, var(--blue-mid) 100%); }
   .service-visual.dark { background: rgba(255,255,255,0.05); border: 1px solid rgba(201,162,39,0.2); }
   .service-visual::after { content: ''; position: absolute; bottom: -40px; right: -40px; width: 180px; height: 180px; border-radius: 50%; border: 40px solid rgba(201,162,39,0.08); }
+  .svc-ring {
+    position: absolute; bottom: -40px; right: -40px;
+    width: 180px; height: 180px; border-radius: 50%;
+    border: 40px solid rgba(201,162,39,0.15);
+    pointer-events: none; z-index: 0;
+    will-change: transform;
+  }
   .service-tag { display: inline-block; font-family: 'Barlow Condensed', sans-serif; font-size: 0.7rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--blue-dark); background: var(--gold); padding: 5px 14px; border-radius: 2px; margin-bottom: 1.5rem; }
   .service-visual h3 { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: var(--white); line-height: 1.1; margin-bottom: 1rem; letter-spacing: 1px; }
   .service-visual p { font-size: 0.88rem; line-height: 1.75; color: rgba(255,255,255,0.6); margin-bottom: 2rem; }
@@ -234,6 +241,7 @@
         <a href="contact.html" class="btn-primary">Request a Quote</a>
       </div>
       <div class="service-visual light">
+        <div class="svc-ring"></div>
         <div class="service-img-wrap"><img src="assets/images/products/AirconServices.png" alt="Aircon Services"></div>
         <div class="service-tag">Aircon Services</div>
         <h3>Full-Cycle Air Conditioning Solutions</h3>
@@ -273,6 +281,7 @@
         <a href="contact.html" class="btn-primary">Request a Quote</a>
       </div>
       <div class="service-visual dark">
+        <div class="svc-ring"></div>
         <div class="service-img-wrap"><img src="assets/images/products/Ventilation.png" alt="Roof Ventilation"></div>
         <div class="service-tag">Roof Ventilation</div>
         <h3>Energy-Free Ventilation That Performs</h3>
@@ -311,6 +320,7 @@
         <a href="contact.html" class="btn-primary">Request a Quote</a>
       </div>
       <div class="service-visual light">
+        <div class="svc-ring"></div>
         <div class="service-img-wrap"><img src="assets/images/products/SkyTunnel.png" alt="Sky Tunnels"></div>
         <div class="service-tag">Sky Tunnels</div>
         <h3>Natural Light. Zero Energy Consumption.</h3>
@@ -345,6 +355,7 @@
         <a href="contact.html" class="btn-primary">Request a Quote</a>
       </div>
       <div class="service-visual dark">
+        <div class="svc-ring"></div>
         <div class="service-img-wrap"><img src="assets/images/products/SolarLighting.png" alt="Solar Lighting"></div>
         <div class="service-tag">Solar Lighting</div>
         <h3>Sustainable Illumination for Modern Facilities</h3>
@@ -379,6 +390,7 @@
         <a href="contact.html" class="btn-primary">Request a Quote</a>
       </div>
       <div class="service-visual light">
+        <div class="svc-ring"></div>
         <div class="service-img-wrap"><img src="assets/images/products/RoofHatch.png" alt="Roof Access Hatchways"></div>
         <div class="service-tag">Roof Access Hatchways</div>
         <h3>Compliant, Safe Roof Access Solutions</h3>
@@ -489,6 +501,19 @@
 </footer>
 
 <script>
+  (function() {
+    var rings = document.querySelectorAll('.svc-ring');
+    function updateRings() {
+      rings.forEach(function(ring) {
+        var rect = ring.parentElement.getBoundingClientRect();
+        var progress = (window.innerHeight / 2 - rect.top) / window.innerHeight;
+        ring.style.transform = 'translate(' + (progress * 80) + 'px, ' + (progress * -100) + 'px)';
+      });
+    }
+    window.addEventListener('scroll', updateRings, { passive: true });
+    updateRings();
+  })();
+
   document.getElementById('hamburger').addEventListener('click', function() {
     this.classList.toggle('open');
     document.getElementById('navLinks').classList.toggle('open');

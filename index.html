@@ -78,7 +78,7 @@
     background: linear-gradient(160deg, var(--blue-dark) 0%, var(--blue-mid) 55%, #0f3c7a 100%);
     display: flex; align-items: center;
     padding: 120px 5% 80px;
-    position: relative; overflow: hidden;
+    position: relative;
   }
   .hero::before {
     content: '';
@@ -91,6 +91,14 @@
     width: 520px; height: 520px;
     border: 60px solid rgba(201,162,39,0.1);
     border-radius: 50%;
+  }
+  .hero-ring {
+    position: absolute; right: -80px; top: -80px;
+    width: 520px; height: 520px;
+    border: 60px solid rgba(201,162,39,0.15);
+    border-radius: 50%;
+    pointer-events: none; z-index: 0;
+    will-change: transform;
   }
   .hero-grid {
     display: grid; grid-template-columns: 1fr 1fr;
@@ -259,12 +267,19 @@
   .why-item-text { font-size: 0.85rem; color: var(--text-mid); line-height: 1.6; }
   .why-visual {
     background: linear-gradient(140deg, var(--blue-dark) 0%, var(--blue-mid) 100%);
-    border-radius: 6px; padding: 3rem 2.5rem; position: relative; overflow: hidden;
+    border-radius: 6px; padding: 3rem 2.5rem; position: relative;
   }
   .why-visual::after {
     content: ''; position: absolute; right: -40px; bottom: -40px;
     width: 200px; height: 200px;
     border: 40px solid rgba(255,255,255,0.06); border-radius: 50%;
+  }
+  .why-ring {
+    position: absolute; right: -40px; bottom: -40px;
+    width: 200px; height: 200px;
+    border: 40px solid rgba(255,255,255,0.12); border-radius: 50%;
+    pointer-events: none; z-index: 0;
+    will-change: transform;
   }
   .why-visual-title {
     font-family: 'Bebas Neue', sans-serif;
@@ -435,6 +450,7 @@
 </nav>
 
 <section class="hero">
+  <div class="hero-ring" id="heroRing"></div>
   <div class="hero-grid">
     <div>
       <div class="hero-eyebrow">Trusted Sustainable Solutions</div>
@@ -572,6 +588,7 @@
         </div>
       </div>
       <div class="why-visual">
+        <div class="why-ring" id="whyRing"></div>
         <div class="why-visual-title">Performance You Can <span>Measure</span></div>
         <p class="why-visual-sub">Impact of Proper Ventilation</p>
         <div class="why-metric">
@@ -704,6 +721,21 @@
 </footer>
 
 <script>
+  (function() {
+    var heroRing = document.getElementById('heroRing');
+    var whyRing = document.getElementById('whyRing');
+    var whyVisual = document.querySelector('.why-visual');
+    function updateRings() {
+      var s = window.scrollY;
+      heroRing.style.transform = 'translate(' + (s * 0.15) + 'px, ' + (s * 0.2) + 'px)';
+      var rect = whyVisual.getBoundingClientRect();
+      var progress = (window.innerHeight / 2 - rect.top) / window.innerHeight;
+      whyRing.style.transform = 'translate(' + (progress * -70) + 'px, ' + (progress * 90) + 'px)';
+    }
+    window.addEventListener('scroll', updateRings, { passive: true });
+    updateRings();
+  })();
+
   document.getElementById('hamburger').addEventListener('click', function() {
     this.classList.toggle('open');
     document.getElementById('navLinks').classList.toggle('open');
