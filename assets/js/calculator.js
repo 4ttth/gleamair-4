@@ -403,12 +403,13 @@ function buildSolarPanel() {
     '</div>' +
     '<button class="calc-btn" onclick="calcSolar()">Calculate Requirements</button>' +
     '<div class="calc-result" id="res-solar">' +
-    '<div class="result-row-2">' +
-    '<div class="result-item"><div class="result-val" id="s-resArea">\u2014</div><div class="result-label">Attic Floor Area (m\u00b2)</div></div>' +
-    '<div class="result-item"><div class="result-val" id="s-resUnits">\u2014</div><div class="result-label">Fans Required</div></div>' +
+    '<div class="result-row">' +
+    '<div class="result-item"><div class="result-val" id="s-resArea">—</div><div class="result-label">Attic Floor Area (m²)</div></div>' +
+    '<div class="result-item"><div class="result-val" id="s-resFans">—</div><div class="result-label">Fans Required</div></div>' +
+    '<div class="result-item"><div class="result-val" id="s-resModel">—</div><div class="result-label">Fan Model</div></div>' +
     '</div>' +
-    '<p class="result-note" id="s-resNote"></p>' +
     '</div>' +
+    '<div id="s-resCta"></div>' +
     '</div>';
 }
 
@@ -419,19 +420,21 @@ function buildAirconPanel() {
   }).join('');
 
   return '<div class="calc-panel" id="panel-aircon">' +
-    '<div class="calc-row-2">' +
+    '<div class="calc-grid">' +
     '<div class="form-group"><label>Room Length (m)</label><input type="number" id="a-length" placeholder="e.g. 5" min="0"></div>' +
     '<div class="form-group"><label>Room Width (m)</label><input type="number" id="a-width" placeholder="e.g. 4" min="0"></div>' +
+    '<div class="form-group"><label>Room Height (m)</label><input type="number" id="a-height" placeholder="e.g. 3" min="0"></div>' +
     '</div>' +
     '<div class="hp-adjustments"><p>Adjustment Factors</p>' + checks + '</div>' +
     '<button class="calc-btn" onclick="calcAircon()">Calculate HP Requirement</button>' +
     '<div class="calc-result" id="res-aircon">' +
-    '<div class="result-row-2">' +
-    '<div class="result-item"><div class="result-val" id="a-resArea">\u2014</div><div class="result-label">Room Area (m\u00b2)</div></div>' +
-    '<div class="result-item"><div class="result-hp" id="a-resHP">\u2014</div><div class="result-label">Recommended HP</div></div>' +
+    '<div class="result-row">' +
+    '<div class="result-item"><div class="result-val" id="a-resArea">—</div><div class="result-label">Floor Area (m²)</div></div>' +
+    '<div class="result-item"><div class="result-val" id="a-resVol">—</div><div class="result-label">Room Volume (m³)</div></div>' +
+    '<div class="result-item"><div class="result-val" id="a-resHP">—</div><div class="result-label">Recommended HP</div></div>' +
     '</div>' +
-    '<p class="result-note" id="a-resNote"></p>' +
     '</div>' +
+    '<div id="a-resCta"></div>' +
     '</div>';
 }
 
@@ -474,18 +477,22 @@ function calcVentilator() {
   for (var i = 0; i < sizes.length; i++) {
     if (sizes[i].lps[ws] >= E) { match = sizes[i]; break; }
   }
-  // If none match, recommend the highest-capacity size
   if (!match) match = sizes[sizes.length - 1];
 
   var rec = document.getElementById('v-resRec');
   rec.innerHTML =
+    '<div class="result-bottom-grid">' +
     '<div class="result-rec-box">' +
     '<div class="result-rec-label">Recommended Ventilator</div>' +
     '<div class="result-rec-name">' + match.label + '</div>' +
-    '<div class="result-rec-detail">' +
-      'Capacity at ' + ws + ' km/hr: <strong>' + match.lps[ws] + ' L/s</strong> &nbsp;/&nbsp; <strong>' + match.cfm[ws] + ' CFM</strong>' +
-    '</div>' +
+    '<div class="result-rec-detail">Capacity at ' + ws + ' km/hr: <strong>' + match.lps[ws] + ' L/s</strong> &nbsp;/&nbsp; <strong>' + match.cfm[ws] + ' CFM</strong></div>' +
     '<div class="result-rec-detail">Quantity: <strong>' + n + ' unit' + (n > 1 ? 's' : '') + '</strong></div>' +
+    '</div>' +
+    '<div class="result-rec-cta">' +
+    '<div class="result-rec-cta-title">Need a More Detailed Assessment?</div>' +
+    '<p>Every facility is different. Our team can conduct a full on-site ventilation assessment to give you the most accurate specification.</p>' +
+    '<a href="contact.html" class="result-cta-btn">Contact Us for a Site Assessment &rarr;</a>' +
+    '</div>' +
     '</div>';
 
   document.getElementById('res-ventilator').classList.add('show');
@@ -505,26 +512,42 @@ function calcSolar() {
     if (area <= table[i].maxArea) { fans = table[i][pitch]; break; }
   }
   if (fans === null) fans = table[table.length - 1][pitch];
+  var summary = area.toFixed(0) + ' m\u00b2 attic &nbsp;&bull;&nbsp; ' + pitch + ' pitch &nbsp;&bull;&nbsp; GVS-' + model + 'W';
   document.getElementById('s-resArea').textContent  = area.toFixed(0);
-  document.getElementById('s-resUnits').textContent = fans;
-  document.getElementById('s-resNote').textContent  =
-    'Minimum recommended fans for a ' + area.toFixed(0) + ' m\u00b2 attic with ' +
-    pitch + ' pitch roof using GVS-' + model + 'W. Contact us for a site assessment.';
+  document.getElementById('s-resFans').textContent  = fans;
+  document.getElementById('s-resModel').textContent = 'GVS-' + model + 'W';
   document.getElementById('res-solar').classList.add('show');
+  document.getElementById('s-resCta').innerHTML =
+    '<div class="result-bottom-grid">' +
+    '<div class="result-rec-box">' +
+    '<div class="result-rec-label">Fans Required</div>' +
+    '<div class="result-rec-name">' + fans + ' Unit' + (fans > 1 ? 's' : '') + '</div>' +
+    '<div class="result-rec-detail">Model: <strong>GVS-' + model + 'W</strong></div>' +
+    '<div class="result-rec-detail">Attic Area: <strong>' + area.toFixed(0) + ' m\u00b2</strong> &nbsp;|&nbsp; Pitch: <strong>' + pitch + '</strong></div>' +
+    '</div>' +
+    '<div class="result-rec-cta">' +
+    '<div class="result-rec-cta-title">Need a More Detailed Assessment?</div>' +
+    '<p>Roof conditions vary. Our team can assess your specific roof type and recommend the optimal solar fan configuration.</p>' +
+    '<a href="contact.html" class="result-cta-btn">Contact Us for a Site Assessment &rarr;</a>' +
+    '</div>' +
+    '</div>';
 }
 
 /* ── AIRCON ── */
 function calcAircon() {
   var l = parseFloat(document.getElementById('a-length').value) || 0;
   var w = parseFloat(document.getElementById('a-width').value)  || 0;
+  var h = parseFloat(document.getElementById('a-height').value) || 0;
   if (!l || !w) return;
-  var area   = l * w;
-  var baseHP = 3.0;
-  var tbl    = CALC.aircon.hpTable;
+  var area    = l * w;
+  var vol     = h > 0 ? (area * h).toFixed(1) : null;
+  var ceilAdj = (h > 3) ? 0.5 : 0;
+  var baseHP  = 3.0;
+  var tbl     = CALC.aircon.hpTable;
   for (var i = 0; i < tbl.length; i++) {
     if (area <= tbl[i].maxArea) { baseHP = tbl[i].hp; break; }
   }
-  var adj = 0;
+  var adj = ceilAdj;
   CALC.aircon.adjustments.forEach(function(a) {
     var el = document.getElementById('a-' + a.id);
     if (el && el.checked) adj += a.hp;
@@ -535,11 +558,19 @@ function calcAircon() {
     return Math.abs(curr - totalHP) < Math.abs(prev - totalHP) ? curr : prev;
   });
   if (totalHP > finalHP) finalHP = std[Math.min(std.indexOf(finalHP) + 1, std.length - 1)];
-  document.getElementById('a-resArea').textContent = area.toFixed(1);
-  document.getElementById('a-resHP').textContent   = finalHP + ' HP';
-  var noteAdj = adj > 0 ? ' Includes +' + adj + ' HP adjustment for selected factors.' : '';
-  document.getElementById('a-resNote').textContent =
-    'Base recommendation for ' + area.toFixed(1) + ' m\u00b2 is ' + baseHP + ' HP.' + noteAdj +
-    ' Final recommendation: ' + finalHP + ' HP. Consult our team for a full assessment.';
-  document.getElementById('res-aircon').classList.add('show');
+  var noteAdj = adj > 0 ? ' + <strong>' + adj.toFixed(1) + ' HP</strong> adjustments' + (ceilAdj > 0 ? ' (incl. high ceiling)' : '') : '';
+  document.getElementById('a-resCta').innerHTML =
+    '<div class="result-bottom-grid">' +
+    '<div class="result-rec-box">' +
+    '<div class="result-rec-label">Recommended HP</div>' +
+    '<div class="result-rec-name">' + finalHP + ' HP</div>' +
+    '<div class="result-rec-detail">Floor Area: <strong>' + area.toFixed(1) + ' m\u00b2</strong>' + (vol ? ' &nbsp;|&nbsp; Volume: <strong>' + vol + ' m\u00b3</strong>' : '') + '</div>' +
+    '<div class="result-rec-detail">Base: <strong>' + baseHP + ' HP</strong>' + (adj > 0 ? ' + <strong>' + adj.toFixed(1) + ' HP</strong> adjustments' : '') + '</div>' +
+    '</div>' +
+    '<div class="result-rec-cta">' +
+    '<div class="result-rec-cta-title">Get the Right Unit for Your Space</div>' +
+    '<p>For the most accurate sizing, have one of our accredited installers survey your space before purchasing a unit.</p>' +
+    '<a href="contact.html" class="result-cta-btn">Request a Free Site Assessment &rarr;</a>' +
+    '</div>' +
+    '</div>';
 }

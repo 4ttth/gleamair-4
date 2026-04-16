@@ -216,10 +216,10 @@ var DB = {
     },
     {
       id: "newbridge-cebu",
-      label: "Newbridge Cebu",
-      folder: "Newbridge Cebu",
+      label: "Newbridge Bacolod",
+      folder: "Newbridge Bacolod",
       images: [
-        "assets/images/client-photos/Newbridge Cebu/Copy_of_IMG_1883.jpg"
+        "assets/images/client-photos/Newbridge Bacolod/Copy_of_IMG_1883.jpg"
       ]
     },
     {
