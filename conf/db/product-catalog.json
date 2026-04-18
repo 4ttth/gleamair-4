@@ -34,6 +34,21 @@
             { "key": "Standards", "value": "BBA & AS4285" }
           ],
           "brochure": "assets/brochures/Sky-Tunnel-Brochure-Commercial.pdf"
+        },
+        {
+          "id": "solar-lights",
+          "name": "Solar Lights",
+          "category": "Lighting Solutions",
+          "image": "assets/images/products/Solar_Light.jpg",
+          "description": "Standalone and integrated solar lighting solutions for pathways, perimeters, and outdoor work areas. Designed for dependable night illumination with low operating cost.",
+          "badges": ["Solar Powered", "Outdoor Rated", "Low Maintenance"],
+          "specs": [
+            { "key": "Applications", "value": "Perimeter, pathways, utility areas" },
+            { "key": "Power Source", "value": "Solar panel + battery" },
+            { "key": "Mounting", "value": "Pole / wall / bracket" },
+            { "key": "Operation", "value": "Automatic dusk-to-dawn" }
+          ],
+          "brochure": null
         }
       ]
     },
@@ -120,6 +135,51 @@
             { "key": "Full Specs", "value": "See Brochure" }
           ],
           "brochure": "assets/brochures/Copy of GA INDUSTRIAL WALL MOUNTED EXHAUST FAN.pdf"
+        },
+        {
+          "id": "ducting-kits",
+          "name": "Ducting Kits",
+          "category": "Ventilation Solutions",
+          "image": "assets/images/products/Ducting_Kits.jpg",
+          "description": "Complete ducting kits to route and improve extraction flow from roof and attic ventilation systems. Suitable for retrofit and new builds.",
+          "badges": ["Complete Kit", "Retrofit Ready", "Corrosion Resistant"],
+          "specs": [
+            { "key": "Use Case", "value": "Attic and roof ventilation" },
+            { "key": "Components", "value": "Ducts, clamps, connectors" },
+            { "key": "Compatibility", "value": "Multiple vent models" },
+            { "key": "Installation", "value": "Indoor / roof cavity" }
+          ],
+          "brochure": null
+        },
+        {
+          "id": "under-eave-vents",
+          "name": "Under Eave Vents",
+          "category": "Ventilation Solutions",
+          "image": "assets/images/products/Under_Eave_Vents.png",
+          "description": "Fresh-air inlet vents installed under roof eaves to support proper air replacement for attic and roof ventilation systems.",
+          "badges": ["Air Inlet", "Passive Ventilation", "Attic Support"],
+          "specs": [
+            { "key": "Function", "value": "Intake air for attic systems" },
+            { "key": "Placement", "value": "Under eaves / soffits" },
+            { "key": "Material", "value": "Weather-resistant polymer/metal" },
+            { "key": "Integration", "value": "Works with wind and solar vents" }
+          ],
+          "brochure": null
+        },
+        {
+          "id": "wall-louvres",
+          "name": "Wall Louvres",
+          "category": "Ventilation Solutions",
+          "image": "assets/images/products/Wall_Louvres.jpg",
+          "description": "Wall louvre assemblies for controlled intake and exhaust while helping shield interiors from direct rain ingress.",
+          "badges": ["Intake / Exhaust", "Weather Shield", "Commercial Grade"],
+          "specs": [
+            { "key": "Use", "value": "Natural or mechanical ventilation" },
+            { "key": "Mounting", "value": "Wall-mounted" },
+            { "key": "Blade Profile", "value": "Rain-deflecting" },
+            { "key": "Available Sizes", "value": "Customizable by opening" }
+          ],
+          "brochure": null
         }
       ]
     },
@@ -148,11 +208,11 @@
           "category": "Cooling Solutions",
           "image": "assets/images/products/Aircon Preventive Maintenance.jpeg",
           "description": "Scheduled preventive maintenance programs to keep your air conditioning units running at peak efficiency. Includes cleaning, inspection, refrigerant check, and performance testing. Emergency repair response available.",
-          "badges": ["Preventive Maintenance", "24/7 Emergency", "All Brands"],
+          "badges": ["Preventive Maintenance", "24/7 Open Channels", "All Brands"],
           "specs": [
             { "key": "Service Type", "value": "Maintenance & Repair" },
             { "key": "Schedule", "value": "Quarterly / Annual" },
-            { "key": "Emergency", "value": "24/7 Response" },
+            { "key": "Emergency", "value": "Our communication channels are 24/7 open" },
             { "key": "Coverage", "value": "All Unit Types & Brands" }
           ],
           "brochure": null
@@ -172,7 +232,7 @@
           "description": "Safe, secure, and weatherproof roof access solutions engineered for all roof pitch angles. Features pad-lockable latches for enhanced security and full safety compliance. Ideal for facilities requiring regular rooftop maintenance access.",
           "badges": ["Weatherproof", "All Pitch Angles", "Safety Compliant"],
           "specs": [
-            { "key": "Application", "value": "Commercial & Industrial" },
+            { "key": "Application", "value": "Residential or Industrial" },
             { "key": "Locking", "value": "Pad-lockable Latch" },
             { "key": "Pitch Compatibility", "value": "All Roof Angles" },
             { "key": "Compliance", "value": "Safety Standards Met" }

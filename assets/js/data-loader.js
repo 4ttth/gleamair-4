@@ -24,11 +24,6 @@ var DB = {
       logo: "assets/images/other/otherbusinesses/3rshane_logo.png"
     },
     {
-      id: "sg-eco",
-      name: "SG Eco Industries",
-      logo: "assets/images/other/otherbusinesses/SG Eco Logo.webp"
-    },
-    {
       id: "fujifilm",
       name: "Fujifilm",
       logo: "assets/images/other/otherbusinesses/Fujifilm.png"
@@ -179,14 +174,6 @@ var DB = {
   ],
   projects: [
     {
-      id: "sg-eco-industries",
-      label: "SG Eco Industries Inc",
-      folder: "SG Eco Industries Inc",
-      images: [
-        "assets/images/client-photos/SG Eco Industries Inc/Copy_of_IMG_1915.jpg"
-      ]
-    },
-    {
       id: "ceva-logistics",
       label: "CEVA Logistics",
       folder: "CEVA Logistics",
@@ -334,6 +321,37 @@ var DB = {
             }
           ],
           brochure: "assets/brochures/Sky-Tunnel-Brochure-Commercial.pdf"
+        },
+        {
+          id: "solar-lights",
+          name: "Solar Lights",
+          category: "Lighting Solutions",
+          image: "assets/images/products/Solar_Light.jpg",
+          description: "Standalone and integrated solar lighting solutions for pathways, perimeters, and outdoor work areas. Designed for dependable night illumination with low operating cost.",
+          badges: [
+            "Solar Powered",
+            "Outdoor Rated",
+            "Low Maintenance"
+          ],
+          specs: [
+            {
+              key: "Applications",
+              value: "Perimeter, pathways, utility areas"
+            },
+            {
+              key: "Power Source",
+              value: "Solar panel + battery"
+            },
+            {
+              key: "Mounting",
+              value: "Pole / wall / bracket"
+            },
+            {
+              key: "Operation",
+              value: "Automatic dusk-to-dawn"
+            }
+          ],
+          brochure: null
         }
       ]
     },
@@ -513,6 +531,99 @@ var DB = {
             }
           ],
           brochure: "assets/brochures/Copy of GA INDUSTRIAL WALL MOUNTED EXHAUST FAN.pdf"
+        },
+        {
+          id: "ducting-kits",
+          name: "Ducting Kits",
+          category: "Ventilation Solutions",
+          image: "assets/images/products/Ducting_Kits.jpg",
+          description: "Complete ducting kits to route and improve extraction flow from roof and attic ventilation systems. Suitable for retrofit and new builds.",
+          badges: [
+            "Complete Kit",
+            "Retrofit Ready",
+            "Corrosion Resistant"
+          ],
+          specs: [
+            {
+              key: "Use Case",
+              value: "Attic and roof ventilation"
+            },
+            {
+              key: "Components",
+              value: "Ducts, clamps, connectors"
+            },
+            {
+              key: "Compatibility",
+              value: "Multiple vent models"
+            },
+            {
+              key: "Installation",
+              value: "Indoor / roof cavity"
+            }
+          ],
+          brochure: null
+        },
+        {
+          id: "under-eave-vents",
+          name: "Under Eave Vents",
+          category: "Ventilation Solutions",
+          image: "assets/images/products/Under_Eave_Vents.png",
+          description: "Fresh-air inlet vents installed under roof eaves to support proper air replacement for attic and roof ventilation systems.",
+          badges: [
+            "Air Inlet",
+            "Passive Ventilation",
+            "Attic Support"
+          ],
+          specs: [
+            {
+              key: "Function",
+              value: "Intake air for attic systems"
+            },
+            {
+              key: "Placement",
+              value: "Under eaves / soffits"
+            },
+            {
+              key: "Material",
+              value: "Weather-resistant polymer/metal"
+            },
+            {
+              key: "Integration",
+              value: "Works with wind and solar vents"
+            }
+          ],
+          brochure: null
+        },
+        {
+          id: "wall-louvres",
+          name: "Wall Louvres",
+          category: "Ventilation Solutions",
+          image: "assets/images/products/Wall_Louvres.jpg",
+          description: "Wall louvre assemblies for controlled intake and exhaust while helping shield interiors from direct rain ingress.",
+          badges: [
+            "Intake / Exhaust",
+            "Weather Shield",
+            "Commercial Grade"
+          ],
+          specs: [
+            {
+              key: "Use",
+              value: "Natural or mechanical ventilation"
+            },
+            {
+              key: "Mounting",
+              value: "Wall-mounted"
+            },
+            {
+              key: "Blade Profile",
+              value: "Rain-deflecting"
+            },
+            {
+              key: "Available Sizes",
+              value: "Customizable by opening"
+            }
+          ],
+          brochure: null
         }
       ]
     },
@@ -556,7 +667,7 @@ var DB = {
           description: "Scheduled preventive maintenance programs to keep your air conditioning units running at peak efficiency. Includes cleaning, inspection, refrigerant check, and performance testing. Emergency repair response available.",
           badges: [
             "Preventive Maintenance",
-            "24/7 Emergency",
+            "24/7 Open Channels",
             "All Brands"
           ],
           specs: [
@@ -570,7 +681,7 @@ var DB = {
             },
             {
               key: "Emergency",
-              value: "24/7 Response"
+              value: "Our communication channels are 24/7 open"
             },
             {
               key: "Coverage",
@@ -600,7 +711,7 @@ var DB = {
           specs: [
             {
               key: "Application",
-              value: "Commercial & Industrial"
+              value: "Residential or Industrial"
             },
             {
               key: "Locking",
@@ -735,9 +846,10 @@ function _buildProductCard(p) {
     return '<div class="prod-spec-row"><span class="prod-spec-key">' + s.key + '</span><span class="prod-spec-val">' + s.value + '</span></div>';
   }).join('');
   var brochureBtn = p.brochure
-    ? '<a href="' + p.brochure + '" target="_blank" class="prod-btn-outline">View Brochure</a>'
+    ? '<a href="' + p.brochure + '" target="_blank" class="prod-btn-outline" onclick="event.stopPropagation()">View Brochure</a>'
     : '';
-  return '<div class="prod-card">' +
+  var hasModal = !!document.getElementById('spec-modal');
+  return '<div class="prod-card"' + (hasModal ? ' role="button" tabindex="0" onclick="openProductSpecsModal(\'' + p.id + '\')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();openProductSpecsModal(\'' + p.id + '\');}"' : '') + '>' +
     imgHtml +
     '<div class="prod-body">' +
     '<span class="prod-cat-tag">' + p.category + '</span>' +
@@ -746,9 +858,45 @@ function _buildProductCard(p) {
     '<div class="prod-badges">' + badges + '</div>' +
     '<div class="prod-specs">' + specs + '</div>' +
     '<div class="prod-actions">' +
-    '<a href="contact.html" class="prod-btn-primary">Request Quote</a>' +
+    '<a href="contact.html" class="prod-btn-primary" onclick="event.stopPropagation()">Request Quote</a>' +
     brochureBtn +
     '</div></div></div>';
+}
+
+var BROCHURE_LIBRARY = {
+  'sky-tunnel-residential': ['assets/brochures/Sky-Tunnel-Brochure-Residential.pdf'],
+  'sky-tunnel-commercial': ['assets/brochures/Sky-Tunnel-Brochure-Commercial.pdf'],
+  'gvs-15w': ['assets/brochures/GVS 15W.pdf'],
+  'gvs-30w': ['assets/brochures/GVS-30W Flyer.pdf'],
+  'whirlwind-plus': ['assets/brochures/Whirlwind-Plus-Flyer.pdf'],
+  'industrial-exhaust-fan': ['assets/brochures/Copy of GA INDUSTRIAL WALL MOUNTED EXHAUST FAN.pdf'],
+  'roof-hatch': ['assets/brochures/Access_Hatches.pdf']
+};
+
+function _inferUseCase(p) {
+  var preferredKeys = ['Application', 'Use Case', 'Service Type', 'Coverage'];
+  for (var i = 0; i < preferredKeys.length; i++) {
+    var found = p.specs.find(function(s) { return s.key === preferredKeys[i]; });
+    if (found) return found.value;
+  }
+  return p.category;
+}
+
+function _buildBrochureLinks(p) {
+  var list = [];
+  if (p.brochure) list.push(p.brochure);
+  if (BROCHURE_LIBRARY[p.id]) {
+    BROCHURE_LIBRARY[p.id].forEach(function(path) {
+      if (list.indexOf(path) === -1) list.push(path);
+    });
+  }
+  if (!list.length) {
+    return '<p class="spec-modal-note">No dedicated brochure file is currently linked for this product. Contact our team for full technical documentation.</p>';
+  }
+  return '<div class="spec-modal-list">' + list.map(function(path) {
+    var name = path.split('/').pop();
+    return '<a href="' + path + '" target="_blank" class="prod-btn-outline">Open ' + name + '</a>';
+  }).join('') + '</div>';
 }
 
 function renderProductCatalog() {
@@ -757,6 +905,68 @@ function renderProductCatalog() {
     if (!el) return;
     el.innerHTML = cat.products.map(_buildProductCard).join('');
   });
+}
+
+function _findProductById(productId) {
+  for (var i = 0; i < DB.categories.length; i++) {
+    for (var j = 0; j < DB.categories[i].products.length; j++) {
+      if (DB.categories[i].products[j].id === productId) return DB.categories[i].products[j];
+    }
+  }
+  return null;
+}
+
+function openProductSpecsModal(productId) {
+  var modal = document.getElementById('spec-modal');
+  var body = document.getElementById('spec-modal-body');
+  if (!modal || !body) return;
+  var p = _findProductById(productId);
+  if (!p) return;
+
+  var imageHtml = p.image
+    ? '<img src="' + p.image + '" alt="' + p.name + '" class="spec-modal-img">'
+    : '';
+
+  var badgeHtml = p.badges.map(function(b) {
+    return '<span class="prod-badge">' + b + '</span>';
+  }).join('');
+
+  var specRows = p.specs.map(function(s) {
+    return '<div class="prod-spec-row"><span class="prod-spec-key">' + s.key + '</span><span class="prod-spec-val">' + s.value + '</span></div>';
+  }).join('');
+
+  var brochureHtml = _buildBrochureLinks(p);
+  var useCase = _inferUseCase(p);
+  var quickFacts =
+    '<div class="spec-modal-facts">' +
+      '<div class="spec-modal-fact"><span class="spec-modal-fact-k">Category</span><span class="spec-modal-fact-v">' + p.category + '</span></div>' +
+      '<div class="spec-modal-fact"><span class="spec-modal-fact-k">Primary Use</span><span class="spec-modal-fact-v">' + useCase + '</span></div>' +
+      '<div class="spec-modal-fact"><span class="spec-modal-fact-k">Model Code</span><span class="spec-modal-fact-v">' + p.id + '</span></div>' +
+      '<div class="spec-modal-fact"><span class="spec-modal-fact-k">Spec Lines</span><span class="spec-modal-fact-v">' + p.specs.length + '</span></div>' +
+    '</div>';
+
+  body.innerHTML =
+    imageHtml +
+    '<div class="prod-cat-tag" style="margin-top:1rem;">' + p.category + '</div>' +
+    '<div class="prod-name" style="margin-top:0.6rem;">' + p.name + '</div>' +
+    '<p class="prod-desc" style="margin-top:0.5rem;">' + p.description + '</p>' +
+    '<div class="prod-badges" style="margin-bottom:1rem;">' + badgeHtml + '</div>' +
+    quickFacts +
+    '<div class="spec-modal-section-title">Detailed Specifications</div>' +
+    '<div class="prod-specs">' + specRows + '</div>' +
+    '<div class="spec-modal-section-title">Brochure Documents</div>' +
+    '<p class="spec-modal-note">Full dimensional drawings and expanded technical information are available in the brochure files below.</p>' +
+    brochureHtml;
+
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeProductSpecsModal() {
+  var modal = document.getElementById('spec-modal');
+  if (!modal) return;
+  modal.classList.remove('open');
+  document.body.style.overflow = '';
 }
 
 /* ── AUTO-INIT ── */

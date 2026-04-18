@@ -154,6 +154,50 @@
   .prod-btn-outline { border: 1.5px solid var(--blue-dark); color: var(--blue-dark); font-family: 'Barlow Condensed', sans-serif; font-size: 0.72rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 0.6rem 1.2rem; border-radius: 2px; text-decoration: none; transition: background 0.2s, color 0.2s; }
   .prod-btn-outline:hover { background: var(--blue-dark); color: var(--white); }
 
+  /* ─── SPEC MODAL ─── */
+  .spec-modal {
+    position: fixed; inset: 0; z-index: 999;
+    background: rgba(6, 15, 30, 0.65);
+    display: none; align-items: center; justify-content: center;
+    padding: 1.25rem;
+  }
+  .spec-modal.open { display: flex; }
+  .spec-modal-dialog {
+    width: min(760px, 100%);
+    max-height: 88vh;
+    overflow: auto;
+    background: #ffffff;
+    border-radius: 8px;
+    border-top: 4px solid var(--gold);
+    box-shadow: 0 26px 80px rgba(0, 0, 0, 0.35);
+    padding: 1.25rem 1.25rem 1.5rem;
+  }
+  .spec-modal-head {
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid #e9edf5; padding-bottom: 0.8rem; margin-bottom: 0.9rem;
+  }
+  .spec-modal-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1rem; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--blue-dark); font-weight: 700;
+  }
+  .spec-modal-close {
+    border: none; background: #eef2fa; color: var(--blue-dark); cursor: pointer;
+    width: 34px; height: 34px; border-radius: 4px; font-size: 1.1rem; font-weight: 700;
+  }
+  .spec-modal-img {
+    width: 100%; max-height: 280px; object-fit: cover;
+    border-radius: 4px; border: 1px solid #e5ebf5;
+  }
+  .spec-modal-facts { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin: 0.2rem 0 1rem; }
+  .spec-modal-fact { background: var(--off-white); border: 1px solid #e6ebf4; border-radius: 4px; padding: 0.7rem 0.8rem; }
+  .spec-modal-fact-k { display: block; font-family: 'Barlow Condensed', sans-serif; font-size: 0.66rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--text-mid); }
+  .spec-modal-fact-v { display: block; margin-top: 0.18rem; font-size: 0.84rem; font-weight: 700; color: var(--blue-dark); }
+  .spec-modal-section-title { font-family: 'Barlow Condensed', sans-serif; font-size: 0.86rem; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; color: var(--blue-dark); margin: 1rem 0 0.45rem; }
+  .spec-modal-note { font-size: 0.82rem; color: var(--text-mid); line-height: 1.65; margin-bottom: 0.8rem; }
+  .spec-modal-list { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .spec-modal-list .prod-btn-outline { font-size: 0.7rem; padding: 0.5rem 0.85rem; }
+
   /* ─── CTA BAND ─── */
   .cta-band { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%); padding: 80px 5%; text-align: center; }
   .cta-band h2 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem,4vw,3.5rem); color: var(--blue-dark); margin-bottom: 1rem; letter-spacing: 1px; }
@@ -192,6 +236,7 @@
   @media (max-width: 600px) {
     .products-grid { grid-template-columns: 1fr; }
     .footer-grid { grid-template-columns: 1fr; }
+    .spec-modal-facts { grid-template-columns: 1fr; }
   }
 </style>
 
@@ -223,6 +268,7 @@
         <a href="product-catalog.html?cat=building" data-cat="building">Building Solutions</a>
       </div>
     </div>
+    <a href="grow-with-us.html">Grow with us</a>
     <a href="contact.html" class="nav-cta">Contact Us</a>
   </div>
 </nav>
@@ -290,6 +336,16 @@
   </div><!-- /.section-inner -->
 </section>
 
+<div class="spec-modal" id="spec-modal" aria-hidden="true">
+  <div class="spec-modal-dialog">
+    <div class="spec-modal-head">
+      <div class="spec-modal-title">Product Specifications</div>
+      <button type="button" class="spec-modal-close" onclick="closeProductSpecsModal()">&times;</button>
+    </div>
+    <div id="spec-modal-body"></div>
+  </div>
+</div>
+
 <!-- CTA BAND -->
 <div class="cta-band">
   <h2>Ready to Order or Inquire?</h2>
@@ -313,6 +369,7 @@
       <a href="about.html">About Us</a>
       <a href="about.html#mission">Mission &amp; Vision</a>
       <a href="contact.html">Contact</a>
+      <a href="grow-with-us.html">Grow with us</a>
     </div>
     <div class="footer-col">
       <div class="footer-col-title">Services</div>
@@ -429,6 +486,13 @@
     var cat = params.get('cat');
     setCategory(validCats.includes(cat) ? cat : 'lighting');
   })();
+
+  document.getElementById('spec-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeProductSpecsModal();
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeProductSpecsModal();
+  });
 </script>
 <script src="assets/js/data-loader.js"></script>
 </body>

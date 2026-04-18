@@ -3,14 +3,6 @@
   "_comment": "MAX OF 9 FILES ONLY (GRID 9) This file contains a list of recently edited projects. It is used to populate the 'Recent Projects' section on the website. Each project has an id, label, folder name, and a list of image paths.",
   "projects": [
     {
-      "id": "sg-eco-industries",
-      "label": "SG Eco Industries Inc",
-      "folder": "SG Eco Industries Inc",
-      "images": [
-        "assets/images/client-photos/SG Eco Industries Inc/Copy_of_IMG_1915.jpg"
-      ]
-    },
-    {
       "id": "ceva-logistics",
       "label": "CEVA Logistics",
       "folder": "CEVA Logistics",

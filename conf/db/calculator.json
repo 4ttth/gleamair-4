@@ -1,18 +1,22 @@
 {
   "ventilator": {
     "label": "Ventilator Sizing",
-    "description": "Estimate the required ventilator size and quantity for your building using the industrial specification formula.",
-    "usageTypes": [
-      { "label": "Workshops (5–10 ACH)",                    "value": 7.5  },
-      { "label": "Factories with Welding (10–15 ACH)",      "value": 12.5 },
-      { "label": "Warehouses / Storage (5–8 ACH)",          "value": 6.5  },
-      { "label": "Gymnasiums (5–10 ACH)",                   "value": 7.5  },
-      { "label": "Assembly Halls (10–15 ACH)",              "value": 12.5 },
-      { "label": "Garages (10–15 ACH)",                     "value": 12.5 },
-      { "label": "Toilets (12–15 ACH)",                     "value": 13.5 },
-      { "label": "Laundries (12–20 ACH)",                   "value": 16.0 },
-      { "label": "High Smell — Poultry / Piggeries (10–50 ACH)", "value": 30.0 }
-    ],
+    "description": "Estimate recommended ventilator model and quantity using building volume, ACH, and windspeed.",
+    "sectors": {
+      "residential": [
+        { "label": "Attic / Ceiling Space (6–8 ACH)", "value": 7 },
+        { "label": "Bedrooms / Living Areas (8–10 ACH)", "value": 9 },
+        { "label": "Kitchen / Laundry (10–15 ACH)", "value": 12 }
+      ],
+      "commercial": [
+        { "label": "Factories & Warehouses (5–10 ACH)", "value": 7.5 },
+        { "label": "Gymnasiums (10–15 ACH)", "value": 12.5 },
+        { "label": "Assembly Halls (10–15 ACH)", "value": 12.5 },
+        { "label": "Toilets (10–15 ACH)", "value": 12.5 },
+        { "label": "Laundries (15–20 ACH)", "value": 17.5 },
+        { "label": "High Smell (Piggeries etc) (20–30 ACH)", "value": 25 }
+      ]
+    },
     "windspeeds": [
       { "label": "6 km/hr (Low)",    "value": "6"  },
       { "label": "12 km/hr (Avg)",   "value": "12" },
@@ -24,6 +28,7 @@
       { "label": "Whirlwind Plus",       "lps": { "6": 210,  "12": 420,  "16": 540  }, "cfm": { "6": 445,  "12": 890,  "16": 1144 } },
       { "label": "GVS-30W (Solar)",      "lps": { "6": 220,  "12": 480,  "16": 600  }, "cfm": { "6": 466,  "12": 1017, "16": 1271 } },
       { "label": "GVW300 — 300mm",       "lps": { "6": 270,  "12": 480,  "16": 620  }, "cfm": { "6": 572,  "12": 1017, "16": 1314 } },
+      { "label": "GVW400 — 400mm",       "lps": { "6": 387,  "12": 688,  "16": 887  }, "cfm": { "6": 820,  "12": 1458, "16": 1880 } },
       { "label": "GVW300 Plus — 300mm+", "lps": { "6": 540,  "12": 960,  "16": 1240 }, "cfm": { "6": 1144, "12": 2034, "16": 2628 } },
       { "label": "GVW600 — 600mm",       "lps": { "6": 620,  "12": 1104, "16": 1420 }, "cfm": { "6": 1314, "12": 2339, "16": 3009 } },
       { "label": "GVW900 — 900mm",       "lps": { "6": 1560, "12": 2700, "16": 3460 }, "cfm": { "6": 3305, "12": 5721, "16": 7331 } }

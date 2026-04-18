@@ -97,8 +97,10 @@
   .contact-item-val { font-size: 0.92rem; color: var(--blue-dark); font-weight: 500; line-height: 1.5; }
   .contact-divider { height: 1px; background: #dde3ee; margin: 2rem 0; }
   .shopee-block { background: var(--blue-dark); border-radius: 3px; padding: 1.5rem 1.75rem; display: flex; align-items: center; gap: 1rem; border-left: 4px solid var(--gold); }
+  .shopee-block svg { width: 24px; height: 24px; stroke: var(--gold); fill: none; stroke-width: 1.7; flex-shrink: 0; }
   .shopee-label { font-family: 'Barlow Condensed', sans-serif; font-size: 0.72rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 4px; }
   .shopee-val { font-size: 0.92rem; color: var(--white); font-weight: 500; }
+  .social-blocks { display: grid; grid-template-columns: 1fr; gap: 0.75rem; }
 
   /* FORM SIDE */
   .contact-form-wrap { background: var(--white); border-radius: 4px; padding: 3.5rem; box-shadow: 0 4px 40px rgba(0,0,0,0.07); border-top: 3px solid var(--gold); }
@@ -162,6 +164,9 @@
     .contact-form-wrap { padding: 2rem; }
     .footer-grid { grid-template-columns: 1fr 1fr; gap: 2.5rem; }
   }
+  @media (min-width: 601px) and (max-width: 900px) {
+    .social-blocks { grid-template-columns: 1fr 1fr; }
+  }
 </style>
 </head>
 <body>
@@ -191,6 +196,7 @@
         <a href="product-catalog.html?cat=building">Building Solutions</a>
       </div>
     </div>
+    <a href="grow-with-us.html">Grow with us</a>
     <a href="contact.html" class="active nav-cta">Contact Us</a>
   </div>
 </nav>
@@ -213,7 +219,7 @@
       <div>
         <div class="section-eyebrow">Get In Touch</div>
         <h2 class="section-title" style="color:var(--blue-dark);">We Are Ready to Assist You</h2>
-        <p class="contact-lead">Whether you have a straightforward aircon requirement or a complex multi-system building project, our team is equipped to assess your needs and provide a professional recommendation.</p>
+        <p class="contact-lead">Whether you need a simple fan installation or a complete cooling solution, our team is ready to help. We provide practical recommendations tailored to your space and budget.</p>
 
         <div class="contact-item">
           <div class="contact-icon">
@@ -247,12 +253,42 @@
 
         <div class="contact-divider"></div>
 
-        <div class="shopee-block">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-          <div>
-            <div class="shopee-label">Shopee Store</div>
-            <div class="shopee-val">gleamairenterprises_</div>
-          </div>
+        <div class="social-blocks">
+          <a class="shopee-block" href="https://shopee.ph/gleamairenterprises_" target="_blank" rel="noopener" style="text-decoration:none;">
+            <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+            <div>
+              <div class="shopee-label">Shopee</div>
+              <div class="shopee-val">gleamairenterprises_</div>
+            </div>
+          </a>
+          <a class="shopee-block" href="https://www.lazada.com.ph/gleamair-enterprises/?q=All-Products" target="_blank" rel="noopener" style="text-decoration:none;">
+            <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+            <div>
+              <div class="shopee-label">Lazada</div>
+              <div class="shopee-val">gleamair-enterprises</div>
+            </div>
+          </a>
+          <a class="shopee-block" href="https://www.tiktok.com/@gleamairenterprises" target="_blank" rel="noopener" style="text-decoration:none;">
+            <svg viewBox="0 0 24 24"><path d="M14 3v11.6a3.6 3.6 0 11-2.6-3.4"/><path d="M14 4.5c1.2 1.8 2.5 2.9 4.4 3.2"/></svg>
+            <div>
+              <div class="shopee-label">TikTok</div>
+              <div class="shopee-val">@gleamairenterprises</div>
+            </div>
+          </a>
+          <a class="shopee-block" href="https://www.instagram.com/Gleamaire/" target="_blank" rel="noopener" style="text-decoration:none;">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>
+            <div>
+              <div class="shopee-label">Instagram</div>
+              <div class="shopee-val">@Gleamaire</div>
+            </div>
+          </a>
+          <a class="shopee-block" href="https://www.facebook.com/profile.php?id=61550651532632" target="_blank" rel="noopener" style="text-decoration:none;">
+            <svg viewBox="0 0 24 24"><path d="M13 22v-8h3l.5-4H13V8.2c0-1.1.3-1.9 1.9-1.9H17V2.8c-.4-.1-1.6-.3-3-.3-3 0-5 1.8-5 5.2V10H6v4h3v8"/></svg>
+            <div>
+              <div class="shopee-label">Facebook</div>
+              <div class="shopee-val">Gleamair Enterprises</div>
+            </div>
+          </a>
         </div>
       </div>
 
@@ -331,6 +367,7 @@
       <a href="about.html">About Us</a>
       <a href="about.html#mission">Mission &amp; Vision</a>
       <a href="contact.html">Contact</a>
+      <a href="grow-with-us.html">Grow with us</a>
     </div>
     <div class="footer-col">
       <div class="footer-col-title">Services</div>

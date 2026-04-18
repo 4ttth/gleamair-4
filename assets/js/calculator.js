@@ -8,45 +8,49 @@
 var CALC = {
   ventilator: {
     label: "Ventilator Sizing",
-    description: "Estimate the required ventilator size and quantity for your building using the industrial specification formula.",
-    usageTypes: [
-      {
-        label: "Workshops (5–10 ACH)",
-        value: 7.5
-      },
-      {
-        label: "Factories with Welding (10–15 ACH)",
-        value: 12.5
-      },
-      {
-        label: "Warehouses / Storage (5–8 ACH)",
-        value: 6.5
-      },
-      {
-        label: "Gymnasiums (5–10 ACH)",
-        value: 7.5
-      },
-      {
-        label: "Assembly Halls (10–15 ACH)",
-        value: 12.5
-      },
-      {
-        label: "Garages (10–15 ACH)",
-        value: 12.5
-      },
-      {
-        label: "Toilets (12–15 ACH)",
-        value: 13.5
-      },
-      {
-        label: "Laundries (12–20 ACH)",
-        value: 16.0
-      },
-      {
-        label: "High Smell — Poultry / Piggeries (10–50 ACH)",
-        value: 30.0
-      }
-    ],
+    description: "Estimate recommended ventilator model and quantity using building volume, ACH, and windspeed.",
+    sectors: {
+      residential: [
+        {
+          label: "Attic / Ceiling Space (6–8 ACH)",
+          value: 7
+        },
+        {
+          label: "Bedrooms / Living Areas (8–10 ACH)",
+          value: 9
+        },
+        {
+          label: "Kitchen / Laundry (10–15 ACH)",
+          value: 12
+        }
+      ],
+      commercial: [
+        {
+          label: "Factories & Warehouses (5–10 ACH)",
+          value: 7.5
+        },
+        {
+          label: "Gymnasiums (10–15 ACH)",
+          value: 12.5
+        },
+        {
+          label: "Assembly Halls (10–15 ACH)",
+          value: 12.5
+        },
+        {
+          label: "Toilets (10–15 ACH)",
+          value: 12.5
+        },
+        {
+          label: "Laundries (15–20 ACH)",
+          value: 17.5
+        },
+        {
+          label: "High Smell (Piggeries etc) (20–30 ACH)",
+          value: 25
+        }
+      ]
+    },
     windspeeds: [
       {
         label: "6 km/hr (Low)",
@@ -125,7 +129,22 @@ var CALC = {
           6: 572,
           12: 1017,
           16: 1314
-        }
+        },
+        isResidential: true
+      },
+      {
+        label: "GVW400 — 400mm",
+        lps: {
+          6: 387,
+          12: 688,
+          16: 887
+        },
+        cfm: {
+          6: 820,
+          12: 1458,
+          16: 1880
+        },
+        isResidential: true
       },
       {
         label: "GVW300 Plus — 300mm+",
@@ -151,7 +170,8 @@ var CALC = {
           6: 1314,
           12: 2339,
           16: 3009
-        }
+        },
+        isResidential: false
       },
       {
         label: "GVW900 — 900mm",
@@ -164,7 +184,8 @@ var CALC = {
           6: 3305,
           12: 5721,
           16: 7331
-        }
+        },
+        isResidential: false
       }
     ]
   },
@@ -346,41 +367,65 @@ function buildCalcUI() {
   }).join('');
 
   panels.innerHTML = buildVentilatorPanel() + buildSolarPanel() + buildAirconPanel();
+  setVentSector('residential');
 }
 
 /* ── VENTILATOR PANEL ── */
 function buildVentilatorPanel() {
-  var usageOpts = CALC.ventilator.usageTypes.map(function(u) {
-    return '<option value="' + u.value + '">' + u.label + '</option>';
-  }).join('');
-
   var wsOpts = CALC.ventilator.windspeeds.map(function(w, i) {
     return '<option value="' + w.value + '"' + (i === 1 ? ' selected' : '') + '>' + w.label + '</option>';
   }).join('');
 
   return '<div class="calc-panel active" id="panel-ventilator">' +
-    '<p style="font-size:0.82rem;color:var(--text-mid);margin-bottom:1.25rem;line-height:1.6;">Formula: <strong>E = (VOL &times; A/C &times; 0.278) / N</strong> &mdash; where E is the required exhaust capacity per vent (L/s).</p>' +
+    '<p style="font-size:0.82rem;color:var(--text-mid);margin-bottom:1.25rem;line-height:1.6;">Formula: <strong>TBV = L &times; W &times; H</strong>, <strong>TVR = (TBV &times; ACH) &times; 0.278</strong>, then <strong>No. of Vents = TVR / Model Capacity</strong> (rounded up).</p>' +
+    '<div class="calc-row-2" style="margin-bottom:1rem;">' +
+    '<button type="button" class="calc-btn" id="v-sector-res" onclick="setVentSector(\'residential\')" style="padding:0.6rem 1rem;background:var(--blue-dark);color:var(--gold);">Residential</button>' +
+    '<button type="button" class="calc-btn" id="v-sector-com" onclick="setVentSector(\'commercial\')" style="padding:0.6rem 1rem;background:#dfe6f4;color:var(--blue-dark);">Commercial / Industrial</button>' +
+    '</div>' +
     '<div class="calc-grid">' +
     '<div class="form-group"><label>Length (m)</label><input type="number" id="v-length" placeholder="e.g. 25" min="0"></div>' +
     '<div class="form-group"><label>Width (m)</label><input type="number" id="v-width" placeholder="e.g. 30" min="0"></div>' +
     '<div class="form-group"><label>Height (m)</label><input type="number" id="v-height" placeholder="e.g. 6" min="0"></div>' +
     '</div>' +
     '<div class="calc-grid">' +
-    '<div class="form-group"><label>Building Type (A/C)</label><select id="v-usage">' + usageOpts + '</select></div>' +
-    '<div class="form-group"><label>No. of Vents (N)</label><input type="number" id="v-n" placeholder="e.g. 6" min="1" value="1"></div>' +
+    '<div class="form-group"><label>Building Type / Usage (ACH)</label><select id="v-usage"></select></div>' +
     '<div class="form-group"><label>Reference Windspeed</label><select id="v-ws">' + wsOpts + '</select></div>' +
+    '<div class="form-group"><label>Computation Basis</label><input type="text" value="Auto-recommended model and vent quantity" readonly></div>' +
     '</div>' +
     '<button class="calc-btn" onclick="calcVentilator()">Calculate Requirements</button>' +
     '<div class="calc-result" id="res-ventilator">' +
     '<div class="result-row">' +
     '<div class="result-item"><div class="result-val" id="v-resVol">\u2014</div><div class="result-label">Volume (m\u00b3)</div></div>' +
-    '<div class="result-item"><div class="result-val" id="v-resE">\u2014</div><div class="result-label">Required E per Vent (L/s)</div></div>' +
-    '<div class="result-item"><div class="result-val" id="v-resCFM">\u2014</div><div class="result-label">Required E per Vent (CFM)</div></div>' +
+    '<div class="result-item"><div class="result-val" id="v-resAirflow">\u2014</div><div class="result-label">Total Airflow (m\u00b3/hr)</div></div>' +
+    '<div class="result-item"><div class="result-val" id="v-resTVR">\u2014</div><div class="result-label">TVR (L/s)</div></div>' +
     '</div>' +
     '<div class="calc-result-rec" id="v-resRec"></div>' +
-    '<p class="result-note">Based on E = (VOL \u00d7 A/C \u00d7 0.278) / N. Contact us for a detailed site assessment.</p>' +
+    '<p class="result-note">Important: the space or attic should have enough air inlets (e.g., under eave vents, windows, rolling doors, etc.) where air enters to replace the hot air being exhausted.</p>' +
     '</div>' +
     '</div>';
+}
+
+function setVentSector(sector) {
+  var usage = document.getElementById('v-usage');
+  var btnRes = document.getElementById('v-sector-res');
+  var btnCom = document.getElementById('v-sector-com');
+  if (!usage || !btnRes || !btnCom) return;
+  var opts = CALC.ventilator.sectors[sector] || CALC.ventilator.sectors.residential;
+  usage.innerHTML = opts.map(function(u) {
+    return '<option value="' + u.value + '">' + u.label + '</option>';
+  }).join('');
+  usage.dataset.sector = sector;
+  if (sector === 'residential') {
+    btnRes.style.background = 'var(--blue-dark)';
+    btnRes.style.color = 'var(--gold)';
+    btnCom.style.background = '#dfe6f4';
+    btnCom.style.color = 'var(--blue-dark)';
+  } else {
+    btnCom.style.background = 'var(--blue-dark)';
+    btnCom.style.color = 'var(--gold)';
+    btnRes.style.background = '#dfe6f4';
+    btnRes.style.color = 'var(--blue-dark)';
+  }
 }
 
 /* ── SOLAR PANEL ── */
@@ -447,53 +492,100 @@ function switchCalcTab(name, btn) {
   btn.classList.add('active');
   var panel = document.getElementById('panel-' + name);
   if (panel) panel.classList.add('active');
+  if (name === 'ventilator') setVentSector('residential');
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
    CALCULATIONS
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* ── VENTILATOR: E = (VOL * A/C * 0.278) / N ── */
+/* ── VENTILATOR: TBV, airflow, TVR, then model quantity ── */
 function calcVentilator() {
   var l  = parseFloat(document.getElementById('v-length').value) || 0;
   var w  = parseFloat(document.getElementById('v-width').value)  || 0;
   var h  = parseFloat(document.getElementById('v-height').value) || 0;
-  var ac = parseFloat(document.getElementById('v-usage').value);
-  var n  = parseInt(document.getElementById('v-n').value)        || 1;
+  var usageEl = document.getElementById('v-usage');
+  var ac = parseFloat(usageEl.value);
+  var sector = usageEl.dataset.sector || 'residential';
   var ws = document.getElementById('v-ws').value;
   if (!l || !w || !h) return;
 
   var vol = l * w * h;
-  var E   = (vol * ac * 0.278) / n;
-  var Ecfm = E * 2.119; // L/s to CFM
+  var airflowHr = vol * ac;
+  var tvr = airflowHr * 0.278;
 
   document.getElementById('v-resVol').textContent = vol.toFixed(0);
-  document.getElementById('v-resE').textContent   = E.toFixed(1);
-  document.getElementById('v-resCFM').textContent = Ecfm.toFixed(0);
+  document.getElementById('v-resAirflow').textContent = airflowHr.toFixed(0);
+  document.getElementById('v-resTVR').textContent = tvr.toFixed(0);
 
-  // Sort sizes ascending by lps at selected windspeed, then find smallest >= E
-  var sizes = CALC.ventilator.sizes.slice().sort(function(a, b) { return a.lps[ws] - b.lps[ws]; });
-  var match = null;
-  for (var i = 0; i < sizes.length; i++) {
-    if (sizes[i].lps[ws] >= E) { match = sizes[i]; break; }
+  var allSizes = CALC.ventilator.sizes.slice();
+  var commercialSizes = allSizes.filter(function(s) {
+    return s.label.indexOf('Whirlwind') === -1 && s.label.indexOf('Solar') === -1 && s.label.indexOf('Plus') === -1;
+  });
+  var residentialChoices = allSizes.filter(function(s) {
+    return s.label === 'Whirlwind' || s.label.indexOf('GVW300') === 0;
+  });
+  var sizingSet = sector === 'residential' ? residentialChoices : commercialSizes;
+
+  function unitsFor(size) {
+    var cap = size.lps[ws] || 1;
+    return Math.max(1, Math.ceil(tvr / cap));
   }
-  if (!match) match = sizes[sizes.length - 1];
 
+  var sorted = sizingSet.slice().sort(function(a, b) {
+    return (a.lps[ws] || 0) - (b.lps[ws] || 0);
+  });
+
+  var preferred = sorted[0];
+  for (var i = 0; i < sorted.length; i++) {
+    if (unitsFor(sorted[i]) <= 8) {
+      preferred = sorted[i];
+      break;
+    }
+    preferred = sorted[i];
+  }
+
+  var preferredUnits = unitsFor(preferred);
   var rec = document.getElementById('v-resRec');
-  rec.innerHTML =
-    '<div class="result-bottom-grid">' +
-    '<div class="result-rec-box">' +
-    '<div class="result-rec-label">Recommended Ventilator</div>' +
-    '<div class="result-rec-name">' + match.label + '</div>' +
-    '<div class="result-rec-detail">Capacity at ' + ws + ' km/hr: <strong>' + match.lps[ws] + ' L/s</strong> &nbsp;/&nbsp; <strong>' + match.cfm[ws] + ' CFM</strong></div>' +
-    '<div class="result-rec-detail">Quantity: <strong>' + n + ' unit' + (n > 1 ? 's' : '') + '</strong></div>' +
-    '</div>' +
-    '<div class="result-rec-cta">' +
-    '<div class="result-rec-cta-title">Need a More Detailed Assessment?</div>' +
-    '<p>Every facility is different. Our team can conduct a full on-site ventilation assessment to give you the most accurate specification.</p>' +
-    '<a href="contact.html" class="result-cta-btn">Contact Us for a Site Assessment &rarr;</a>' +
-    '</div>' +
-    '</div>';
+
+  if (sector === 'residential') {
+    var residentialHtml = residentialChoices.map(function(opt) {
+      return '<div class="result-rec-detail" style="margin-bottom:0.45rem;">' +
+        '<strong>' + opt.label + ':</strong> ' + unitsFor(opt) + ' unit' + (unitsFor(opt) > 1 ? 's' : '') +
+        ' <span style="opacity:0.8;">(' + opt.lps[ws] + ' L/s each at ' + ws + ' km/hr)</span></div>';
+    }).join('');
+
+    rec.innerHTML =
+      '<div class="result-bottom-grid">' +
+      '<div class="result-rec-box">' +
+      '<div class="result-rec-label">Recommended for Residential</div>' +
+      '<div class="result-rec-name">Whirlwind or GVW300</div>' +
+      residentialHtml +
+      '<div class="result-rec-detail">Total Ventilation Rate: <strong>' + tvr.toFixed(0) + ' L/s</strong></div>' +
+      '</div>' +
+      '<div class="result-rec-cta">' +
+      '<div class="result-rec-cta-title">Need a More Detailed Assessment?</div>' +
+      '<p>Every facility is different. Our team can conduct a full ventilation assessment to give you the most accurate specification.</p>' +
+      '<a href="contact.html" class="result-cta-btn">Contact Us for a Site Assessment &rarr;</a>' +
+      '</div>' +
+      '</div>';
+  } else {
+    rec.innerHTML =
+      '<div class="result-bottom-grid">' +
+      '<div class="result-rec-box">' +
+      '<div class="result-rec-label">Recommended Ventilator</div>' +
+      '<div class="result-rec-name">' + preferred.label + '</div>' +
+      '<div class="result-rec-detail">Capacity at ' + ws + ' km/hr: <strong>' + preferred.lps[ws] + ' L/s</strong> &nbsp;/&nbsp; <strong>' + preferred.cfm[ws] + ' CFM</strong></div>' +
+      '<div class="result-rec-detail">Suggested Quantity: <strong>' + preferredUnits + ' unit' + (preferredUnits > 1 ? 's' : '') + '</strong></div>' +
+      '<div class="result-rec-detail">TVR Basis: <strong>' + tvr.toFixed(0) + ' L/s</strong></div>' +
+      '</div>' +
+      '<div class="result-rec-cta">' +
+      '<div class="result-rec-cta-title">Need a More Detailed Assessment?</div>' +
+      '<p>Every facility is different. Our team can conduct a full ventilation assessment to give you the most accurate specification.</p>' +
+      '<a href="contact.html" class="result-cta-btn">Contact Us for a Site Assessment &rarr;</a>' +
+      '</div>' +
+      '</div>';
+  }
 
   document.getElementById('res-ventilator').classList.add('show');
 }
