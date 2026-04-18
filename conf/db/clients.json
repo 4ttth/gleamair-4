@@ -12,6 +12,7 @@
     { "id": "hapimi",            "name": "Hapimi",                          "logo": "assets/images/other/otherbusinesses/hapimi.png" },
     { "id": "jocfabrication",    "name": "JOC Fabrication & Construction",  "logo": "assets/images/other/otherbusinesses/jocfabrication&construction.png" },
     { "id": "nbelectrical",      "name": "NB Electrical",                   "logo": "assets/images/other/otherbusinesses/nbelectrical.png" },
-    { "id": "trinav",            "name": "Trinav",                          "logo": "assets/images/other/otherbusinesses/trinav.png" }
+    { "id": "trinav",            "name": "Trinav",                          "logo": "assets/images/other/otherbusinesses/trinav.png" },
+    { "id": "sg-eco-industries", "name": "SG Eco Industries Inc",           "logo": "assets/images/other/otherbusinesses/SG Eco Logo.webp" }
   ]
 }

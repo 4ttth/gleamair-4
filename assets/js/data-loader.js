@@ -72,6 +72,11 @@ var DB = {
       id: "trinav",
       name: "Trinav",
       logo: "assets/images/other/otherbusinesses/trinav.png"
+    },
+    {
+      id: "sg-eco-industries",
+      name: "SG Eco Industries Inc",
+      logo: "assets/images/other/otherbusinesses/SG Eco Logo.webp"
     }
   ],
   testimonials: [
@@ -243,6 +248,14 @@ var DB = {
       folder: "Residential Bamban",
       images: [
         "assets/images/client-photos/Residential - Bamban/Copy_of_IMG_1913.jpg"
+      ]
+    },
+    {
+      id: "sg-eco-industries",
+      label: "SG Eco Industries Inc",
+      folder: "SG Eco Industries Inc",
+      images: [
+        "assets/images/client-photos/SG Eco Industries Inc/Copy_of_IMG_1915.jpg"
       ]
     }
   ],

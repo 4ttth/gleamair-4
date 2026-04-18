@@ -73,6 +73,14 @@
       "images": [
         "assets/images/client-photos/Residential - Bamban/Copy_of_IMG_1913.jpg"
       ]
+    },
+    {
+      "id": "sg-eco-industries",
+      "label": "SG Eco Industries Inc",
+      "folder": "SG Eco Industries Inc",
+      "images": [
+        "assets/images/client-photos/SG Eco Industries Inc/Copy_of_IMG_1915.jpg"
+      ]
     }
   ]
 }
