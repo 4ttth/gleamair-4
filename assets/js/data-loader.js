@@ -302,7 +302,7 @@ var DB = {
               value: "Acrylic or Polycarbonate"
             }
           ],
-          brochure: "assets/brochures/Sky-Tunnel-Brochure-Residential.pdf"
+          brochure: null
         },
         {
           id: "sky-tunnel-commercial",
@@ -333,7 +333,7 @@ var DB = {
               value: "BBA & AS4285"
             }
           ],
-          brochure: "assets/brochures/Sky-Tunnel-Brochure-Commercial.pdf"
+          brochure: null
         },
         {
           id: "solar-lights",
@@ -410,7 +410,7 @@ var DB = {
               value: "304 Stainless Steel"
             }
           ],
-          brochure: null
+          brochure: "assets/brochures/Green Vent Wind & 300 Plus.pdf"
         },
         {
           id: "gvs-15w",
@@ -605,7 +605,7 @@ var DB = {
               value: "Works with wind and solar vents"
             }
           ],
-          brochure: null
+          brochure: "assets/brochures/Green Vent Under Eave Vents.pdf"
         },
         {
           id: "wall-louvres",
@@ -739,7 +739,7 @@ var DB = {
               value: "Safety Standards Met"
             }
           ],
-          brochure: "assets/brochures/Access_Hatches.pdf"
+          brochure: null
         }
       ]
     }
