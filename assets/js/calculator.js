@@ -119,6 +119,19 @@ var CALC = {
         }
       },
       {
+        label: "GVW300 Plus — 300mm+",
+        lps: {
+          6: 270,
+          12: 480,
+          16: 620
+        },
+        cfm: {
+          6: 572,
+          12: 1017,
+          16: 1314
+        }
+      },
+      {
         label: "GVW300 — 300mm",
         lps: {
           6: 270,
@@ -129,8 +142,7 @@ var CALC = {
           6: 572,
           12: 1017,
           16: 1314
-        },
-        isResidential: true
+        }
       },
       {
         label: "GVW400 — 400mm",
@@ -143,20 +155,6 @@ var CALC = {
           6: 820,
           12: 1458,
           16: 1880
-        },
-        isResidential: true
-      },
-      {
-        label: "GVW300 Plus — 300mm+",
-        lps: {
-          6: 540,
-          12: 960,
-          16: 1240
-        },
-        cfm: {
-          6: 1144,
-          12: 2034,
-          16: 2628
         }
       },
       {
@@ -170,8 +168,7 @@ var CALC = {
           6: 1314,
           12: 2339,
           16: 3009
-        },
-        isResidential: false
+        }
       },
       {
         label: "GVW900 — 900mm",
@@ -184,8 +181,7 @@ var CALC = {
           6: 3305,
           12: 5721,
           16: 7331
-        },
-        isResidential: false
+        }
       }
     ]
   },
