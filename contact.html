@@ -297,31 +297,35 @@
         <div id="formContainer">
           <div class="form-title">Send Us a Message</div>
           <p class="form-sub">Complete the form below and a member of our team will respond within one business day.</p>
-          <div class="form-row">
-            <div class="form-group"><label>First Name</label><input type="text" placeholder="Juan"></div>
-            <div class="form-group"><label>Last Name</label><input type="text" placeholder="dela Cruz"></div>
-          </div>
-          <div class="form-row">
-            <div class="form-group"><label>Company / Organization</label><input type="text" placeholder="Your Company Inc."></div>
-            <div class="form-group"><label>Contact Number</label><input type="tel" placeholder="09XX-XXX-XXXX"></div>
-          </div>
-          <div class="form-group"><label>Email Address</label><input type="email" placeholder="yourname@company.com"></div>
-          <div class="form-group">
-            <label>Service of Interest</label>
-            <select>
-              <option value="">Select a Service</option>
-              <option>Aircon Services</option>
-              <option>Roof Ventilation</option>
-              <option>Sky Tunnels</option>
-              <option>Solar Lighting</option>
-              <option>Roof Access Hatchways</option>
-              <option>Green-Vent Wind Product Inquiry</option>
-              <option>General Inquiry</option>
-            </select>
-          </div>
-          <div class="form-group"><label>Message / Project Details</label><textarea placeholder="Please describe your requirements, building type, location, or any specific questions you have for our team."></textarea></div>
-          <button class="submit-btn" onclick="submitForm()">Submit Inquiry</button>
-          <p class="form-note">Your information is kept strictly confidential and will only be used to respond to your inquiry.</p>
+          <form id="contactForm" action="https://api.web3forms.com/submit" method="POST">
+            <input type="hidden" name="access_key" value="96ed613b-e6f3-43c0-b435-e76efc4b09ff">
+            <input type="hidden" name="subject" value="New Contact Inquiry from Gleamair Enterprises">
+            <div class="form-row">
+              <div class="form-group"><label>First Name</label><input type="text" name="first_name" placeholder="Juan" required></div>
+              <div class="form-group"><label>Last Name</label><input type="text" name="last_name" placeholder="dela Cruz" required></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Company / Organization</label><input type="text" name="company" placeholder="Your Company Inc."></div>
+              <div class="form-group"><label>Contact Number</label><input type="tel" name="phone" placeholder="09XX-XXX-XXXX" required></div>
+            </div>
+            <div class="form-group"><label>Email Address</label><input type="email" name="email" placeholder="yourname@company.com" required></div>
+            <div class="form-group">
+              <label>Service of Interest</label>
+              <select name="service" required>
+                <option value="">Select a Service</option>
+                <option value="Aircon Services">Aircon Services</option>
+                <option value="Roof Ventilation">Roof Ventilation</option>
+                <option value="Sky Tunnels">Sky Tunnels</option>
+                <option value="Solar Lighting">Solar Lighting</option>
+                <option value="Roof Access Hatchways">Roof Access Hatchways</option>
+                <option value="Green-Vent Wind Product Inquiry">Green-Vent Wind Product Inquiry</option>
+                <option value="General Inquiry">General Inquiry</option>
+              </select>
+            </div>
+            <div class="form-group"><label>Message / Project Details</label><textarea name="message" placeholder="Please describe your requirements, building type, location, or any specific questions you have for our team." required></textarea></div>
+            <button type="submit" class="submit-btn">Submit Inquiry</button>
+            <p class="form-note">Your information is kept strictly confidential and will only be used to respond to your inquiry.</p>
+          </form>
         </div>
         <div class="success-msg" id="successMsg">
           <div class="success-icon">
@@ -435,9 +439,43 @@
       document.querySelectorAll('.nav-dropdown').forEach(function(d){ d.classList.remove('dd-open'); });
     }
   });
-  function submitForm() {
-    document.getElementById('formContainer').style.display = 'none';
-    document.getElementById('successMsg').classList.add('show');
+
+  var contactForm = document.getElementById('contactForm');
+  if (contactForm) {
+    contactForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      var submitBtn = this.querySelector('.submit-btn');
+      var originalBtnText = submitBtn.innerText;
+      submitBtn.innerText = 'Sending...';
+      submitBtn.disabled = true;
+
+      var formData = new FormData(this);
+
+      fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Accept': 'application/json'
+        }
+      })
+      .then(function(response) {
+        if (response.ok) {
+          document.getElementById('formContainer').style.display = 'none';
+          document.getElementById('successMsg').classList.add('show');
+          contactForm.reset();
+        } else {
+          alert('Oops! There was a problem submitting your form.');
+          submitBtn.innerText = originalBtnText;
+          submitBtn.disabled = false;
+        }
+      })
+      .catch(function() {
+        alert('Oops! There was a problem submitting your form.');
+        submitBtn.innerText = originalBtnText;
+        submitBtn.disabled = false;
+      });
+    });
   }
 </script>
 </body>
