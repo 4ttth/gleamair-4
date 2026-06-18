@@ -1,0 +1,65 @@
+{
+  "siteUrl": "https://www.gleamaire.com",
+  "siteName": "Gleamair Enterprises",
+  "alternateNames": [
+    "Gleamaire",
+    "Gleamaire Enterprises",
+    "Gleamair PH",
+    "Gleamair Philippines",
+    "Gleamair Enterprises Philippines"
+  ],
+  "defaultKeywords": "Gleamair, Gleamaire, Gleamair PH, Gleamair Philippines, Gleamair Enterprises, Gleamaire Enterprises, gleamair ph, gleamair enterprises, HVAC Philippines, aircon Philippines",
+  "defaultImage": "https://www.gleamaire.com/assets/images/other/horizontal_logo.png",
+  "locale": "en_PH",
+  "email": "sales@gleamaire.com",
+  "telephone": "+63-912-301-5388",
+  "address": {
+    "streetAddress": "12 Domingo Street, Gordon Heights",
+    "addressLocality": "Olongapo City",
+    "addressCountry": "PH"
+  },
+  "sameAs": [
+    "https://shopee.ph/gleamairenterprises_",
+    "https://www.lazada.com.ph/gleamair-enterprises/",
+    "https://www.instagram.com/Gleamaire/",
+    "https://www.tiktok.com/@gleamairenterprises",
+    "https://www.facebook.com/profile.php?id=61550651532632"
+  ],
+  "pages": {
+    "index.html": {
+      "title": "Gleamair Enterprises | Gleamair PH — HVAC & Building Solutions Philippines",
+      "description": "Official Gleamair Enterprises website (also known as Gleamaire). Gleamair PH provides HVAC, aircon installation, ventilation, solar lighting, and building solutions across the Philippines.",
+      "path": "/"
+    },
+    "about.html": {
+      "title": "About Gleamair Enterprises | Gleamair PH Philippines",
+      "description": "Learn about Gleamair Enterprises (Gleamaire) — a trusted Gleamair PH provider of lighting, ventilation, and air conditioning solutions with 8+ years of experience in the Philippines.",
+      "path": "/about.html"
+    },
+    "services.html": {
+      "title": "Services | Gleamair Enterprises — Gleamair PH HVAC & Building",
+      "description": "Explore Gleamair Enterprises services: aircon installation, maintenance, roof ventilation, solar lighting, and building solutions. Your trusted Gleamair PH partner.",
+      "path": "/services.html"
+    },
+    "products.html": {
+      "title": "Products | Gleamair Enterprises — Gleamair PH Solutions",
+      "description": "Browse Gleamair Enterprises products — air conditioning, ventilation, sky tunnels, solar lighting, and building solutions from Gleamair PH (Gleamaire).",
+      "path": "/products.html"
+    },
+    "product-catalog.html": {
+      "title": "Product Catalog | Gleamair Enterprises — Gleamair PH",
+      "description": "Full Gleamair Enterprises product catalog. Shop lighting, ventilation, cooling, and building solutions from Gleamair PH (Gleamaire) in the Philippines.",
+      "path": "/product-catalog.html"
+    },
+    "contact.html": {
+      "title": "Contact Gleamair Enterprises | Gleamair Philippines",
+      "description": "Contact Gleamair Enterprises (Gleamaire / Gleamair PH). Call 0912-301-5388 or visit our Olongapo City office for HVAC and building solutions in the Philippines.",
+      "path": "/contact.html"
+    },
+    "grow-with-us.html": {
+      "title": "Careers & Partnerships | Gleamair Enterprises — Gleamair PH",
+      "description": "Grow with Gleamair Enterprises. Explore careers and partnership opportunities with Gleamair PH (Gleamaire), a leading HVAC and building solutions company in the Philippines.",
+      "path": "/grow-with-us.html"
+    }
+  }
+}
