@@ -77,6 +77,11 @@ var DB = {
       id: "sg-eco-industries",
       name: "SG Eco Industries Inc",
       logo: "assets/images/other/otherbusinesses/SG Eco Logo.webp"
+    },
+    {
+      id: "waltermart-san-rafael",
+      name: "Waltermart - San Rafael",
+      logo: "assets/images/other/otherbusinesses/Walter_Mart_new_logo.svg.png"
     }
   ],
   testimonials: [
@@ -179,6 +184,14 @@ var DB = {
   ],
   projects: [
     {
+      id: "waltermart-san-rafael",
+      label: "Waltermart - San Rafael",
+      folder: "Waltermart - San Rafael",
+      images: [
+        "assets/images/client-photos/Waltermart - San Rafael/01.jpg"
+      ]
+    },
+    {
       id: "ceva-logistics",
       label: "CEVA Logistics",
       folder: "CEVA Logistics",
@@ -240,14 +253,6 @@ var DB = {
         "assets/images/client-photos/3R Shane RiceMills/Copy of Copy of IMG_2020.JPG",
         "assets/images/client-photos/3R Shane RiceMills/Copy of Copy of IMG_2021.JPG",
         "assets/images/client-photos/3R Shane RiceMills/Copy of Copy of IMG_2022.JPG"
-      ]
-    },
-    {
-      id: "residential-bamban",
-      label: "Residential - Bamban",
-      folder: "Residential Bamban",
-      images: [
-        "assets/images/client-photos/Residential - Bamban/Copy_of_IMG_1913.jpg"
       ]
     },
     {

@@ -3,6 +3,14 @@
   "_comment": "MAX OF 9 FILES ONLY (GRID 9) This file contains a list of recently edited projects. It is used to populate the 'Recent Projects' section on the website. Each project has an id, label, folder name, and a list of image paths.",
   "projects": [
     {
+      "id": "waltermart-san-rafael",
+      "label": "Waltermart - San Rafael",
+      "folder": "Waltermart - San Rafael",
+      "images": [
+        "assets/images/client-photos/Waltermart - San Rafael/01.jpg"
+      ]
+    },
+    {
       "id": "ceva-logistics",
       "label": "CEVA Logistics",
       "folder": "CEVA Logistics",
@@ -64,14 +72,6 @@
         "assets/images/client-photos/3R Shane RiceMills/Copy of Copy of IMG_2020.JPG",
         "assets/images/client-photos/3R Shane RiceMills/Copy of Copy of IMG_2021.JPG",
         "assets/images/client-photos/3R Shane RiceMills/Copy of Copy of IMG_2022.JPG"
-      ]
-    },
-    {
-      "id": "residential-bamban",
-      "label": "Residential - Bamban",
-      "folder": "Residential Bamban",
-      "images": [
-        "assets/images/client-photos/Residential - Bamban/Copy_of_IMG_1913.jpg"
       ]
     },
     {
