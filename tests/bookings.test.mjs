@@ -95,6 +95,20 @@ check('staff cannot fetch unpaid booking (404)', r.statusCode === 404, r.body);
 r = await call(bookingOne, { method: 'GET', ...sess(cust2Tok), query: { id: ref } });
 check('other customer cannot see the booking (404)', r.statusCode === 404, r.body);
 
+// Regression: the status filter must be intersected with what the role may
+// see. Assigning it directly let a staff caller pass ?status=awaiting_payment
+// and replace the role guard entirely, exposing unpaid leads - name, units and
+// exact map pin - that the single-booking endpoint already refuses them.
+r = await call(bookings, { method: 'GET', ...sess(staffTok), url: '/api/bookings?status=awaiting_payment' });
+check('staff cannot filter to unpaid bookings', (r.body?.bookings ?? []).length === 0, r.body?.bookings);
+r = await call(bookings, { method: 'GET', ...sess(staffTok), url: '/api/bookings?status=cancelled' });
+check('staff cannot filter to cancelled bookings', (r.body?.bookings ?? []).length === 0, r.body?.bookings);
+r = await call(bookings, { method: 'GET', ...sess(adminTok), url: '/api/bookings?status=awaiting_payment' });
+check('admin CAN still filter to unpaid bookings', (r.body?.bookings ?? []).length === 1, r.body?.bookings);
+r = await call(bookings, { method: 'GET', ...sess(custTok), url: '/api/bookings?status=awaiting_payment' });
+check('customer filter stays scoped to own bookings',
+  (r.body?.bookings ?? []).every((b) => b.reference === ref), r.body?.bookings);
+
 console.log('\n=== 7. PayMongo webhook ===');
 const evt = (type, sessionId) => Buffer.from(JSON.stringify({ data: { attributes: {
   type, data: { id: sessionId, attributes: { reference_number: ref,

@@ -168,6 +168,25 @@ stuck unpaid but the customer was charged, opening
 `/app/booking-complete?ref=PMS-000123` asks PayMongo directly and reconciles
 it. Check the Vercel function logs for `[webhook]` lines.
 
+Signature verification needs the *exact* bytes PayMongo signed, so
+`api/webhooks/paymongo.js` disables body parsing via its `config` export. That
+directive is best known from Next.js API routes; if Vercel's Node runtime ever
+parses the body anyway, the raw bytes are gone and the HMAC cannot be
+recomputed from a re-serialised object. The code fails closed and logs
+`Could not read the raw request body for signature verification` rather than
+hanging, and PayMongo will retry — but payments would then only confirm via the
+return page. **Confirm on your first live payment that the webhook delivery
+shows 200 in the PayMongo dashboard.** If it does not, the fix is to read the
+body from the request stream in a runtime that leaves it untouched (for
+example, moving just this one route to a Vercel Edge function, where `request`
+exposes `.text()`).
+
+**Login redirects.** `/login?next=…` accepts only same-origin paths, enforced
+by `safeNext()` in `assets/js/portal.js`. Do not loosen it: the value is read
+from the address bar, so anything else turns the login page into a
+`javascript:` execution sink or an open redirect. `tests/browser/redirect.test.cjs`
+covers this.
+
 **Staff visibility.** Staff deliberately see only the customer's name, unit
 details and map pin. If technicians need to phone customers, set
 `STAFF_SEES_CONTACT = true` in `api/_lib/bookings.js` — that is the only change

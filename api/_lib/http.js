@@ -41,6 +41,18 @@ export async function readJson(req) {
     change whitespace and break the HMAC. */
 export function readRaw(req) {
   if (req.rawBody) return Promise.resolve(Buffer.from(req.rawBody));
+
+  // If something upstream already drained the stream, 'data'/'end' will never
+  // fire and the promise would hang until the function times out. Fail fast
+  // and loudly instead: the exact bytes are gone and the HMAC cannot be
+  // recomputed from a re-serialised object.
+  if (req.readableEnded || req.readable === false) {
+    return Promise.reject(new ApiError(
+      500,
+      'Could not read the raw request body for signature verification.'
+    ));
+  }
+
   return new Promise((resolve, reject) => {
     const chunks = [];
     let size = 0;

@@ -19,7 +19,12 @@ node --import ./tests/loader.mjs tests/devserver.mjs
 node tests/browser/flow.test.cjs        # registration: address, phone, password
 node tests/browser/customer.test.cjs    # dashboard, booking, map pin, payment
 node tests/browser/admin.test.cjs       # roles, assignment, dispatch map
+node tests/browser/redirect.test.cjs   # ?next= cannot become XSS or open redirect
 ```
+
+`redirect.test.cjs` only needs the customer from `flow.test.cjs`. It is a
+genuine regression test: reverting `safeNext()` in `assets/js/portal.js` makes
+it fail with the payload actually executing.
 
 `admin.test.cjs` expects `flow` and `customer` to have run first (they create
 the customer and the paid booking), plus a superadmin:

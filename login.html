@@ -83,14 +83,17 @@
 </main>
 
 <script type="module">
-  import { api, showAlert, hideAlert, busy, el, clearFieldErrors, markFieldError, attachPasswordToggle } from './assets/js/portal.js';
+  import { api, showAlert, hideAlert, busy, el, clearFieldErrors, markFieldError,
+           attachPasswordToggle, safeNext } from './assets/js/portal.js';
 
   const form = el('loginForm');
   const alertBox = el('formAlert');
   attachPasswordToggle(el('password'));
 
   // If a protected page bounced us here, return there after signing in.
-  const nextUrl = new URLSearchParams(location.search).get('next');
+  // safeNext rejects anything that is not a same-origin path, so this can
+  // never become a javascript: sink or an open redirect.
+  const nextUrl = safeNext(new URLSearchParams(location.search).get('next'));
 
   // Already signed in? Skip the form entirely.
   api.get('/api/auth/me')

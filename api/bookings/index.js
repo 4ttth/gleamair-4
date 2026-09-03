@@ -11,6 +11,7 @@ import { scopeBooking, serviceFor } from '../_lib/bookings.js';
 import * as V from '../_lib/validate.js';
 
 const LIST_LIMIT = 200;
+const STAFF_VISIBLE_STATUSES = ['paid', 'assigned', 'in_progress', 'completed'];
 
 async function list(req, res) {
   const user = await requireUser(req);
@@ -22,13 +23,20 @@ async function list(req, res) {
 
   if (user.role === 'customer') {
     query.customerId = user._id;
-  } else if (user.role === 'staff') {
-    // Unpaid bookings are not yet real work, so staff never see them.
-    query.status = { $in: ['paid', 'assigned', 'in_progress', 'completed'] };
   }
 
-  if (statusFilter && V.BOOKING_STATUSES.includes(statusFilter)) {
+  // The statuses this caller is allowed to see at all. Unpaid and cancelled
+  // bookings are not yet real work, so staff never see them - matching the
+  // single-booking endpoint, which 404s staff on awaiting_payment.
+  const visibleStatuses = user.role === 'staff' ? STAFF_VISIBLE_STATUSES : V.BOOKING_STATUSES;
+
+  // Intersect the requested filter with what the role may see. Assigning the
+  // filter directly would let a staff caller pass ?status=awaiting_payment and
+  // replace the role guard outright.
+  if (statusFilter && visibleStatuses.includes(statusFilter)) {
     query.status = statusFilter;
+  } else if (user.role === 'staff') {
+    query.status = { $in: visibleStatuses };
   }
   if (url.searchParams.get('mine') === '1' && user.role !== 'customer') {
     query.assignedStaffId = user._id;

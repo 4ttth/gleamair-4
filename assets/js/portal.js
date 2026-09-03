@@ -72,6 +72,20 @@ export async function requireAuth({ roles } = {}) {
   return data.user;
 }
 
+/**
+ * Validates a `?next=` redirect target from the URL.
+ *
+ * requireAuth only ever writes `pathname + search`, but a value read back out
+ * of the address bar is attacker-controlled regardless of who wrote it.
+ * Assigning it to location.href would otherwise execute a `javascript:` URL in
+ * this origin, or hand the visitor to another site straight off the real login
+ * page. Only a single-slash absolute path is accepted, which rejects
+ * `javascript:`, `data:`, `//evil.example` and `/\evil.example`.
+ */
+export function safeNext(value) {
+  return typeof value === 'string' && /^\/(?![/\\])/.test(value) ? value : null;
+}
+
 export async function signOut() {
   try { await api.post('/api/auth/logout', {}); } catch { /* clear regardless */ }
   location.href = '/login';
