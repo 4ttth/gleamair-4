@@ -1,0 +1,1442 @@
+<!DOCTYPE html>
+<html lang="en-PH">
+<head>
+<meta charset="UTF-8">
+<title>SSECKA IT Solutions — Technical Proposal for Gleamair Enterprises</title>
+<style>
+  @page {
+    size: A4;
+    margin: 17mm 18mm 20mm 18mm;
+  }
+  @page :first {
+    margin: 0;
+  }
+
+  :root {
+    --ink:        #16233a;
+    --ink-soft:   #33445f;
+    --body:       #22303f;
+    --muted:      #5f6d80;
+    --accent:     #2f5d8c;
+    --accent-dk:  #1d3d61;
+    --rule:       #ccd4de;
+    --rule-soft:  #e4e9ef;
+    --wash:       #f2f5f8;
+    --flag-hi:    #8c2f2f;
+    --flag-md:    #9a6a1c;
+    --flag-lo:    #3f6b4a;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  body {
+    margin: 0;
+    font-family: "Bitstream Charter", "Charter", "Liberation Serif", Georgia, serif;
+    font-size: 9.5pt;
+    line-height: 1.44;
+    color: var(--body);
+  }
+
+  p { margin: 0 0 6pt; text-align: justify; }
+  strong { color: var(--ink); font-weight: 700; }
+
+  /* ─────────────────────────── COVER ─────────────────────────── */
+
+  .cover {
+    page-break-after: always;
+    height: 297mm;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .cover-band {
+    background: var(--ink);
+    color: #fff;
+    padding: 22mm 18mm 16mm;
+  }
+
+  .wordmark {
+    font-family: "Liberation Sans", Arial, sans-serif;
+    font-size: 22pt;
+    font-weight: 700;
+    letter-spacing: 5.5pt;
+    line-height: 1;
+    margin: 0;
+  }
+  .wordmark span { color: #7fa6ce; }
+
+  .wordmark-rule {
+    width: 26mm;
+    height: 2.4pt;
+    background: #7fa6ce;
+    margin: 6mm 0 4mm;
+  }
+
+  .wordmark-sub {
+    font-family: "Liberation Sans", Arial, sans-serif;
+    font-size: 7.6pt;
+    letter-spacing: 2.4pt;
+    text-transform: uppercase;
+    color: #b9c8d9;
+    margin: 0;
+  }
+
+  .cover-body {
+    flex: 1;
+    padding: 20mm 18mm 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .doc-kicker {
+    font-family: "Liberation Sans", Arial, sans-serif;
+    font-size: 8pt;
+    letter-spacing: 3.2pt;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 700;
+    margin: 0 0 6mm;
+  }
+
+  .doc-title {
+    font-family: "Liberation Sans", Arial, sans-serif;
+    font-size: 25pt;
+    line-height: 1.16;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0 0 5mm;
+    letter-spacing: -0.3pt;
+  }
+
+  .doc-subtitle {
+    font-size: 12pt;
+    line-height: 1.45;
+    color: var(--ink-soft);
+    margin: 0 0 12mm;
+    max-width: 135mm;
+    text-align: left;
+  }
+
+  .cover-for {
+    border-top: 2.2pt solid var(--ink);
+    border-bottom: 0.6pt solid var(--rule);
+    padding: 5mm 0;
+    margin-bottom: 12mm;
+  }
+  .cover-for-label {
+    font-family: "Liberation Sans", Arial, sans-serif;
+    font-size: 7.4pt;
+    letter-spacing: 2.4pt;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 2mm;
+  }
+  .cover-for-name {
+    font-family: "Liberation Sans", Arial, sans-serif;
+    font-size: 15pt;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0 0 1.5mm;
+  }
+  .cover-for-meta { font-size: 9.4pt; color: var(--muted); margin: 0; }
+
+  .cover-meta {
+    margin-top: auto;
+    display: table;
+    width: 100%;
+    border-collapse: collapse;
+    font-family: "Liberation Sans", Arial, sans-serif;
+    font-size: 8.6pt;
+  }
+  .cover-meta div { display: table-row; }
+  .cover-meta span {
+    display: table-cell;
+    padding: 2.6mm 0;
+    border-bottom: 0.5pt solid var(--rule-soft);
+  }
+  .cover-meta span:first-child {
+    width: 42mm;
+    color: var(--muted);
+    letter-spacing: 0.6pt;
+    text-transform: uppercase;
+    font-size: 7.6pt;
+  }
+  .cover-meta span:last-child { color: var(--ink); font-weight: 700; }
+
+  .cover-foot {
+    background: var(--wash);
+    border-top: 0.6pt solid var(--rule);
+    padding: 6mm 18mm;
+    margin-top: 12mm;
+    font-family: "Liberation Sans", Arial, sans-serif;
+    font-size: 7.4pt;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  /* ─────────────────────────── STRUCTURE ─────────────────────── */
+
+  .sheet { page-break-before: always; }
+  .subsheet { page-break-before: always; }
+
+  h2 {
+    font-family: "Liberation Sans", Arial, sans-serif;
+    font-size: 13pt;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0 0 3.4mm;
+    padding-bottom: 2.2mm;
+    border-bottom: 1.8pt solid var(--ink);
+    page-break-after: avoid;
+    letter-spacing: -0.15pt;
+  }
+  h2 .num {
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+    margin-right: 3mm;
+  }
+
+  h3 {
+    font-family: "Liberation Sans", Arial, sans-serif;
+    font-size: 10.2pt;
+    font-weight: 700;
+    color: var(--accent-dk);
+    margin: 4.6mm 0 2mm;
+    page-break-after: avoid;
+  }
+
+  h4 {
+    font-family: "Liberation Sans", Arial, sans-serif;
+    font-size: 8.4pt;
+    font-weight: 700;
+    letter-spacing: 1.6pt;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 3.2mm 0 1.4mm;
+    page-break-after: avoid;
+  }
+
+  ul, ol { margin: 0 0 6pt; padding-left: 5mm; }
+  li { margin-bottom: 1.6pt; }
+  li::marker { color: var(--accent); }
+
+  .lead {
+    font-size: 10.4pt;
+    line-height: 1.48;
+    color: var(--ink-soft);
+    border-left: 2.6pt solid var(--accent);
+    padding-left: 5mm;
+    margin: 0 0 5mm;
+  }
+
+  /* ─────────────────────────── TABLES ────────────────────────── */
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: "Liberation Sans", Arial, sans-serif;
+    font-size: 8.2pt;
+    margin: 0 0 5mm;
+    page-break-inside: auto;
+  }
+  thead { display: table-header-group; }
+  tr { page-break-inside: avoid; }
+  th {
+    text-align: left;
+    font-weight: 700;
+    color: #fff;
+    background: var(--ink);
+    padding: 2mm 2.4mm;
+    letter-spacing: 0.4pt;
+    font-size: 7.8pt;
+    text-transform: uppercase;
+  }
+  td {
+    padding: 1.9mm 2.4mm;
+    border-bottom: 0.5pt solid var(--rule-soft);
+    vertical-align: top;
+    line-height: 1.38;
+  }
+  tbody tr:nth-child(even) td { background: #f7f9fb; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  td.ctr, th.ctr { text-align: center; white-space: nowrap; }
+  tfoot td {
+    border-top: 1.4pt solid var(--ink);
+    border-bottom: none;
+    font-weight: 700;
+    color: var(--ink);
+    background: #fff !important;
+  }
+  caption {
+    caption-side: top;
+    text-align: left;
+    font-family: "Liberation Sans", Arial, sans-serif;
+    font-size: 7.6pt;
+    letter-spacing: 1.4pt;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 700;
+    padding-bottom: 1.8mm;
+  }
+
+  .flag {
+    display: inline-block;
+    font-size: 7pt;
+    font-weight: 700;
+    letter-spacing: 0.7pt;
+    text-transform: uppercase;
+    padding: 0.7mm 2mm;
+    border-radius: 1.2mm;
+    white-space: nowrap;
+    color: #fff;
+  }
+  .f-hi { background: var(--flag-hi); }
+  .f-md { background: var(--flag-md); }
+  .f-lo { background: var(--flag-lo); }
+
+  .ref {
+    font-family: "Liberation Sans", Arial, sans-serif;
+    font-weight: 700;
+    color: var(--accent-dk);
+    white-space: nowrap;
+  }
+
+  /* ─────────────────────────── BLOCKS ────────────────────────── */
+
+  .ws {
+    border: 0.6pt solid var(--rule);
+    border-left: 2.6pt solid var(--accent);
+    padding: 3.2mm 4.4mm 1.6mm;
+    margin: 0 0 4mm;
+    page-break-inside: avoid;
+  }
+  .ws-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 4mm;
+    border-bottom: 0.5pt solid var(--rule-soft);
+    padding-bottom: 1.7mm;
+    margin-bottom: 2.2mm;
+  }
+  .ws-title {
+    font-family: "Liberation Sans", Arial, sans-serif;
+    font-size: 10.6pt;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0;
+  }
+  .ws-title em {
+    display: block;
+    font-style: normal;
+    font-size: 7.4pt;
+    letter-spacing: 1.8pt;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1mm;
+  }
+  .ws-effort {
+    font-family: "Liberation Sans", Arial, sans-serif;
+    font-size: 8pt;
+    font-weight: 700;
+    color: #fff;
+    background: var(--accent-dk);
+    padding: 1.2mm 2.6mm;
+    white-space: nowrap;
+  }
+  .ws p { margin-bottom: 4pt; }
+  .ws ul { margin-bottom: 5pt; }
+  .ws h4 { margin-top: 3mm; }
+
+  .callout {
+    background: var(--wash);
+    border: 0.5pt solid var(--rule);
+    padding: 3.4mm 4.6mm 1.6mm;
+    margin: 0 0 5mm;
+    page-break-inside: avoid;
+  }
+  .callout h4 { margin-top: 0; }
+
+  .metrics {
+    display: flex;
+    gap: 3mm;
+    margin: 0 0 5mm;
+  }
+  .metric {
+    flex: 1;
+    border-top: 2.2pt solid var(--accent);
+    background: var(--wash);
+    padding: 3mm 3.4mm;
+  }
+  .metric b {
+    display: block;
+    font-family: "Liberation Sans", Arial, sans-serif;
+    font-size: 16pt;
+    line-height: 1.05;
+    color: var(--ink);
+    letter-spacing: -0.4pt;
+  }
+  .metric i {
+    display: block;
+    font-style: normal;
+    font-family: "Liberation Sans", Arial, sans-serif;
+    font-size: 7pt;
+    letter-spacing: 1.1pt;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 1.6mm;
+    line-height: 1.35;
+  }
+
+  .sign {
+    display: flex;
+    gap: 10mm;
+    margin-top: 4mm;
+    page-break-inside: avoid;
+  }
+  .sign-col { flex: 1; }
+  .sign-col h4 { margin-top: 0; }
+  .sign-line {
+    border-bottom: 0.9pt solid var(--ink);
+    height: 11mm;
+    margin-bottom: 2mm;
+  }
+  .sign-field {
+    font-family: "Liberation Sans", Arial, sans-serif;
+    font-size: 8pt;
+    color: var(--muted);
+    border-bottom: 0.5pt solid var(--rule);
+    padding: 2.6mm 0 1mm;
+  }
+
+  .note {
+    font-size: 8.2pt;
+    color: var(--muted);
+    line-height: 1.45;
+    font-style: italic;
+  }
+
+  .end {
+    text-align: center;
+    font-family: "Liberation Sans", Arial, sans-serif;
+    font-size: 7.4pt;
+    letter-spacing: 3pt;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-top: 0.5pt solid var(--rule);
+    padding-top: 4mm;
+    margin-top: 8mm;
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════ COVER ══════════════════════════ -->
+<div class="cover">
+  <div class="cover-band">
+    <p class="wordmark">SSECKA<span>.</span></p>
+    <div class="wordmark-rule"></div>
+    <p class="wordmark-sub">IT Solutions &nbsp;&middot;&nbsp; Software Engineering &amp; Digital Systems</p>
+  </div>
+
+  <div class="cover-body">
+    <p class="doc-kicker">Technical Proposal &nbsp;&middot;&nbsp; Confidential</p>
+    <h1 class="doc-title">Website Modernisation &amp;<br>Digital Enablement Programme</h1>
+    <p class="doc-subtitle">A phased proposal for the technical consolidation, performance remediation and
+      lead-generation enablement of the Gleamair Enterprises corporate website.</p>
+
+    <div class="cover-for">
+      <p class="cover-for-label">Prepared for</p>
+      <p class="cover-for-name">Gleamair Enterprises</p>
+      <p class="cover-for-meta">12 Domingo Street, Gordon Heights, Olongapo City, Philippines &nbsp;&middot;&nbsp; www.gleamaire.com</p>
+    </div>
+
+    <div class="cover-meta">
+      <div><span>Document reference</span><span>SSECKA-GLM-2026-001</span></div>
+      <div><span>Revision</span><span>1.0 &mdash; For client review</span></div>
+      <div><span>Date of issue</span><span>03 September 2026</span></div>
+      <div><span>Prepared by</span><span>SSECKA IT Solutions</span></div>
+      <div><span>Subject repository</span><span>4ttth/gleamair-4 (branch: master)</span></div>
+      <div><span>Validity of proposal</span><span>Sixty (60) calendar days from date of issue</span></div>
+    </div>
+  </div>
+
+  <div class="cover-foot">
+    <strong>Confidentiality notice.</strong> This document and its contents are the proprietary property of SSECKA IT
+    Solutions and are furnished to Gleamair Enterprises solely for the purpose of evaluating the engagement described
+    herein. It contains commercial and technical information that is confidential to both parties and may not be
+    reproduced, disclosed or transmitted to any third party, in whole or in part, without the prior written consent of
+    SSECKA IT Solutions. All findings recorded in this proposal were derived from a direct technical inspection of the
+    client&rsquo;s source repository and remain subject to the assumptions stated in Section 8.
+  </div>
+</div>
+
+<!-- ══════════════════════ 1. EXECUTIVE SUMMARY ══════════════════════ -->
+<div class="sheet">
+  <h2><span class="num">1</span>Executive Summary</h2>
+
+  <p class="lead">Gleamair Enterprises operates a well-presented, content-rich corporate website that is materially
+    undermined by three engineering conditions: an unoptimised media payload that makes the site prohibitively
+    expensive to load on Philippine mobile connections, a hand-duplicated front-end that has already begun to diverge
+    across pages, and the complete absence of measurement, meaning commercial performance cannot presently be
+    evidenced. None of these conditions are design faults. All three are correctable within a defined programme of
+    work.</p>
+
+  <p>SSECKA IT Solutions was asked to review the Gleamair Enterprises website and to propose implementations that
+    would improve its technical standing and its commercial return. We conducted a full inspection of the production
+    source repository &mdash; seven published pages, approximately 6,500 lines of hand-authored HTML, CSS, JavaScript
+    and Python, a JSON-backed content pipeline, and 68&nbsp;MB of committed media assets.</p>
+
+  <p>The review confirms a sound editorial and search-engine foundation. Structured data is correctly implemented,
+    canonical and social metadata are present on every page, all fifty image elements carry alternative text, and the
+    ventilation sizing calculator is a genuine commercial differentiator that few competitors in the sector offer. The
+    decision to hold catalogue content in versioned JSON files rather than hard-coding it into the pages reflects
+    sound instinct and gives the programme a foundation to build upon.</p>
+
+  <p>Against that foundation, the measured deficiencies are substantial. The homepage transfers approximately
+    <strong>24.4&nbsp;MB</strong> to a first-time visitor and the products page approximately
+    <strong>21.8&nbsp;MB</strong>; a competitive benchmark for a site of this type is under 2&nbsp;MB. Not one of the
+    fifty images on the site defers loading. Roughly 1,522 lines of stylesheet are duplicated inline across the seven
+    pages, and that duplication has already produced seven different navigation blocks, five different footers and
+    three divergent brand-token definitions on a site that should have one of each. Three product brochures advertised
+    to prospective buyers return errors because the underlying files were renamed but the links were not. There is no
+    analytics instrumentation of any kind, no automated quality gate, and no route by which a submitted enquiry
+    reaches the Odoo platform the business already operates.</p>
+
+  <h3>Proposed response</h3>
+
+  <p>We propose a programme of six core workstreams delivered across three phases over an indicative twelve-week
+    period, with two further optional workstreams available should Gleamair Enterprises wish to extend the engagement
+    into commercial tooling. The phasing is deliberate: Phase&nbsp;1 delivers the changes that produce immediate,
+    visible improvement at the lowest risk; Phase&nbsp;2 removes the structural duplication that is the root cause of
+    ongoing maintenance cost; Phase&nbsp;3 converts the resulting stability into measurable commercial return.</p>
+
+  <div class="metrics">
+    <div class="metric"><b>24.4 MB</b><i>Current homepage transfer weight</i></div>
+    <div class="metric"><b>&lt; 2 MB</b><i>Target after Phase&nbsp;1</i></div>
+    <div class="metric"><b>36</b><i>Core programme person-days</i></div>
+    <div class="metric"><b>12</b><i>Indicative delivery weeks</i></div>
+  </div>
+
+  <p>The programme is structured so that each phase stands alone and produces independently valuable outcomes.
+    Gleamair Enterprises may commission Phase&nbsp;1 only, and elect to proceed to subsequent phases on the strength
+    of the results obtained. SSECKA IT Solutions makes no requirement that the full programme be commissioned at
+    the outset.</p>
+
+  <h3>Summary of recommendation</h3>
+
+  <p>We recommend proceeding with Phase&nbsp;1 as a matter of priority. The three broken brochure links and the media
+    payload are actively costing the business enquiries today, and both are remediable within the first three weeks
+    at modest cost. The consolidation work in Phase&nbsp;2 should follow before any further pages are added to the
+    site, because every additional page authored under the present arrangement compounds the duplication that
+    Phase&nbsp;2 exists to remove.</p>
+</div>
+
+<!-- ══════════════════════ 2. SCOPE OF REVIEW ══════════════════════ -->
+<div class="sheet">
+  <h2><span class="num">2</span>Background and Scope of Review</h2>
+
+  <h3>2.1&nbsp; Engagement background</h3>
+  <p>Gleamair Enterprises is a Philippine supplier and installer of ventilation, air conditioning, natural daylighting
+    and solar lighting systems, serving residential, commercial and industrial clients from Olongapo City. Its
+    website performs three commercial functions: it establishes credibility with prospective buyers through project
+    and client evidence, it presents a technical product catalogue with downloadable specification literature, and it
+    captures enquiries through an online contact form, an embedded live-chat channel and marketplace listings.</p>
+
+  <p>SSECKA IT Solutions was engaged to examine the technical implementation supporting those functions and to set
+    out the implementations we would recommend. This document is the output of that examination.</p>
+
+  <h3>2.2&nbsp; Basis of the review</h3>
+  <p>The review was conducted by direct static inspection of the production source repository. Every published page,
+    script, data file and committed asset was examined. Figures quoted throughout this document were measured from
+    the repository at the revision stated on the cover; the method used for each is recorded in Appendix&nbsp;A so
+    that Gleamair Enterprises may independently verify them.</p>
+
+  <table>
+    <caption>Table 1 &mdash; Composition of the reviewed estate</caption>
+    <thead>
+      <tr><th>Component</th><th>Detail</th><th class="num">Measure</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Published pages</td><td>Home, About, Services, Products, Product Catalogue, Contact, Grow With Us</td><td class="num">7</td></tr>
+      <tr><td>Hand-authored source</td><td>HTML, CSS, JavaScript, Python and JSON, combined</td><td class="num">6,519 lines</td></tr>
+      <tr><td>Committed media assets</td><td>39&nbsp;MB images, 16&nbsp;MB brochures, 13&nbsp;MB video</td><td class="num">68 MB</td></tr>
+      <tr><td>Catalogue content</td><td>Products across four categories, held in JSON</td><td class="num">14 products</td></tr>
+      <tr><td>Image elements</td><td>Across all pages; all carry alternative text</td><td class="num">50</td></tr>
+      <tr><td>Client and project evidence</td><td>Client logos and named project photograph sets</td><td class="num">15 / 10</td></tr>
+      <tr><td>Interactive tooling</td><td>Ventilation, solar and air-conditioning sizing calculator</td><td class="num">3 modes</td></tr>
+      <tr><td>Third-party integrations</td><td>Web3Forms (enquiries), Odoo live chat, Google Fonts</td><td class="num">3</td></tr>
+      <tr><td>Build, test or deployment automation</td><td>No pipeline configuration present in the repository</td><td class="num">None</td></tr>
+      <tr><td>Analytics or measurement</td><td>No tag, property or instrumentation present</td><td class="num">None</td></tr>
+    </tbody>
+  </table>
+
+  <h3>2.3&nbsp; Limitations of this review</h3>
+  <p>This assessment is a static review of source and assets. It does not include field performance measurement from
+    real visitors, penetration testing, a review of hosting or DNS configuration, or an audit of the Odoo tenancy,
+    marketplace listings or social channels. Where such work would be prudent, it is identified in the relevant
+    workstream. Commercial figures such as current enquiry volume and conversion rate could not be established
+    because no measurement exists; this is itself a finding, recorded at <span class="ref">F-08</span>.</p>
+</div>
+
+<!-- ══════════════════════ 3. CURRENT STATE ══════════════════════ -->
+<div class="sheet">
+  <h2><span class="num">3</span>Current State Assessment</h2>
+
+  <h3>3.1&nbsp; Established strengths</h3>
+  <p>It is important to record what is working, because the programme proposed in Section&nbsp;4 is designed to
+    preserve it. The following were verified during the review and should not be disturbed by any implementation:</p>
+  <ul>
+    <li><strong>Search-engine foundation.</strong> Organisation and LocalBusiness structured data are correctly
+      expressed as JSON-LD, canonical URLs are declared, Open Graph and Twitter card metadata are complete, and
+      geographic targeting for the Philippine market is set. A sitemap, a robots directive and search-engine
+      ownership verification are all in place.</li>
+    <li><strong>Accessibility fundamentals.</strong> All fifty image elements carry alternative text and each page
+      declares exactly one first-level heading. These are frequently absent on comparable sites and their presence
+      here reflects care in authoring.</li>
+    <li><strong>Separation of content from presentation.</strong> Catalogue, testimonial, client, project and
+      calculator content is held in versioned JSON files under <span class="ref">conf/db/</span> and applied to the
+      site by a generator script. The instinct is correct and the programme builds on it rather than replacing it.</li>
+    <li><strong>Genuine technical differentiation.</strong> The sizing calculator implements documented engineering
+      relationships for building volume, ventilation rate and unit selection across residential, commercial and
+      industrial scenarios. This is a substantive commercial asset.</li>
+  </ul>
+
+  <h3>3.2&nbsp; Findings</h3>
+  <p>Findings are graded by commercial consequence rather than by technical severity. A <span class="flag f-hi">High</span>
+    finding is one we assess to be costing the business enquiries or money at present; <span class="flag f-md">Medium</span>
+    denotes accumulating cost or risk; <span class="flag f-lo">Low</span> denotes a deficiency that should be corrected
+    but is not presently material.</p>
+
+  <table>
+    <caption>Table 2 &mdash; Findings register</caption>
+    <thead>
+      <tr><th style="width:13mm">Ref</th><th style="width:20mm" class="ctr">Grade</th><th>Finding and commercial consequence</th><th style="width:17mm" class="ctr">Ref&nbsp;WS</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="ref">F-01</td><td class="ctr"><span class="flag f-hi">High</span></td>
+        <td><strong>Excessive page weight.</strong> The homepage transfers approximately 24.4&nbsp;MB on a first
+          visit (12.2&nbsp;MB hero video and 12.1&nbsp;MB of imagery); the products page transfers approximately
+          21.8&nbsp;MB. A single catalogue photograph is 9.3&nbsp;MB. On a typical Philippine mobile connection this
+          represents a wait of well over a minute and a material data cost borne by the visitor. Visitors abandon
+          long before the page completes, and the loss is invisible to the business because it occurs before any
+          enquiry is made.</td>
+        <td class="ctr ref">WS-1</td>
+      </tr>
+      <tr>
+        <td class="ref">F-02</td><td class="ctr"><span class="flag f-hi">High</span></td>
+        <td><strong>Broken product literature.</strong> Three brochures offered to prospective buyers do not resolve,
+          because the underlying files carry a <span class="ref">.bak</span> suffix while the links do not: the
+          residential and commercial Sky Tunnel brochures and the roof access hatch brochure. A buyer requesting
+          technical literature at the point of evaluation receives an error.</td>
+        <td class="ctr ref">WS-1</td>
+      </tr>
+      <tr>
+        <td class="ref">F-03</td><td class="ctr"><span class="flag f-hi">High</span></td>
+        <td><strong>No deferred image loading.</strong> None of the fifty image elements on the site use deferred
+          loading. Every image on a page is fetched before the visitor has scrolled to it, which is the principal
+          multiplier on <span class="ref">F-01</span> and is correctable at negligible cost.</td>
+        <td class="ctr ref">WS-1</td>
+      </tr>
+      <tr>
+        <td class="ref">F-04</td><td class="ctr"><span class="flag f-md">Medium</span></td>
+        <td><strong>Duplicated front-end and observed divergence.</strong> Approximately 1,522 lines of stylesheet are
+          repeated inline across the seven pages. Component files exist for the navigation and footer but are
+          documented as copy-and-paste references rather than being included at build time. The consequence is
+          already measurable: the seven pages carry seven distinct navigation blocks, five distinct footers and three
+          divergent brand-token definitions. Every content change must be applied seven times and each application is
+          an opportunity for further drift.</td>
+        <td class="ctr ref">WS-2</td>
+      </tr>
+      <tr>
+        <td class="ref">F-05</td><td class="ctr"><span class="flag f-md">Medium</span></td>
+        <td><strong>Content pipeline requires developer intervention.</strong> Updating catalogue or testimonial
+          content requires editing JSON, running a Python script locally, and committing the generated output. Content
+          is therefore gated on technical availability, and no schema validation prevents a malformed edit from
+          reaching production.</td>
+        <td class="ctr ref">WS-3</td>
+      </tr>
+      <tr>
+        <td class="ref">F-06</td><td class="ctr"><span class="flag f-md">Medium</span></td>
+        <td><strong>Enquiries do not reach the business systems.</strong> The contact form posts to a third-party
+          relay and arrives as electronic mail. There is no handoff into the Odoo platform the business already
+          operates, no acknowledgement to the enquirer, no server-side validation and no structured record. Enquiries
+          are consequently untracked, and follow-up depends on an inbox.</td>
+        <td class="ctr ref">WS-4</td>
+      </tr>
+      <tr>
+        <td class="ref">F-07</td><td class="ctr"><span class="flag f-md">Medium</span></td>
+        <td><strong>No delivery or quality automation.</strong> The repository contains no pipeline configuration.
+          Nothing verifies that links resolve, that data files are well-formed, or that page weight has not regressed
+          before a change reaches visitors. <span class="ref">F-02</span> is the direct evidence of this gap: the
+          brochure links broke silently and remained broken.</td>
+        <td class="ctr ref">WS-6</td>
+      </tr>
+      <tr>
+        <td class="ref">F-08</td><td class="ctr"><span class="flag f-md">Medium</span></td>
+        <td><strong>No measurement.</strong> No analytics instrumentation is present on any page. Traffic volume,
+          traffic source, page performance, calculator usage and enquiry conversion are all unknown. Marketing
+          expenditure cannot be evaluated and the effect of any improvement cannot be demonstrated.</td>
+        <td class="ctr ref">WS-5</td>
+      </tr>
+      <tr>
+        <td class="ref">F-09</td><td class="ctr"><span class="flag f-lo">Low</span></td>
+        <td><strong>Render-blocking third-party resources.</strong> Web font stylesheets are requested from Google
+          Fonts on every page without connection pre-establishment or preloading, and the Odoo live-chat widget loads
+          on all seven pages. Both delay the point at which the visitor sees content.</td>
+        <td class="ctr ref">WS-1</td>
+      </tr>
+      <tr>
+        <td class="ref">F-10</td><td class="ctr"><span class="flag f-lo">Low</span></td>
+        <td><strong>Search-engine housekeeping.</strong> The sitemap omits last-modified dates, denying search engines
+          a recrawl signal when catalogue content changes. Behaviour is bound to markup through inline event handlers
+          in fourteen places, which constrains the introduction of a content security policy.</td>
+        <td class="ctr ref">WS-5</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <h4>Root cause</h4>
+    <p style="margin-bottom:4pt">Findings <span class="ref">F-02</span>, <span class="ref">F-03</span>,
+      <span class="ref">F-04</span> and <span class="ref">F-05</span> share a single cause: the site is maintained
+      entirely by hand, with no build step and no automated verification. This is an entirely reasonable way to have
+      started, and it has carried the site to its present standard. It does not scale to the size the estate has now
+      reached. The programme in Section&nbsp;4 addresses the cause, not only the symptoms &mdash; which is why we
+      recommend Phase&nbsp;2 be commissioned before further pages are authored.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════ 4. PROPOSED IMPLEMENTATIONS ══════════════════════ -->
+<div class="sheet">
+  <h2><span class="num">4</span>Proposed Implementations</h2>
+
+  <p>The programme comprises six core workstreams and two optional workstreams. Each is specified below with its
+    objective, scope of work, deliverables and indicative effort. Effort is expressed in person-days of senior
+    engineering time and includes analysis, implementation, testing and handover documentation.</p>
+
+  <div class="ws">
+    <div class="ws-head">
+      <p class="ws-title"><em>Workstream WS-1 &nbsp;&middot;&nbsp; Phase 1</em>Performance and Media Remediation</p>
+      <span class="ws-effort">6 days</span>
+    </div>
+    <p><strong>Objective.</strong> Reduce first-visit transfer weight on every page to below 2&nbsp;MB without any
+      perceptible loss of visual quality, and restore the broken product literature.</p>
+    <h4>Scope of work</h4>
+    <ul>
+      <li>Re-encode the full image estate to modern formats with quality-matched fallbacks, and generate responsive
+        size variants so that mobile visitors receive appropriately dimensioned files rather than full-resolution
+        originals.</li>
+      <li>Re-encode and rate-limit the homepage hero video, introduce a lightweight poster frame, and defer video
+        loading so that it never blocks the first meaningful paint. Suppress video entirely on constrained
+        connections.</li>
+      <li>Apply deferred loading and explicit dimensions to all fifty image elements, eliminating both the
+        unnecessary fetches identified at <span class="ref">F-03</span> and the layout shift they cause.</li>
+      <li>Restore the three brochure files identified at <span class="ref">F-02</span> and correct the corresponding
+        catalogue references; compress the sixteen megabytes of brochure literature for faster delivery.</li>
+      <li>Establish connection pre-establishment and font preloading for third-party resources, and defer the
+        live-chat widget until after first paint (<span class="ref">F-09</span>).</li>
+    </ul>
+    <h4>Deliverables</h4>
+    <ul>
+      <li>Optimised media estate committed to the repository, with originals archived separately.</li>
+      <li>Before-and-after performance report for all seven pages, measured on a simulated Philippine mobile profile.</li>
+      <li>Written media preparation standard for future asset additions.</li>
+    </ul>
+  </div>
+
+  <div class="ws">
+    <div class="ws-head">
+      <p class="ws-title"><em>Workstream WS-2 &nbsp;&middot;&nbsp; Phase 2</em>Front-End Consolidation and Build Pipeline</p>
+      <span class="ws-effort">9 days</span>
+    </div>
+    <p><strong>Objective.</strong> Establish a single authoritative definition of every shared element, so that a
+      change is made once and applied everywhere, and eliminate the divergence recorded at <span class="ref">F-04</span>.</p>
+    <h4>Scope of work</h4>
+    <ul>
+      <li>Introduce a static site build using a lightweight template engine, producing the same static output the
+        site produces today and preserving current hosting arrangements without change.</li>
+      <li>Reduce the seven navigation variants, five footer variants and three brand-token definitions to one of
+        each, reconciling the differences with Gleamair Enterprises before adoption.</li>
+      <li>Extract the 1,522 duplicated inline stylesheet lines into a shared, cached stylesheet with a single
+        brand-token layer, retaining page-specific styles where genuinely page-specific.</li>
+      <li>Separate behaviour from markup by replacing the fourteen inline event handlers, enabling a content security
+        policy to be introduced under <span class="ref">WS-6</span>.</li>
+      <li>Verify rendered output against the current site page by page to confirm no visual regression.</li>
+    </ul>
+    <h4>Deliverables</h4>
+    <ul>
+      <li>Build pipeline producing byte-comparable static output, with a documented local development workflow.</li>
+      <li>Consolidated layout templates, shared stylesheet and single brand-token definition.</li>
+      <li>Visual regression comparison covering all seven pages.</li>
+    </ul>
+  </div>
+
+  <div class="ws">
+    <div class="ws-head">
+      <p class="ws-title"><em>Workstream WS-3 &nbsp;&middot;&nbsp; Phase 2</em>Content Management and Data Integrity</p>
+      <span class="ws-effort">7 days</span>
+    </div>
+    <p><strong>Objective.</strong> Enable Gleamair Enterprises staff to publish catalogue, project and testimonial
+      content without developer involvement, and prevent malformed content from reaching production
+      (<span class="ref">F-05</span>).</p>
+    <h4>Scope of work</h4>
+    <ul>
+      <li>Introduce a Git-backed editorial interface over the existing <span class="ref">conf/db/</span> content
+        files, giving non-technical staff a browser-based editor while retaining full version history and requiring
+        no additional hosting or database.</li>
+      <li>Define and enforce a formal schema for each content file, so that a missing image, an invalid product
+        record or a malformed specification is rejected at edit time rather than discovered by a visitor.</li>
+      <li>Automate the generation step so that publishing no longer depends on a script being run on a developer
+        workstation.</li>
+      <li>Extend the content model to capture the fields currently absent from the catalogue, including per-product
+        literature references, so that <span class="ref">F-02</span> cannot recur.</li>
+    </ul>
+    <h4>Deliverables</h4>
+    <ul>
+      <li>Editorial interface configured for catalogue, projects, testimonials, clients and mission content.</li>
+      <li>Content schemas with validation integrated into the delivery pipeline.</li>
+      <li>Illustrated editor guide and a training session for nominated staff.</li>
+    </ul>
+  </div>
+
+  <div class="ws">
+    <div class="ws-head">
+      <p class="ws-title"><em>Workstream WS-4 &nbsp;&middot;&nbsp; Phase 3</em>Enquiry Capture and Odoo Integration</p>
+      <span class="ws-effort">5 days</span>
+    </div>
+    <p><strong>Objective.</strong> Ensure every enquiry is captured as a structured, tracked record in the Odoo
+      platform Gleamair Enterprises already operates, and that every enquirer receives immediate acknowledgement
+      (<span class="ref">F-06</span>).</p>
+    <h4>Scope of work</h4>
+    <ul>
+      <li>Route contact form submissions into Odoo CRM as qualified leads, carrying the product interest, project
+        type and enquiry source, with the existing electronic mail notification retained as a fallback.</li>
+      <li>Issue an automatic branded acknowledgement to the enquirer stating expected response time.</li>
+      <li>Add server-side validation and proportionate automated-submission protection ahead of the relay.</li>
+      <li>Extend the sizing calculator so that a completed calculation may be submitted as a specification enquiry,
+        carrying the computed requirement and recommended model into the resulting lead record.</li>
+      <li>Reconcile the live-chat channel and the contact form so that both originate leads in the same place.</li>
+    </ul>
+    <h4>Deliverables</h4>
+    <ul>
+      <li>Enquiry integration in operation, with fallback behaviour tested against a simulated outage.</li>
+      <li>Calculator-to-enquiry submission path.</li>
+      <li>Lead-source taxonomy documented for reporting under <span class="ref">WS-5</span>.</li>
+    </ul>
+  </div>
+
+  <div class="ws">
+    <div class="ws-head">
+      <p class="ws-title"><em>Workstream WS-5 &nbsp;&middot;&nbsp; Phases 1 and 3</em>Measurement, Analytics and Search Optimisation</p>
+      <span class="ws-effort">4 days</span>
+    </div>
+    <p><strong>Objective.</strong> Make commercial performance visible, so that the effect of this programme and of
+      all future marketing expenditure can be evidenced (<span class="ref">F-08</span>, <span class="ref">F-10</span>).</p>
+    <h4>Scope of work</h4>
+    <ul>
+      <li>Implement privacy-respecting analytics across all pages, with a baseline established in Phase&nbsp;1 before
+        remediation begins so that improvement can be demonstrated against it.</li>
+      <li>Define and instrument the commercial events that matter: enquiry submission, calculator completion,
+        brochure download, live-chat initiation and marketplace referral.</li>
+      <li>Register and configure search-engine webmaster properties, and extend the sitemap with last-modified
+        signals generated automatically at build time.</li>
+      <li>Extend structured data to individual products, making catalogue items eligible for enhanced search
+        presentation.</li>
+      <li>Deliver a monthly performance report covering traffic, source, page performance and enquiry conversion.</li>
+    </ul>
+    <h4>Deliverables</h4>
+    <ul>
+      <li>Analytics property with commercial event tracking and a documented measurement plan.</li>
+      <li>Search-engine properties configured and verified.</li>
+      <li>Reporting template with the first month&rsquo;s report delivered.</li>
+    </ul>
+  </div>
+
+  <div class="ws">
+    <div class="ws-head">
+      <p class="ws-title"><em>Workstream WS-6 &nbsp;&middot;&nbsp; Phases 1 and 3</em>Quality Assurance and Delivery Automation</p>
+      <span class="ws-effort">5 days</span>
+    </div>
+    <p><strong>Objective.</strong> Prevent the recurrence of the defect class represented by
+      <span class="ref">F-02</span> by verifying every change automatically before it reaches visitors
+      (<span class="ref">F-07</span>).</p>
+    <h4>Scope of work</h4>
+    <ul>
+      <li>Establish a continuous integration pipeline that, on every change, validates content files against their
+        schemas, verifies that every internal link and asset reference resolves, and builds the site.</li>
+      <li>Enforce a page-weight budget so that any change taking a page above the agreed threshold fails the pipeline
+        rather than reaching visitors.</li>
+      <li>Introduce automated performance and accessibility scoring with agreed minimum thresholds.</li>
+      <li>Automate deployment on successful validation, with a documented one-step rollback.</li>
+      <li>Introduce a content security policy and appropriate response headers, enabled by the separation of
+        behaviour from markup delivered under <span class="ref">WS-2</span>.</li>
+    </ul>
+    <h4>Deliverables</h4>
+    <ul>
+      <li>Pipeline configuration committed to the repository, with all checks passing.</li>
+      <li>Documented deployment and rollback procedure.</li>
+      <li>Security header and policy configuration.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ══════════════════════ 4 cont. OPTIONAL ══════════════════════ -->
+<div class="sheet">
+  <h2><span class="num">4</span>Proposed Implementations <span style="font-weight:400;font-size:10pt;color:var(--muted)">(continued)</span></h2>
+
+  <p>The following workstreams are offered as optional extensions. They are not required to remediate any finding in
+    Section&nbsp;3 and are presented for consideration on their commercial merits alone. Neither is a precondition of
+    the core programme, and either may be commissioned at a later date.</p>
+
+  <div class="ws">
+    <div class="ws-head">
+      <p class="ws-title"><em>Workstream WS-7 &nbsp;&middot;&nbsp; Optional</em>Catalogue and Quotation Enhancement</p>
+      <span class="ws-effort">8 days</span>
+    </div>
+    <p><strong>Objective.</strong> Shorten the path between a visitor identifying a requirement and Gleamair
+      Enterprises issuing a quotation.</p>
+    <h4>Scope of work</h4>
+    <ul>
+      <li>Introduce catalogue filtering and comparison across the fourteen products by application, capacity and
+        sector, so that a specifying engineer can narrow to a shortlist without contacting the business.</li>
+      <li>Provide a specification basket allowing several products and quantities to be assembled and submitted as a
+        single quotation request.</li>
+      <li>Generate a branded specification sheet for any product or basket as a downloadable document, produced
+        automatically from catalogue data so that it can never diverge from the published specification.</li>
+      <li>Extend the calculator to produce a saveable, shareable summary of a sizing exercise, suitable for inclusion
+        in a client&rsquo;s own tender documentation.</li>
+    </ul>
+    <h4>Deliverables</h4>
+    <ul>
+      <li>Filtering, comparison and quotation-basket functionality in production.</li>
+      <li>Automated specification sheet generation.</li>
+      <li>Shareable calculator output.</li>
+    </ul>
+  </div>
+
+  <div class="ws">
+    <div class="ws-head">
+      <p class="ws-title"><em>Workstream WS-8 &nbsp;&middot;&nbsp; Optional</em>Channel and Marketplace Alignment</p>
+      <span class="ws-effort">6 days</span>
+    </div>
+    <p><strong>Objective.</strong> Present a single, consistent product record across the website and the
+      marketplace and social channels the business already operates.</p>
+    <h4>Scope of work</h4>
+    <ul>
+      <li>Establish the website catalogue as the authoritative product record and generate marketplace-ready listing
+        data from it, removing the present need to maintain descriptions and specifications separately.</li>
+      <li>Introduce structured cross-referencing between website product pages and their corresponding marketplace
+        listings, with referral tracking so that channel contribution is measurable.</li>
+      <li>Generate consistent social preview imagery for each product from catalogue data.</li>
+      <li>Review and align the project evidence presented on the website with the material published on social
+        channels.</li>
+    </ul>
+    <h4>Deliverables</h4>
+    <ul>
+      <li>Marketplace listing export generated from catalogue data.</li>
+      <li>Cross-channel referral tracking integrated with <span class="ref">WS-5</span> reporting.</li>
+      <li>Generated social preview assets for all catalogue products.</li>
+    </ul>
+  </div>
+
+  <div class="subsheet">
+  <h3 style="margin-top:0">4.1&nbsp; Traceability</h3>
+  <p>Every finding recorded in Section&nbsp;3 is addressed by at least one workstream, and every workstream addresses
+    at least one finding or delivers a distinct commercial capability. The mapping is as follows.</p>
+
+  <table>
+    <caption>Table 3 &mdash; Finding to workstream traceability</caption>
+    <thead>
+      <tr><th>Workstream</th><th>Findings addressed</th><th class="ctr">Phase</th><th class="num">Effort</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>WS-1</strong> &nbsp;Performance and Media Remediation</td><td>F-01, F-02, F-03, F-09</td><td class="ctr">1</td><td class="num">6 days</td></tr>
+      <tr><td><strong>WS-2</strong> &nbsp;Front-End Consolidation and Build Pipeline</td><td>F-04</td><td class="ctr">2</td><td class="num">9 days</td></tr>
+      <tr><td><strong>WS-3</strong> &nbsp;Content Management and Data Integrity</td><td>F-05, F-02 (recurrence)</td><td class="ctr">2</td><td class="num">7 days</td></tr>
+      <tr><td><strong>WS-4</strong> &nbsp;Enquiry Capture and Odoo Integration</td><td>F-06</td><td class="ctr">3</td><td class="num">5 days</td></tr>
+      <tr><td><strong>WS-5</strong> &nbsp;Measurement, Analytics and Search Optimisation</td><td>F-08, F-10</td><td class="ctr">1 &amp; 3</td><td class="num">4 days</td></tr>
+      <tr><td><strong>WS-6</strong> &nbsp;Quality Assurance and Delivery Automation</td><td>F-07, F-10</td><td class="ctr">1 &amp; 3</td><td class="num">5 days</td></tr>
+      <tr><td><strong>WS-7</strong> &nbsp;Catalogue and Quotation Enhancement <span class="note">(optional)</span></td><td>&mdash;</td><td class="ctr">4</td><td class="num">8 days</td></tr>
+      <tr><td><strong>WS-8</strong> &nbsp;Channel and Marketplace Alignment <span class="note">(optional)</span></td><td>&mdash;</td><td class="ctr">4</td><td class="num">6 days</td></tr>
+    </tbody>
+    <tfoot>
+      <tr><td colspan="3">Core programme (WS-1 to WS-6)</td><td class="num">36 days</td></tr>
+      <tr><td colspan="3">Optional extensions (WS-7 and WS-8)</td><td class="num">14 days</td></tr>
+    </tfoot>
+  </table>
+
+  <h3>4.2&nbsp; Basis of estimate</h3>
+  <p>Effort has been estimated from the bottom up against the measured scope recorded in Appendix&nbsp;A, rather than
+    from a percentage of a notional project value. Each workstream was decomposed into its constituent tasks and each
+    task sized against the quantity of work actually present: seven pages to consolidate, approximately 1,522 lines of
+    duplicated stylesheet to extract, fifty image elements to correct, an estate of sixty-eight megabytes of media to
+    re-encode, fourteen products across four categories to model, and nine brochures to verify and compress. Where a
+    task&rsquo;s size depends on a fact we could not establish by static inspection &mdash; principally the
+    configuration of the client&rsquo;s Odoo tenancy &mdash; that dependency is stated in Section&nbsp;8.1 and the
+    associated risk recorded at <span class="ref">R-03</span>.</p>
+  <p>A person-day is a full working day of senior engineering time and is inclusive of analysis, implementation,
+    testing, review and the documentation required at handover. It is not a measure of coding time alone. Project
+    management, weekly reporting and the phase review meetings described in Section&nbsp;5.1 are included within the
+    stated effort and are not charged separately.</p>
+  <p>The estimates carry no separate contingency line. Each phase is offered on a fixed-price basis, which means
+    SSECKA IT Solutions carries the risk of the estimate being wrong for the scope stated. What the fixed price does
+    not absorb is a change to that scope, which is handled under the procedure at Section&nbsp;8.4. Should any
+    workstream complete in materially less effort than estimated, the saving is reflected in the final invoice for
+    that phase rather than retained.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════ 5. ROADMAP ══════════════════════ -->
+<div class="sheet">
+  <h2><span class="num">5</span>Implementation Roadmap</h2>
+
+  <p>The programme is arranged into three core phases and one optional phase. The sequence is not arbitrary: each
+    phase creates the conditions the next depends upon. Analytics is deliberately placed at the start of
+    Phase&nbsp;1, before any remediation, so that a baseline exists against which improvement can be demonstrated.
+    The content security policy in Phase&nbsp;3 depends on the separation of behaviour from markup delivered in
+    Phase&nbsp;2. Enquiry integration is placed last among the core phases because its value depends on visitors
+    reaching the enquiry form at all, which is what Phase&nbsp;1 restores.</p>
+
+  <table>
+    <caption>Table 4 &mdash; Phased delivery schedule</caption>
+    <thead>
+      <tr><th style="width:38mm">Phase</th><th class="ctr" style="width:20mm">Weeks</th><th>Content and outcome</th><th class="num" style="width:18mm">Effort</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Phase 1</strong><br><span class="note">Stabilise</span></td>
+        <td class="ctr">1&ndash;3</td>
+        <td>Analytics baseline established, then full media remediation, deferred image loading, restoration of the
+          three broken brochures, and the first validation checks in the delivery pipeline.
+          <strong>Outcome:</strong> page weight below 2&nbsp;MB, literature restored, performance visible and
+          measured for the first time.</td>
+        <td class="num">11 days</td>
+      </tr>
+      <tr>
+        <td><strong>Phase 2</strong><br><span class="note">Consolidate</span></td>
+        <td class="ctr">4&ndash;8</td>
+        <td>Build pipeline introduced, navigation, footer and brand tokens reduced to a single definition each,
+          stylesheet extracted and shared, editorial interface and content schemas delivered with staff training.
+          <strong>Outcome:</strong> a change is made once rather than seven times, and staff publish content without
+          developer involvement.</td>
+        <td class="num">16 days</td>
+      </tr>
+      <tr>
+        <td><strong>Phase 3</strong><br><span class="note">Convert</span></td>
+        <td class="ctr">9&ndash;12</td>
+        <td>Odoo enquiry integration with acknowledgement and calculator submission, remaining commercial event
+          instrumentation, automated deployment with rollback, security policy and headers, first monthly report.
+          <strong>Outcome:</strong> every enquiry tracked in the business systems and conversion measurable
+          end to end.</td>
+        <td class="num">9 days</td>
+      </tr>
+      <tr>
+        <td><strong>Phase 4</strong><br><span class="note">Optional &mdash; Extend</span></td>
+        <td class="ctr">13+</td>
+        <td>Catalogue filtering, comparison and quotation basket, automated specification sheets, marketplace listing
+          generation and cross-channel referral tracking.
+          <strong>Outcome:</strong> a shorter path from requirement to quotation, and one product record across all
+          channels.</td>
+        <td class="num">14 days</td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr><td colspan="3">Core programme, Phases 1 to 3</td><td class="num">36 days</td></tr>
+    </tfoot>
+  </table>
+
+  <div class="callout">
+    <h4>Phase independence</h4>
+    <p style="margin-bottom:4pt">Each phase is specified to deliver value independently and concludes at a defined
+      acceptance point. Gleamair Enterprises may commission Phase&nbsp;1 alone and take the decision on subsequent
+      phases on the evidence Phase&nbsp;1 produces. No phase leaves the site in an intermediate or unsupportable
+      state, and the site remains fully in service throughout.</p>
+  </div>
+
+  <h3>5.1&nbsp; Governance and working arrangements</h3>
+  <ul>
+    <li>A single point of contact is nominated by each party for the duration of the engagement.</li>
+    <li>A written progress report is issued at the end of each week, stating work completed, work planned and any
+      matter awaiting a decision by Gleamair Enterprises.</li>
+    <li>Each phase concludes with a review meeting and formal written acceptance against the criteria in
+      Section&nbsp;9.</li>
+    <li>All work is carried out on isolated branches of the client repository and merged only after review, so the
+      published site is never exposed to work in progress.</li>
+    <li>All source, configuration and documentation remain in the client&rsquo;s own repository throughout. There is
+      no point at which the work is held solely by SSECKA IT Solutions.</li>
+  </ul>
+</div>
+
+<!-- ══════════════════════ 6. COMMERCIAL ══════════════════════ -->
+<div class="sheet">
+  <h2><span class="num">6</span>Commercial Summary</h2>
+
+  <p>Effort is stated in person-days of senior engineering time and is inclusive of analysis, implementation,
+    testing, documentation and handover. Professional fees are calculated by applying the engagement rate agreed
+    between the parties to the effort stated below. The applicable rate card is issued under separate cover and is
+    not reproduced in this document.</p>
+
+  <table>
+    <caption>Table 5 &mdash; Effort summary by phase</caption>
+    <thead>
+      <tr><th>Phase</th><th>Workstreams</th><th class="ctr">Basis</th><th class="num">Person-days</th><th class="num">Professional fees</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Phase 1 &mdash; Stabilise</td><td>WS-1, WS-5 (baseline), WS-6 (partial)</td><td class="ctr">Fixed price</td><td class="num">11</td><td class="num">Per rate card</td></tr>
+      <tr><td>Phase 2 &mdash; Consolidate</td><td>WS-2, WS-3</td><td class="ctr">Fixed price</td><td class="num">16</td><td class="num">Per rate card</td></tr>
+      <tr><td>Phase 3 &mdash; Convert</td><td>WS-4, WS-5, WS-6 (remainder)</td><td class="ctr">Fixed price</td><td class="num">9</td><td class="num">Per rate card</td></tr>
+    </tbody>
+    <tfoot>
+      <tr><td colspan="3">Core programme total</td><td class="num">36</td><td class="num">&mdash;</td></tr>
+    </tfoot>
+  </table>
+
+  <table>
+    <caption>Table 6 &mdash; Optional extensions</caption>
+    <thead>
+      <tr><th>Phase</th><th>Workstreams</th><th class="ctr">Basis</th><th class="num">Person-days</th><th class="num">Professional fees</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Phase 4 &mdash; Extend</td><td>WS-7 Catalogue and Quotation Enhancement</td><td class="ctr">Fixed price</td><td class="num">8</td><td class="num">Per rate card</td></tr>
+      <tr><td>Phase 4 &mdash; Extend</td><td>WS-8 Channel and Marketplace Alignment</td><td class="ctr">Fixed price</td><td class="num">6</td><td class="num">Per rate card</td></tr>
+    </tbody>
+    <tfoot>
+      <tr><td colspan="3">Optional total</td><td class="num">14</td><td class="num">&mdash;</td></tr>
+    </tfoot>
+  </table>
+
+  <h3>6.1&nbsp; Recurring costs payable by the client</h3>
+  <p>The programme is designed to avoid introducing recurring licence costs. The following third-party services are
+    contracted directly by Gleamair Enterprises and are not included in the professional fees above.</p>
+
+  <table>
+    <caption>Table 7 &mdash; Third-party services</caption>
+    <thead>
+      <tr><th>Service</th><th>Purpose</th><th>Commercial position</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Static site hosting</td><td>Publication of the built site</td><td>No change to present arrangement required</td></tr>
+      <tr><td>Analytics platform</td><td>Measurement under WS-5</td><td>Free tier sufficient at present volumes</td></tr>
+      <tr><td>Editorial interface</td><td>Content publishing under WS-3</td><td>Open source; no licence fee</td></tr>
+      <tr><td>Continuous integration</td><td>Validation and deployment under WS-6</td><td>Free allowance expected to be sufficient</td></tr>
+      <tr><td>Odoo platform</td><td>Lead management under WS-4</td><td>Existing client subscription; no additional cost anticipated</td></tr>
+      <tr><td>Enquiry relay</td><td>Fallback path under WS-4</td><td>Existing client arrangement retained</td></tr>
+    </tbody>
+  </table>
+
+  <h3>6.2&nbsp; Payment terms</h3>
+  <ul>
+    <li>Invoicing is by phase. Thirty per cent (30%) is invoiced on commencement of each phase and the balance on
+      written acceptance of that phase.</li>
+    <li>Payment terms are fifteen (15) calendar days from date of invoice.</li>
+    <li>All amounts are exclusive of value-added tax, which is applied at the prevailing statutory rate.</li>
+    <li>Fixed-price phases are firm for the scope stated in Section&nbsp;4. Work requested outside that scope is
+      handled under the change procedure at Section&nbsp;8.4.</li>
+    <li>This proposal remains valid for sixty (60) calendar days from the date of issue stated on the cover.</li>
+  </ul>
+</div>
+
+<!-- ══════════════════════ 7. RISK ══════════════════════ -->
+<div class="sheet">
+  <h2><span class="num">7</span>Risk Assessment</h2>
+
+  <p>The following risks were identified during planning. Each is stated with our assessment of likelihood and
+    impact should it occur, together with the mitigation built into the programme. Risks are reviewed at each weekly
+    progress report and the register is maintained for the duration of the engagement.</p>
+
+  <table>
+    <caption>Table 8 &mdash; Risk register</caption>
+    <thead>
+      <tr><th style="width:12mm">Ref</th><th>Risk</th><th class="ctr" style="width:19mm">Likelihood</th><th class="ctr" style="width:16mm">Impact</th><th style="width:62mm">Mitigation</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="ref">R-01</td>
+        <td>Media re-encoding degrades the visual quality of product photography, which is central to the site&rsquo;s
+          credibility.</td>
+        <td class="ctr">Low</td><td class="ctr">High</td>
+        <td>Quality thresholds agreed with the client before conversion; side-by-side comparison submitted for
+          approval; all originals archived and restorable.</td>
+      </tr>
+      <tr>
+        <td class="ref">R-02</td>
+        <td>Consolidating seven divergent page variants alters the appearance of a page in a way the client did not
+          intend.</td>
+        <td class="ctr">Medium</td><td class="ctr">Medium</td>
+        <td>Differences catalogued and reconciled with the client before adoption; automated visual comparison of all
+          seven pages before and after; work merged only after review.</td>
+      </tr>
+      <tr>
+        <td class="ref">R-03</td>
+        <td>Odoo tenancy configuration or access does not permit lead creation from the website within the planned
+          effort.</td>
+        <td class="ctr">Medium</td><td class="ctr">Medium</td>
+        <td>Access and configuration confirmed at the start of Phase&nbsp;3 before implementation begins; existing
+          electronic mail path retained throughout as a fallback so no enquiry is ever lost.</td>
+      </tr>
+      <tr>
+        <td class="ref">R-04</td>
+        <td>Introducing a build step raises the barrier for the client to make small changes independently.</td>
+        <td class="ctr">Medium</td><td class="ctr">Low</td>
+        <td>The editorial interface delivered under WS-3 removes the need to touch source for content changes; local
+          development workflow documented; training delivered to nominated staff.</td>
+      </tr>
+      <tr>
+        <td class="ref">R-05</td>
+        <td>Client review and approval cycles extend the elapsed schedule beyond twelve weeks.</td>
+        <td class="ctr">Medium</td><td class="ctr">Low</td>
+        <td>Decision points identified in advance in each weekly report; phases are independent, so a delay in one
+          does not invalidate work completed in another.</td>
+      </tr>
+      <tr>
+        <td class="ref">R-06</td>
+        <td>Search-engine ranking is temporarily disturbed by structural changes to markup and templates.</td>
+        <td class="ctr">Low</td><td class="ctr">Medium</td>
+        <td>Existing structured data, canonical declarations and URL structure preserved without alteration; no page
+          address changes; ranking monitored through the properties established under WS-5.</td>
+      </tr>
+      <tr>
+        <td class="ref">R-07</td>
+        <td>A defect introduced during the programme reaches visitors.</td>
+        <td class="ctr">Low</td><td class="ctr">Medium</td>
+        <td>Validation pipeline delivered early in Phase&nbsp;1; all work reviewed before merge; documented one-step
+          rollback available from Phase&nbsp;3 and manual rollback available throughout.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>7.1&nbsp; Risk of taking no action</h3>
+  <p>For completeness we record the consequence of declining the programme. The media payload documented at
+    <span class="ref">F-01</span> continues to cost enquiries at a rate the business cannot presently observe, because
+    no measurement exists to observe it. The divergence documented at <span class="ref">F-04</span> is progressive:
+    each new page authored under the present arrangement adds another variant to reconcile, so the cost of
+    consolidation rises with every addition. The defect class represented by <span class="ref">F-02</span> will recur,
+    since nothing detects it. These are not speculative risks; two of the three are already realised and measured in
+    Section&nbsp;3.</p>
+</div>
+
+<!-- ══════════════════════ 8. ASSUMPTIONS ══════════════════════ -->
+<div class="sheet">
+  <h2><span class="num">8</span>Assumptions, Dependencies and Exclusions</h2>
+
+  <h3>8.1&nbsp; Assumptions</h3>
+  <p>The effort and schedule stated in this proposal rest on the following assumptions. Should any prove incorrect,
+    SSECKA IT Solutions will notify Gleamair Enterprises in writing and state the effect before any additional effort
+    is incurred.</p>
+  <ul>
+    <li>The repository inspected during this review is the authoritative source of the production site, and no
+      undisclosed changes are applied directly to the published site outside it.</li>
+    <li>Original, full-resolution source files are available for the product photography and the homepage video, or
+      the committed versions are of sufficient quality to serve as originals.</li>
+    <li>Gleamair Enterprises holds, or can obtain, administrative access to its Odoo tenancy, domain registration,
+      hosting arrangement and marketplace accounts as required by the relevant workstream.</li>
+    <li>The business holds the necessary rights to all photography, client logos and brochure literature published on
+      the site.</li>
+    <li>A nominated client representative is available for review and decision within three (3) working days of a
+      request.</li>
+    <li>The site remains a static publication. No workstream in this proposal requires an application server or a
+      database.</li>
+  </ul>
+
+  <h3>8.2&nbsp; Client dependencies</h3>
+  <ul>
+    <li>Repository access with permission to create branches and open changes for review.</li>
+    <li>Confirmation of the single authoritative version of the navigation, footer and brand tokens, required at the
+      start of Phase&nbsp;2.</li>
+    <li>Availability of nominated staff for content-management training during Phase&nbsp;2.</li>
+    <li>Written acceptance at the conclusion of each phase, in accordance with Section&nbsp;9.</li>
+  </ul>
+
+  <h3>8.3&nbsp; Exclusions</h3>
+  <p>The following are outside the scope of this proposal. Each may be quoted separately on request.</p>
+  <ul>
+    <li>Graphic design, rebranding, and the authoring of new marketing copy or photography.</li>
+    <li>Translation or localisation into languages other than English.</li>
+    <li>Penetration testing, and any audit of hosting, DNS or electronic mail infrastructure.</li>
+    <li>Configuration, customisation or licensing of the Odoo platform beyond the enquiry integration specified at
+      WS-4.</li>
+    <li>Transactional electronic commerce on the website itself, including payment processing, order management and
+      stock control.</li>
+    <li>Paid advertising, search-engine marketing, content marketing and social media management.</li>
+    <li>Ongoing hosting, monitoring and support after the warranty period stated in Section&nbsp;9.3, which is
+      available under a separate support agreement.</li>
+  </ul>
+
+  <h3>8.4&nbsp; Change procedure</h3>
+  <p>Any request that alters the scope stated in Section&nbsp;4 is documented as a written change note recording the
+    requested change, its effect on effort, fees and schedule, and any consequence for the remainder of the
+    programme. No work outside the agreed scope is undertaken, and no additional fee is incurred, until the change
+    note is accepted in writing by both parties.</p>
+
+  <h3>8.5&nbsp; Intellectual property and confidentiality</h3>
+  <p>All source code, configuration, documentation and generated assets produced under this engagement vest in
+    Gleamair Enterprises upon settlement of the corresponding invoice. Work is carried out in the client&rsquo;s own
+    repository throughout, so no deliverable is at any point held solely by SSECKA IT Solutions. Where open-source
+    components are introduced, they are limited to permissively licensed software imposing no obligation on Gleamair
+    Enterprises to disclose its own material, and each is recorded in the handover documentation. Each party shall
+    treat the other&rsquo;s commercial and technical information as confidential.</p>
+</div>
+
+<!-- ══════════════════════ 9. ACCEPTANCE ══════════════════════ -->
+<div class="sheet">
+  <h2><span class="num">9</span>Acceptance Criteria and Success Measures</h2>
+
+  <p>Each phase is accepted against objective criteria agreed in advance. Acceptance is not a matter of opinion: every
+    criterion below is verifiable by Gleamair Enterprises, or by an independent adviser, using public tooling.</p>
+
+  <table>
+    <caption>Table 9 &mdash; Acceptance criteria by phase</caption>
+    <thead>
+      <tr><th class="ctr" style="width:20mm">Phase</th><th>Criterion</th><th style="width:44mm">Method of verification</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="ctr">1</td><td>First-visit transfer weight below 2.0&nbsp;MB and largest contentful paint below 2.5 seconds on every page, on a simulated 4G mobile profile.</td><td>Browser developer tools; automated performance audit.</td></tr>
+      <tr><td class="ctr">1</td><td>All internal links and assets resolve; the three F-02 brochures are restored.</td><td>Automated link verification; manual confirmation.</td></tr>
+      <tr><td class="ctr">1</td><td>Analytics recording traffic on all seven pages, with a pre-remediation baseline.</td><td>Live analytics property.</td></tr>
+      <tr><td class="ctr">2</td><td>One navigation, one footer and one brand-token definition across the estate.</td><td>Source inspection; duplication check.</td></tr>
+      <tr><td class="ctr">2</td><td>No unintended visual difference on any page against the previous site.</td><td>Automated visual comparison.</td></tr>
+      <tr><td class="ctr">2</td><td>A nominated staff member publishes a catalogue change unaided.</td><td>Witnessed acceptance test.</td></tr>
+      <tr><td class="ctr">2</td><td>A deliberately malformed content edit is rejected before publication.</td><td>Witnessed negative test.</td></tr>
+      <tr><td class="ctr">3</td><td>A test enquiry creates a structured lead in Odoo and is acknowledged.</td><td>Witnessed end-to-end test.</td></tr>
+      <tr><td class="ctr">3</td><td>Enquiry, calculator, brochure and chat interactions recorded as events.</td><td>Analytics event report.</td></tr>
+      <tr><td class="ctr">3</td><td>A change exceeding the page-weight budget is rejected by the pipeline.</td><td>Witnessed negative test.</td></tr>
+      <tr><td class="ctr">3</td><td>Mobile audit scores of 90 or above for performance, accessibility, best practice and search.</td><td>Automated audit on the live site.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>9.1&nbsp; Commercial success measures</h3>
+  <p>The following commercial measures are reported monthly from the conclusion of Phase&nbsp;1. They are measures of
+    programme success rather than acceptance criteria, since they depend in part on factors outside our control.</p>
+  <ul>
+    <li>Organic search sessions, measured against the Phase&nbsp;1 baseline.</li>
+    <li>Proportion of visitors who leave without interaction, by page and by device class.</li>
+    <li>Enquiry conversion rate, expressed as enquiries per hundred sessions.</li>
+    <li>Calculator completions and brochure downloads by product, as indicators of catalogue interest.</li>
+  </ul>
+
+  <h3>9.2&nbsp; Handover</h3>
+  <p>At the conclusion of the final commissioned phase, SSECKA IT Solutions delivers written handover documentation
+    covering the architecture as built, the development and deployment workflow, the content editing procedure, the
+    media preparation standard, the measurement plan and the rollback procedure, together with a handover session for
+    the client&rsquo;s nominated representatives.</p>
+
+  <h3>9.3&nbsp; Warranty</h3>
+  <p>SSECKA IT Solutions warrants the delivered work against defect for ninety (90) calendar days from the written
+    acceptance of each phase, and corrects any defect attributable to that work at no charge. The warranty does not
+    extend to defects arising from changes made by others, from alterations to third-party services outside our
+    control, or from content published through the editorial interface.</p>
+</div>
+
+<!-- ══════════════════════ 10. NEXT STEPS ══════════════════════ -->
+<div class="sheet">
+  <h2><span class="num">10</span>Next Steps and Acceptance</h2>
+
+  <p class="lead">SSECKA IT Solutions recommends that Gleamair Enterprises commission Phase&nbsp;1 without delay. The
+    broken product literature and the media payload are costing the business enquiries at present, both are
+    remediable within three weeks, and the analytics baseline established at the start of Phase&nbsp;1 is what makes
+    every subsequent improvement demonstrable.</p>
+
+  <h3>10.1&nbsp; Proposed sequence</h3>
+  <table>
+    <thead>
+      <tr><th class="ctr" style="width:16mm">Step</th><th>Action</th><th style="width:36mm">Responsibility</th><th style="width:30mm">Indicative timing</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="ctr">1</td><td>Review this proposal and raise any question of scope, sequence or commercial terms.</td><td>Gleamair Enterprises</td><td>Within 2 weeks</td></tr>
+      <tr><td class="ctr">2</td><td>Clarification meeting to address questions and confirm the phases to be commissioned.</td><td>Both parties</td><td>Week 3</td></tr>
+      <tr><td class="ctr">3</td><td>Issue of the rate card and the engagement agreement for the commissioned phases.</td><td>SSECKA IT Solutions</td><td>Week 3</td></tr>
+      <tr><td class="ctr">4</td><td>Execution of the acceptance below and confirmation of client dependencies at Section 8.2.</td><td>Both parties</td><td>Week 4</td></tr>
+      <tr><td class="ctr">5</td><td>Commencement of Phase&nbsp;1, beginning with the analytics baseline.</td><td>SSECKA IT Solutions</td><td>Week 4</td></tr>
+    </tbody>
+  </table>
+
+  <h3>10.2&nbsp; Contact</h3>
+  <p>Questions on this proposal, whether technical or commercial, should be directed to the engagement contact at
+    SSECKA IT Solutions. We are glad to walk through any finding in Section&nbsp;3 against the source, so that Gleamair
+    Enterprises may satisfy itself as to the basis of each conclusion before committing to any expenditure.</p>
+
+  <h3>10.3&nbsp; Acceptance</h3>
+  <p>Execution below constitutes acceptance of this proposal and authority to proceed with the phases indicated,
+    subject to the engagement agreement to be issued in accordance with Section&nbsp;10.1.</p>
+
+  <table style="margin-bottom:4mm">
+    <thead>
+      <tr><th>Phases commissioned</th><th class="ctr" style="width:26mm">Person-days</th><th class="ctr" style="width:30mm">Commissioned</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Phase 1 &mdash; Stabilise</td><td class="ctr">11</td><td class="ctr">&#9744;</td></tr>
+      <tr><td>Phase 2 &mdash; Consolidate</td><td class="ctr">16</td><td class="ctr">&#9744;</td></tr>
+      <tr><td>Phase 3 &mdash; Convert</td><td class="ctr">9</td><td class="ctr">&#9744;</td></tr>
+      <tr><td>Phase 4 &mdash; Extend (optional)</td><td class="ctr">14</td><td class="ctr">&#9744;</td></tr>
+    </tbody>
+  </table>
+
+  <div class="sign">
+    <div class="sign-col">
+      <h4>For and on behalf of Gleamair Enterprises</h4>
+      <div class="sign-line"></div>
+      <div class="sign-field">Name</div>
+      <div class="sign-field">Position</div>
+      <div class="sign-field">Date</div>
+    </div>
+    <div class="sign-col">
+      <h4>For and on behalf of SSECKA IT Solutions</h4>
+      <div class="sign-line"></div>
+      <div class="sign-field">Name</div>
+      <div class="sign-field">Position</div>
+      <div class="sign-field">Date</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ APPENDIX A ══════════════════════ -->
+<div class="sheet">
+  <h2>Appendix A &nbsp;&mdash;&nbsp; Evidence Log</h2>
+
+  <p>Every quantitative claim in this proposal was measured directly from the client repository at the revision
+    stated on the cover. The method is recorded below so that Gleamair Enterprises, or any adviser acting on its
+    behalf, may independently reproduce each figure.</p>
+
+  <table>
+    <caption>Table 10 &mdash; Measured evidence</caption>
+    <thead>
+      <tr><th style="width:14mm">Ref</th><th style="width:48mm">Measurement</th><th class="ctr" style="width:26mm">Result</th><th>Method</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="ref">F-01</td><td>Homepage first-visit transfer weight</td><td class="ctr">24.4 MB</td><td>Sum of the page document, hero video, data loader and all 26 unique images referenced by the page markup and by the client and project data files, deduplicated.</td></tr>
+      <tr><td class="ref">F-01</td><td>Products page transfer weight</td><td class="ctr">21.8 MB</td><td>Sum of the page document, both scripts and all 17 unique images referenced by the page and by the catalogue data file.</td></tr>
+      <tr><td class="ref">F-01</td><td>Largest single image asset</td><td class="ctr">9.3 MB</td><td>Sky Tunnel XL2 commercial product photograph, measured on disk.</td></tr>
+      <tr><td class="ref">F-01</td><td>Total committed media</td><td class="ctr">68 MB</td><td>Aggregate size of the assets directory: 39&nbsp;MB images, 16&nbsp;MB brochures, 13&nbsp;MB video.</td></tr>
+      <tr><td class="ref">F-02</td><td>Unresolved brochure references</td><td class="ctr">3 of 9</td><td>Each brochure path referenced in markup, script and data was tested for a corresponding file. The residential and commercial Sky Tunnel and roof access hatch brochures exist only with a <span class="ref">.bak</span> suffix.</td></tr>
+      <tr><td class="ref">F-03</td><td>Images using deferred loading</td><td class="ctr">0 of 50</td><td>Count of image elements across all pages carrying a deferred loading attribute.</td></tr>
+      <tr><td class="ref">F-04</td><td>Duplicated inline stylesheet</td><td class="ctr">1,522 lines</td><td>Sum of lines within the inline style block of each of the seven pages.</td></tr>
+      <tr><td class="ref">F-04</td><td>Distinct navigation variants</td><td class="ctr">7 of 7</td><td>Checksum comparison of the navigation block extracted from each page. No two pages match.</td></tr>
+      <tr><td class="ref">F-04</td><td>Distinct footer variants</td><td class="ctr">5 of 7</td><td>Checksum comparison of the footer block extracted from each page. Three pages share one footer; four differ.</td></tr>
+      <tr><td class="ref">F-04</td><td>Distinct brand-token definitions</td><td class="ctr">3 of 7</td><td>Checksum comparison of the custom property block at the head of each stylesheet.</td></tr>
+      <tr><td class="ref">F-05</td><td>Content generation dependency</td><td class="ctr">Manual</td><td>The generator script rewrites the data loader and calculator from the JSON sources and must be executed locally; its output is committed by hand. No schema validation is applied.</td></tr>
+      <tr><td class="ref">F-06</td><td>Enquiry destination</td><td class="ctr">Relay only</td><td>The contact form posts to a third-party relay. No integration with the Odoo platform, no acknowledgement to the enquirer and no server-side validation were found.</td></tr>
+      <tr><td class="ref">F-07</td><td>Delivery automation present</td><td class="ctr">None</td><td>No pipeline, workflow or test configuration exists anywhere in the repository.</td></tr>
+      <tr><td class="ref">F-08</td><td>Analytics instrumentation present</td><td class="ctr">None</td><td>No analytics, tag manager or measurement script was found on any of the seven pages.</td></tr>
+      <tr><td class="ref">F-09</td><td>Third-party resource loading</td><td class="ctr">7 pages</td><td>Web font stylesheets are requested from Google Fonts on every page without connection pre-establishment; the live-chat widget loads on all seven.</td></tr>
+      <tr><td class="ref">F-10</td><td>Sitemap recrawl signals</td><td class="ctr">Absent</td><td>The sitemap lists all seven pages with change frequency and priority but carries no last-modified dates.</td></tr>
+      <tr><td class="ref">F-10</td><td>Inline event handlers</td><td class="ctr">14</td><td>Count of behaviour attributes bound directly within markup and generated markup.</td></tr>
+      <tr><td>&mdash;</td><td>Alternative text coverage</td><td class="ctr">50 of 50</td><td>Every image element carries alternative text. Recorded as a strength at Section 3.1.</td></tr>
+      <tr><td>&mdash;</td><td>Heading structure</td><td class="ctr">1 per page</td><td>Each of the seven pages declares exactly one first-level heading. Recorded as a strength at Section 3.1.</td></tr>
+      <tr><td>&mdash;</td><td>Catalogue scale</td><td class="ctr">14 / 4</td><td>Products and categories defined in the catalogue data file.</td></tr>
+    </tbody>
+  </table>
+
+  <p class="note">All measurements were taken by static inspection of the repository. Transfer weights are stated
+    uncompressed and represent the total bytes a browser would request on a first visit with an empty cache, before
+    any transport compression. They are therefore an upper bound on the compressed figure, but the media assets that
+    dominate them are already compressed formats and do not compress further in transport.</p>
+
+  <div class="end">End of document &nbsp;&middot;&nbsp; SSECKA-GLM-2026-001 &nbsp;&middot;&nbsp; Revision 1.0</div>
+</div>
+
+</body>
+</html>
