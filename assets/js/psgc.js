@@ -6,6 +6,11 @@
    so a customer never downloads the full 42,000-barangay dataset.
    ────────────────────────────────────────────────────────────────────────── */
 
+import { esc } from './portal.js';
+
+// PSGC ships 28 place names containing & or an apostrophe -- "Brooke's Point",
+// "Bgy. 11 - Maoyod Pob. (Bgy. 10 & 11)" -- so option labels are escaped even
+// though the data is ours, not user input.
 const BASE = '/assets/data/psgc';
 const cache = new Map();
 
@@ -63,9 +68,9 @@ export function attachAddressSelects({ province, city, barangay, onError }) {
         .sort((a, b) => a[0].localeCompare(b[0]))
         .map(([region, list]) => {
           const options = list
-            .map((p) => `<option value="${p.code}">${p.name}</option>`)
+            .map((p) => `<option value="${esc(p.code)}">${esc(p.name)}</option>`)
             .join('');
-          return `<optgroup label="${region}">${options}</optgroup>`;
+          return `<optgroup label="${esc(region)}">${options}</optgroup>`;
         })
         .join('');
 
@@ -84,7 +89,7 @@ export function attachAddressSelects({ province, city, barangay, onError }) {
       cities = data.cities || [];
       city.innerHTML =
         '<option value="">Select city / municipality</option>' +
-        cities.map((c) => `<option value="${c.code}">${c.name}</option>`).join('');
+        cities.map((c) => `<option value="${esc(c.code)}">${esc(c.name)}</option>`).join('');
       city.disabled = false;
     } catch (err) {
       reset(city, 'Could not load cities');
@@ -100,7 +105,7 @@ export function attachAddressSelects({ province, city, barangay, onError }) {
     const list = found?.barangays || [];
     barangay.innerHTML =
       '<option value="">Select barangay</option>' +
-      list.map((b) => `<option value="${b.code}">${b.name}</option>`).join('');
+      list.map((b) => `<option value="${esc(b.code)}">${esc(b.name)}</option>`).join('');
     barangay.disabled = false;
   });
 

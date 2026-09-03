@@ -1,0 +1,14 @@
+# Keep development-only files out of the deployment. Anything not ignored here
+# is published as a static file, so the test harness, build tooling and docs
+# would otherwise be publicly fetchable.
+
+tests/
+tools/
+docs/
+sync-data.py
+.env.example
+README.md
+
+# Never deployable
+node_modules/
+.git/
