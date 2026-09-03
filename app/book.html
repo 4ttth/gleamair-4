@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en-PH">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Book Preventive Maintenance | Gleamair Enterprises</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/x-icon" href="/assets/images/other/favicon_io/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/vendor/leaflet/leaflet.css">
+<link rel="stylesheet" href="/assets/css/app.css">
+</head>
+<body>
+
+<script src="/assets/vendor/leaflet/leaflet.js"></script>
+
+<script type="module">
+  import {
+    api, requireAuth, esc, peso, el, busy, showAlert, hideAlert,
+  } from '/assets/js/portal.js';
+  import { mountShell, icon, ICON } from '/assets/js/shell.js';
+  import { createMap, OLONGAPO } from '/assets/js/geo.js';
+
+  const user = await requireAuth({ roles: ['customer'] });
+
+  const SERVICE = { code: 'PMS', name: 'Preventive Maintenance Service', total: 50000, downpayment: 25000 };
+  const UNIT_TYPES = ['Split Type', 'Window Type', 'Cassette Type', 'Floor Standing', 'Ducted / Centralized', 'Portable'];
+  const HORSEPOWER = ['0.5', '0.75', '1.0', '1.5', '2.0', '2.5', '3.0', '4.0', '5.0+'];
+
+  const content = mountShell({
+    user, active: 'book',
+    title: 'Book Preventive Maintenance',
+    subtitle: 'Reserve your slot with a down payment.',
+    items: [
+      { id: 'back', label: 'Back to dashboard', icon: 'grid', href: '/app/dashboard' },
+      { id: 'book', label: 'Book PMS', icon: 'wrench' },
+    ],
+  });
+
+  const addr = user.address || {};
+  const addressLine = [addr.line1, addr.line2, addr.barangayName, addr.cityName, addr.provinceName]
+    .filter(Boolean).join(', ');
+
+  content.innerHTML = `
+    <div class="alert error" id="pageAlert" hidden></div>
+
+    <div class="grid" style="grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);align-items:start;gap:20px" id="bookGrid">
+      <div class="grid" style="gap:16px">
+
+        <section class="card">
+          <div class="card-head"><h2>1. Your air conditioning units</h2></div>
+          <div class="card-pad">
+            <p class="muted mb-md" style="font-size:.9rem">
+              Tell us what our technician will be working on so they arrive with the right equipment.
+            </p>
+            <div id="unitRows"></div>
+            <button class="btn btn-outline btn-sm mt-sm" type="button" id="addUnit">
+              ${icon(ICON.plus)} Add another unit type
+            </button>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-head"><h2>2. Where should we go?</h2></div>
+          <div class="card-pad">
+            <div class="alert info" style="margin-bottom:14px">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              <div><strong>Service address</strong><br>${esc(addressLine || 'No address on file')}</div>
+            </div>
+
+            <label class="label">Pin your exact location <span class="opt">(recommended)</span></label>
+            <p class="hint" style="margin:0 0 10px">
+              Drag the marker to your gate or building entrance. This is what your technician
+              navigates to, so it beats a street address in a subdivision.
+            </p>
+            <div class="map" id="pinMap"></div>
+            <div class="row gap-sm mt-sm row-wrap center">
+              <button class="btn btn-outline btn-sm" type="button" id="useGps">Use my current location</button>
+              <span class="muted-soft" style="font-size:.82rem" id="pinReadout">No pin set yet</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-head"><h2>3. Anything we should know?</h2></div>
+          <div class="card-pad">
+            <div class="field" data-field="notes" style="margin:0">
+              <label class="label" for="notes">Notes for the technician <span class="opt">(optional)</span></label>
+              <textarea class="textarea" id="notes" maxlength="600"
+                placeholder="Access instructions, preferred days, gate codes, pets, parking…"></textarea>
+              <div class="hint"><span id="noteCount">0</span>/600</div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <aside class="card" style="position:sticky;top:88px">
+        <div class="card-head"><h2>Booking summary</h2></div>
+        <div class="card-pad">
+          <div class="row between" style="margin-bottom:8px">
+            <span class="muted">${esc(SERVICE.name)}</span>
+            <strong>${peso(SERVICE.total)}</strong>
+          </div>
+          <div class="row between muted" style="margin-bottom:8px;font-size:.9rem">
+            <span>Units</span><span id="unitTotal">0</span>
+          </div>
+          <div class="divider" style="margin:14px 0"></div>
+          <div class="row between" style="margin-bottom:6px">
+            <strong>Pay now to reserve</strong>
+            <strong style="color:var(--gold);font-size:1.15rem">${peso(SERVICE.downpayment)}</strong>
+          </div>
+          <div class="row between muted" style="font-size:.88rem">
+            <span>Balance on completion</span><span>${peso(SERVICE.total - SERVICE.downpayment)}</span>
+          </div>
+
+          <button class="btn btn-primary btn-block btn-lg mt-lg" type="button" id="payBtn">
+            Pay ${peso(SERVICE.downpayment)} &amp; reserve
+          </button>
+          <p class="hint" style="text-align:center;margin-top:10px">
+            You will be taken to PayMongo's secure checkout. Gleamair never sees your card details.
+          </p>
+          <a class="btn btn-ghost btn-block btn-sm mt-sm" href="/app/dashboard">Cancel</a>
+        </div>
+      </aside>
+    </div>`;
+
+  /* ── Unit rows ─────────────────────────────────────────────────────────── */
+
+  const rows = el('unitRows');
+
+  function addRow(first = false) {
+    const row = document.createElement('div');
+    row.className = 'row gap-sm row-wrap center unit-row';
+    row.style.marginBottom = '10px';
+    row.innerHTML = `
+      <select class="select" data-u="type" style="flex:2;min-width:150px">
+        ${UNIT_TYPES.map((t) => `<option>${t}</option>`).join('')}
+      </select>
+      <select class="select" data-u="hp" style="flex:1;min-width:104px">
+        ${HORSEPOWER.map((h) => `<option value="${h}"${h === '1.0' ? ' selected' : ''}>${h} HP</option>`).join('')}
+      </select>
+      <input class="input" data-u="count" type="number" min="1" max="50" value="1"
+             style="flex:0 0 84px" aria-label="Quantity">
+      <button class="btn btn-ghost btn-sm" type="button" data-remove
+              aria-label="Remove this unit"${first ? ' style="visibility:hidden"' : ''}>Remove</button>`;
+
+    row.querySelector('[data-remove]').addEventListener('click', () => {
+      row.remove();
+      refreshRows();
+    });
+    row.querySelector('[data-u="count"]').addEventListener('input', updateTotal);
+    rows.appendChild(row);
+    refreshRows();
+  }
+
+  /** The first row's Remove button stays hidden so at least one unit remains. */
+  function refreshRows() {
+    const all = [...rows.querySelectorAll('.unit-row')];
+    all.forEach((r, i) => {
+      r.querySelector('[data-remove]').style.visibility = (i === 0 && all.length === 1) ? 'hidden' : 'visible';
+    });
+    updateTotal();
+  }
+
+  function updateTotal() {
+    const total = [...rows.querySelectorAll('[data-u="count"]')]
+      .reduce((sum, input) => sum + (parseInt(input.value, 10) || 0), 0);
+    el('unitTotal').textContent = total;
+  }
+
+  addRow(true);
+  el('addUnit').addEventListener('click', () => addRow());
+
+  el('notes').addEventListener('input', (e) => { el('noteCount').textContent = e.target.value.length; });
+
+  /* ── Map pin ───────────────────────────────────────────────────────────── */
+
+  let pin = null;
+
+  // The pin is optional, so a map failure must never block the booking.
+  const map = createMap('pinMap', { center: OLONGAPO, zoom: 13 });
+  const marker = map ? window.L.marker(OLONGAPO, { draggable: true }).addTo(map) : null;
+
+  const setPin = (lat, lng, source = 'pin') => {
+    pin = { lat, lng, source };
+    marker?.setLatLng([lat, lng]);
+    el('pinReadout').textContent = `Pinned at ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+  };
+
+  if (map) {
+    marker.on('dragend', () => {
+      const { lat, lng } = marker.getLatLng();
+      setPin(lat, lng, 'pin');
+    });
+    map.on('click', (e) => setPin(e.latlng.lat, e.latlng.lng, 'pin'));
+  } else {
+    el('useGps').textContent = 'Share my current location';
+    el('pinReadout').textContent = 'Map unavailable — you can still book.';
+  }
+
+  el('useGps').addEventListener('click', () => {
+    if (!navigator.geolocation) {
+      return showAlert(el('pageAlert'), 'Your browser does not support location sharing. Drag the marker instead.', 'warn');
+    }
+    const restore = busy(el('useGps'), 'Locating…');
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        restore();
+        const { latitude, longitude } = position.coords;
+        setPin(latitude, longitude, 'gps');
+        map?.setView([latitude, longitude], 17);
+      },
+      () => {
+        restore();
+        showAlert(el('pageAlert'),
+          'We could not read your location. Please allow location access, or drag the marker to your address.', 'warn');
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  });
+
+  /* ── Submit ────────────────────────────────────────────────────────────── */
+
+  el('payBtn').addEventListener('click', async () => {
+    hideAlert(el('pageAlert'));
+
+    const units = [...rows.querySelectorAll('.unit-row')].map((r) => ({
+      type: r.querySelector('[data-u="type"]').value,
+      horsepower: r.querySelector('[data-u="hp"]').value,
+      count: parseInt(r.querySelector('[data-u="count"]').value, 10) || 0,
+    }));
+
+    if (units.some((u) => u.count < 1)) {
+      return showAlert(el('pageAlert'), 'Every unit row needs a quantity of at least 1.');
+    }
+
+    const restore = busy(el('payBtn'), 'Opening checkout…');
+    try {
+      const data = await api.post('/api/bookings', {
+        service: SERVICE.code,
+        units,
+        location: pin,
+        notes: el('notes').value.trim(),
+      });
+      location.href = data.checkoutUrl;
+    } catch (err) {
+      restore();
+      showAlert(el('pageAlert'), err.message);
+    }
+  });
+</script>
+
+<style>
+  /* Single column once the sticky summary no longer has room beside the form */
+  @media (max-width: 1000px) {
+    #bookGrid { grid-template-columns: 1fr !important; }
+    #bookGrid aside { position: static !important; }
+  }
+</style>
+
+</body>
+</html>

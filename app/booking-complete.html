@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en-PH">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Booking Confirmed | Gleamair Enterprises</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/x-icon" href="/assets/images/other/favicon_io/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/app.css">
+</head>
+<body>
+
+<script type="module">
+  import { api, requireAuth, esc, peso, unitSummary, STATUS_LABELS, STATUS_TONE } from '/assets/js/portal.js';
+  import { mountShell, icon, ICON } from '/assets/js/shell.js';
+
+  const user = await requireAuth({ roles: ['customer'] });
+  const ref = new URLSearchParams(location.search).get('ref');
+
+  const content = mountShell({
+    user, active: 'overview',
+    title: 'Booking confirmation',
+    subtitle: '',
+    items: [
+      { id: 'overview', label: 'Dashboard', icon: 'grid', href: '/app/dashboard' },
+      { id: 'bookings', label: 'My Bookings', icon: 'calendar', href: '/app/dashboard' },
+    ],
+  });
+
+  content.innerHTML = `<div class="card card-pad"><div class="row center gap-sm">
+    <span class="spinner dark"></span> Confirming your payment…</div></div>`;
+
+  if (!ref) {
+    location.replace('/app/dashboard');
+  } else {
+    /* The webhook is the authoritative confirmation, but it can land a moment
+       after the customer is redirected back. Ask the server to reconcile
+       directly with PayMongo so this page never shows a stale "unpaid". */
+    let booking = null;
+    try {
+      const synced = await api.post(`/api/bookings/${encodeURIComponent(ref)}`, { action: 'sync' });
+      booking = synced.booking;
+    } catch {
+      try { booking = (await api.get(`/api/bookings/${encodeURIComponent(ref)}`)).booking; } catch { /* shown below */ }
+    }
+
+    if (!booking) {
+      content.innerHTML = `
+        <div class="card card-pad">
+          <div class="alert error" style="margin:0">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <div>We could not load that booking. Please check <a href="/app/dashboard">your dashboard</a>,
+            or <a href="/contact.html">contact us</a> if you have been charged.</div>
+          </div>
+        </div>`;
+    } else {
+      const paid = booking.payment?.status === 'paid';
+      content.innerHTML = `
+        <div class="card" style="max-width:660px;margin:0 auto">
+          <div class="card-pad" style="text-align:center;padding:34px 26px 26px">
+            <div style="width:62px;height:62px;border-radius:50%;margin:0 auto 16px;display:grid;place-items:center;
+                        background:${paid ? 'var(--ok-bg)' : 'var(--warn-bg)'};color:${paid ? 'var(--ok)' : 'var(--warn)'}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:30px;height:30px">
+                ${paid
+                  ? '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>'
+                  : '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>'}
+              </svg>
+            </div>
+            <h2 style="font-size:1.45rem;font-weight:700">
+              ${paid ? 'Your slot is reserved' : 'Payment is still processing'}
+            </h2>
+            <p class="muted mt-sm" style="max-width:44ch;margin-inline:auto">
+              ${paid
+                ? 'Thank you. Our team will assign a technician and confirm your schedule shortly — you will see it on your dashboard.'
+                : 'We have not received confirmation from PayMongo yet. This page will update once it arrives; refresh in a moment, or check your dashboard.'}
+            </p>
+          </div>
+
+          <div class="card-head" style="border-top:1px solid var(--border)"><h3>Booking details</h3></div>
+          <div class="card-pad">
+            <div class="grid grid-2" style="gap:14px">
+              <div><div class="label">Reference</div><div class="mono">${esc(booking.reference)}</div></div>
+              <div><div class="label">Status</div>
+                <span class="badge ${STATUS_TONE[booking.status] || 'grey'}">${esc(STATUS_LABELS[booking.status] || booking.status)}</span>
+              </div>
+              <div><div class="label">Service</div><div>${esc(booking.serviceName)}</div></div>
+              <div><div class="label">Units</div><div>${esc(unitSummary(booking.units))}</div></div>
+              <div><div class="label">Down payment</div><div>${esc(peso(booking.amounts?.downpayment))}</div></div>
+              <div><div class="label">Balance on completion</div><div>${esc(peso(booking.amounts?.balance))}</div></div>
+            </div>
+            <a class="btn btn-primary btn-block mt-lg" href="/app/dashboard">Go to my dashboard</a>
+          </div>
+        </div>`;
+    }
+  }
+</script>
+
+</body>
+</html>

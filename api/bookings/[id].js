@@ -79,7 +79,6 @@ async function patch(req, res) {
       if (body.assignedStaffId === null || body.assignedStaffId === '') {
         set.assignedStaffId = null;
         set.assignedStaffName = null;
-        if (booking.status === 'assigned') set.status = 'paid';
       } else {
         const staffId = V.string(body.assignedStaffId, 'Technician', { max: 40 });
         if (!ObjectId.isValid(staffId)) throw badRequest('That technician is invalid.', { field: 'assignedStaffId' });
@@ -93,7 +92,6 @@ async function patch(req, res) {
 
         set.assignedStaffId = staff._id;
         set.assignedStaffName = `${staff.firstName} ${staff.lastName}`.trim();
-        if (booking.status === 'paid') set.status = 'assigned';
       }
     }
 
@@ -118,6 +116,18 @@ async function patch(req, res) {
     if (body.notes !== undefined) {
       set.notes = V.string(body.notes, 'Notes', { max: 600, required: false });
     }
+
+    /* Keep status and assignment consistent, and do it AFTER both have been
+       read. The management form always submits the status it was opened with,
+       so deriving the transition earlier let that stale value overwrite it —
+       a job could end up showing "Paid - Unassigned" with a technician on it.
+       Only the paid <-> assigned pair is derived; an explicit in_progress,
+       completed or cancelled from an admin always wins. */
+    const nextStatus = set.status ?? booking.status;
+    const nextAssignee = 'assignedStaffId' in set ? set.assignedStaffId : booking.assignedStaffId;
+
+    if (nextAssignee && nextStatus === 'paid') set.status = 'assigned';
+    else if (!nextAssignee && nextStatus === 'assigned') set.status = 'paid';
   }
 
   const updated = await Collections.bookings(db).findOneAndUpdate(

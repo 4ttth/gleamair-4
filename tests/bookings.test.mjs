@@ -153,6 +153,29 @@ check('status becomes assigned', r.body?.booking?.status === 'assigned', r.body?
 check('technician name recorded', r.body?.booking?.assignedStaffName === 'Tech One', r.body?.booking);
 check('schedule recorded', !!r.body?.booking?.scheduledAt, r.body?.booking?.scheduledAt);
 
+// Regression: the management form always submits the status it was opened
+// with. Assigning a technician while that stale 'paid' rides along must not
+// leave the job showing "Paid - Unassigned" with a technician on it.
+r = await call(bookingOne, { method: 'PATCH', ...sess(adminTok), query: { id: ref },
+  body: { assignedStaffId: staffId, status: 'paid' }});
+check('stale status does not undo the assignment', r.body?.booking?.status === 'assigned', r.body?.booking);
+check('technician still attached', r.body?.booking?.assignedStaffName === 'Tech One', r.body?.booking);
+
+// Unassigning should walk it back the other way.
+r = await call(bookingOne, { method: 'PATCH', ...sess(adminTok), query: { id: ref },
+  body: { assignedStaffId: null, status: 'assigned' }});
+check('unassigning reverts status to paid', r.body?.booking?.status === 'paid', r.body?.booking);
+check('technician cleared', r.body?.booking?.assignedStaffId === null, r.body?.booking);
+
+// An explicit non-assignment status from an admin still wins.
+r = await call(bookingOne, { method: 'PATCH', ...sess(adminTok), query: { id: ref },
+  body: { assignedStaffId: staffId, status: 'completed' }});
+check('explicit completed status is respected', r.body?.booking?.status === 'completed', r.body?.booking);
+
+// Put it back to assigned for the staff checks below.
+await call(bookingOne, { method: 'PATCH', ...sess(adminTok), query: { id: ref },
+  body: { assignedStaffId: staffId, status: 'assigned' }});
+
 r = await call(bookingOne, { method: 'PATCH', ...sess(staffTok), query: { id: ref }, body: { status: 'in_progress' }});
 check('assigned staff can start the job', r.statusCode === 200 && r.body?.booking?.status === 'in_progress', r.body);
 r = await call(bookingOne, { method: 'PATCH', ...sess(staffTok), query: { id: ref }, body: { status: 'cancelled' }});
