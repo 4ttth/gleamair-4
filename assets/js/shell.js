@@ -75,7 +75,7 @@ export function mountShell({ user, items, active, title, subtitle, actions = '' 
       <div class="main">
         <header class="topbar">
           <button class="sidebar-toggle" id="sidebarToggle" aria-label="Open menu">${svg(ICON.menu)}</button>
-          <div>
+          <div class="topbar-titles">
             <div class="page-title" id="pageTitle">${esc(title || '')}</div>
             <div class="page-sub" id="pageSub">${esc(subtitle || '')}</div>
           </div>

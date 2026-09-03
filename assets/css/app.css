@@ -196,7 +196,8 @@ img { max-width: 100%; display: block; }
 .main { flex: 1; margin-left: var(--sidebar-w); min-width: 0; display: flex; flex-direction: column; }
 
 .topbar {
-  height: var(--topbar-h);
+  min-height: var(--topbar-h);
+  padding-block: 9px;
   background: rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border);
@@ -208,6 +209,8 @@ img { max-width: 100%; display: block; }
   top: 0;
   z-index: 40;
 }
+
+.topbar-titles { min-width: 0; flex: 1; }
 
 .content { padding: 26px; flex: 1; max-width: 1400px; width: 100%; }
 
@@ -758,7 +761,17 @@ table.data .row-title { font-weight: 600; }
   .main { margin-left: 0; }
   .sidebar-toggle { display: block; }
   .content { padding: 18px 15px; }
-  .topbar { padding: 0 15px; }
+  .topbar { padding-inline: 15px; }
+
+  /* The subtitle is supplementary; on a phone the sticky bar's height is
+     better spent on content. Keep the title to a single line. */
+  .topbar .page-sub { display: none; }
+  .topbar .page-title {
+    font-size: 1.06rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
   .scrim { position: fixed; inset: 0; background: rgba(9, 24, 47, 0.45); z-index: 50; }
   .scrim.show { display: block; }
   .user-meta { display: none; }
