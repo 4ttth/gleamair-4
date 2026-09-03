@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en-PH">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign In | Gleamair Enterprises</title>
+<meta name="description" content="Sign in to your Gleamair Enterprises account to book preventive maintenance service and manage your bookings.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/x-icon" href="assets/images/other/favicon_io/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/images/other/favicon_io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="assets/images/other/favicon_io/apple-touch-icon.png">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+
+<main class="auth">
+  <!-- Brand panel: hidden below 980px so the form owns the small screen -->
+  <aside class="auth-aside">
+    <a href="index.html"><img src="assets/images/other/horizontal_logo.png" alt="Gleamair Enterprises" class="logo"></a>
+
+    <h1>Cooler spaces,<span>fewer breakdowns.</span></h1>
+    <p class="lede">Book preventive maintenance for your air conditioning systems and track every visit from one place.</p>
+
+    <ul class="auth-points">
+      <li>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <span>Reserve a service slot with a secure online down payment</span>
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <span>Follow your booking from payment through to completion</span>
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <span>Technicians dispatched straight to your pinned location</span>
+      </li>
+    </ul>
+  </aside>
+
+  <section class="auth-main">
+    <div class="auth-card">
+      <a href="index.html" class="auth-back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        Back to gleamaire.com
+      </a>
+
+      <h2>Sign in</h2>
+      <p class="sub">Customers and Gleamair staff sign in here.</p>
+
+      <div class="alert error" id="formAlert" hidden></div>
+
+      <form id="loginForm" novalidate>
+        <div class="field" data-field="email">
+          <label class="label" for="email">Email address</label>
+          <input class="input" type="email" id="email" name="email" autocomplete="email"
+                 placeholder="you@example.com" required autofocus>
+          <div class="err"></div>
+        </div>
+
+        <div class="field" data-field="password">
+          <label class="label" for="password">Password</label>
+          <div class="pw-wrap">
+            <input class="input" type="password" id="password" name="password"
+                   autocomplete="current-password" placeholder="Your password" required>
+          </div>
+          <div class="err"></div>
+        </div>
+
+        <button class="btn btn-primary btn-block btn-lg mt-md" type="submit" id="submitBtn">Sign in</button>
+      </form>
+
+      <div class="divider-text">New to Gleamair?</div>
+
+      <a href="register.html" class="btn btn-outline btn-block">Create a customer account</a>
+
+      <p class="auth-foot">
+        Staff accounts are created by your administrator.<br>
+        Need help? <a href="contact.html">Contact us</a>.
+      </p>
+    </div>
+  </section>
+</main>
+
+<script type="module">
+  import { api, showAlert, hideAlert, busy, el, clearFieldErrors, markFieldError, attachPasswordToggle } from './assets/js/portal.js';
+
+  const form = el('loginForm');
+  const alertBox = el('formAlert');
+  attachPasswordToggle(el('password'));
+
+  // If a protected page bounced us here, return there after signing in.
+  const nextUrl = new URLSearchParams(location.search).get('next');
+
+  // Already signed in? Skip the form entirely.
+  api.get('/api/auth/me')
+    .then((data) => { location.replace(nextUrl || data.landing); })
+    .catch(() => { /* not signed in — stay on the form */ });
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    hideAlert(alertBox);
+    clearFieldErrors(form);
+
+    const restore = busy(el('submitBtn'), 'Signing in…');
+    try {
+      const data = await api.post('/api/auth/login', {
+        email: el('email').value.trim(),
+        password: el('password').value,
+      });
+      // The server decides the destination based on role, not the browser.
+      location.href = nextUrl || data.redirect;
+    } catch (err) {
+      restore();
+      if (!markFieldError(form, err.details, err.message)) {
+        showAlert(alertBox, err.message);
+      }
+    }
+  });
+</script>
+
+</body>
+</html>

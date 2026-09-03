@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en-PH">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Account | Gleamair Enterprises</title>
+<meta name="description" content="Create a Gleamair Enterprises customer account to book preventive maintenance service for your air conditioning systems.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/x-icon" href="assets/images/other/favicon_io/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/images/other/favicon_io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="assets/images/other/favicon_io/apple-touch-icon.png">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+
+<main class="auth">
+  <aside class="auth-aside">
+    <a href="index.html"><img src="assets/images/other/horizontal_logo.png" alt="Gleamair Enterprises" class="logo"></a>
+
+    <h1>Book your first<span>maintenance visit.</span></h1>
+    <p class="lede">Create an account to reserve a preventive maintenance slot for your air conditioning systems.</p>
+
+    <ul class="auth-points">
+      <li>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span>Takes about two minutes</span>
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <span>Your details are stored securely and never shared</span>
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <span>Complete Philippine address list, down to your barangay</span>
+      </li>
+    </ul>
+  </aside>
+
+  <section class="auth-main">
+    <div class="auth-card">
+      <a href="login.html" class="auth-back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        Back to sign in
+      </a>
+
+      <h2>Create your account</h2>
+      <p class="sub">Customer registration. Staff accounts are created by your administrator.</p>
+
+      <div class="steps">
+        <div class="step active" id="stepInd1">
+          <span class="dot">1</span><span class="nm">Your details</span>
+        </div>
+        <span class="bar"></span>
+        <div class="step" id="stepInd2">
+          <span class="dot">2</span><span class="nm">Password</span>
+        </div>
+      </div>
+
+      <div class="alert error" id="formAlert" hidden></div>
+
+      <form id="registerForm" novalidate>
+        <!-- ── Step 1: personal + service address ── -->
+        <div id="step1">
+          <div class="grid grid-2" style="gap:0 12px;">
+            <div class="field" data-field="firstName">
+              <label class="label" for="firstName">First name <span class="req">*</span></label>
+              <input class="input" type="text" id="firstName" autocomplete="given-name" required autofocus>
+              <div class="err"></div>
+            </div>
+            <div class="field" data-field="lastName">
+              <label class="label" for="lastName">Last name <span class="req">*</span></label>
+              <input class="input" type="text" id="lastName" autocomplete="family-name" required>
+              <div class="err"></div>
+            </div>
+          </div>
+
+          <div class="field" data-field="email">
+            <label class="label" for="email">Email address <span class="req">*</span></label>
+            <input class="input" type="email" id="email" autocomplete="email" placeholder="you@example.com" required>
+            <div class="err"></div>
+          </div>
+
+          <div class="field" data-field="phone">
+            <label class="label" for="phone">Mobile number <span class="req">*</span></label>
+            <div class="phone-wrap">
+              <span class="prefix">+63</span>
+              <input class="input" type="tel" id="phone" inputmode="numeric"
+                     autocomplete="tel-national" placeholder="917 123 4567" required>
+            </div>
+            <div class="hint">Type it however you like — <strong>0917…</strong> becomes <strong>+63 917…</strong> automatically.</div>
+            <div class="err"></div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="field" data-field="line1">
+            <label class="label" for="line1">Address line 1 <span class="req">*</span></label>
+            <input class="input" type="text" id="line1" autocomplete="address-line1"
+                   placeholder="House / unit number and street" required>
+            <div class="err"></div>
+          </div>
+
+          <div class="field" data-field="line2">
+            <label class="label" for="line2">Address line 2 <span class="opt">(optional)</span></label>
+            <input class="input" type="text" id="line2" autocomplete="address-line2"
+                   placeholder="Subdivision, building, landmark">
+          </div>
+
+          <div class="field" data-field="provinceCode">
+            <label class="label" for="province">Province <span class="req">*</span></label>
+            <select class="select" id="province" required></select>
+            <div class="err"></div>
+          </div>
+
+          <div class="field" data-field="cityCode">
+            <label class="label" for="city">City / Municipality <span class="req">*</span></label>
+            <select class="select" id="city" required disabled></select>
+            <div class="err"></div>
+          </div>
+
+          <div class="field" data-field="barangayCode">
+            <label class="label" for="barangay">Barangay <span class="req">*</span></label>
+            <select class="select" id="barangay" required disabled></select>
+            <div class="err"></div>
+          </div>
+
+          <button class="btn btn-primary btn-block btn-lg mt-md" type="button" id="toStep2">
+            Continue to password
+          </button>
+        </div>
+
+        <!-- ── Step 2: password ── -->
+        <div id="step2" class="hidden">
+          <div class="field" data-field="password">
+            <label class="label" for="password">Create a password <span class="req">*</span></label>
+            <div class="pw-wrap">
+              <input class="input" type="password" id="password" autocomplete="new-password" required>
+            </div>
+            <ul class="pw-rules" id="pwRules"></ul>
+            <div class="err"></div>
+          </div>
+
+          <div class="field" data-field="confirm">
+            <label class="label" for="confirm">Confirm password <span class="req">*</span></label>
+            <div class="pw-wrap">
+              <input class="input" type="password" id="confirm" autocomplete="new-password" required>
+            </div>
+            <div class="err"></div>
+          </div>
+
+          <div class="row gap-sm mt-md">
+            <button class="btn btn-outline" type="button" id="backTo1">Back</button>
+            <button class="btn btn-primary btn-lg" style="flex:1;" type="submit" id="submitBtn">
+              Create account
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <p class="auth-foot">
+        Already have an account? <a href="login.html">Sign in</a>
+      </p>
+    </div>
+  </section>
+</main>
+
+<script type="module">
+  import {
+    api, el, busy, showAlert, hideAlert, clearFieldErrors, markFieldError,
+    attachPhoneInput, phoneValue, attachPasswordRules, attachPasswordToggle, passwordValid,
+  } from './assets/js/portal.js';
+  import { attachAddressSelects } from './assets/js/psgc.js';
+
+  const form = el('registerForm');
+  const alertBox = el('formAlert');
+
+  attachPhoneInput(el('phone'));
+  attachPasswordRules(el('password'), el('pwRules'));
+  attachPasswordToggle(el('password'));
+  attachPasswordToggle(el('confirm'));
+
+  const address = attachAddressSelects({
+    province: el('province'),
+    city: el('city'),
+    barangay: el('barangay'),
+    onError: (msg) => showAlert(alertBox, msg),
+  });
+
+  // Already signed in? Don't let them register a second account.
+  api.get('/api/auth/me').then((data) => location.replace(data.landing)).catch(() => {});
+
+  /* ── Step navigation ── */
+
+  const setStep = (n) => {
+    el('step1').classList.toggle('hidden', n !== 1);
+    el('step2').classList.toggle('hidden', n !== 2);
+    el('stepInd1').className = n === 1 ? 'step active' : 'step done';
+    el('stepInd2').className = n === 2 ? 'step active' : 'step';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const invalid = (fieldName, message) => {
+    const field = form.querySelector(`[data-field="${fieldName}"]`);
+    field?.classList.add('invalid');
+    const err = field?.querySelector('.err');
+    if (err) err.textContent = message;
+    field?.querySelector('input, select')?.focus();
+    return false;
+  };
+
+  /** Mirrors the server rules so people aren't bounced after a round trip. */
+  function validateStep1() {
+    clearFieldErrors(form);
+    if (!el('firstName').value.trim()) return invalid('firstName', 'First name is required.');
+    if (!el('lastName').value.trim())  return invalid('lastName', 'Last name is required.');
+
+    const email = el('email').value.trim();
+    if (!email) return invalid('email', 'Email address is required.');
+    if (!/^[^\s@]+@[^\s@.]+(\.[^\s@.]+)+$/.test(email)) {
+      return invalid('email', 'That does not look like a valid email address.');
+    }
+
+    const digits = (el('phone').value || '').replace(/\D/g, '');
+    if (!/^9\d{9}$/.test(digits)) {
+      return invalid('phone', 'Enter a valid mobile number, e.g. 0917 123 4567.');
+    }
+
+    if (!el('line1').value.trim()) return invalid('line1', 'Address line 1 is required.');
+    if (!el('province').value)     return invalid('provinceCode', 'Please select your province.');
+    if (!el('city').value)         return invalid('cityCode', 'Please select your city or municipality.');
+    if (!el('barangay').value)     return invalid('barangayCode', 'Please select your barangay.');
+    return true;
+  }
+
+  el('toStep2').addEventListener('click', () => {
+    hideAlert(alertBox);
+    if (validateStep1()) setStep(2);
+  });
+
+  el('backTo1').addEventListener('click', () => setStep(1));
+
+  /* ── Submit ── */
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    hideAlert(alertBox);
+    clearFieldErrors(form);
+
+    const password = el('password').value;
+    if (!passwordValid(password)) {
+      return invalid('password', 'Your password does not meet all the requirements yet.');
+    }
+    if (password !== el('confirm').value) {
+      return invalid('confirm', 'The two passwords do not match.');
+    }
+
+    const restore = busy(el('submitBtn'), 'Creating account…');
+    try {
+      const a = address.value();
+      const data = await api.post('/api/auth/register', {
+        firstName: el('firstName').value.trim(),
+        lastName: el('lastName').value.trim(),
+        email: el('email').value.trim(),
+        phone: phoneValue(el('phone')),
+        address: {
+          line1: el('line1').value.trim(),
+          line2: el('line2').value.trim(),
+          ...a,
+        },
+        password,
+      });
+      // Registration signs the customer in, so go straight to the dashboard.
+      location.href = data.redirect;
+    } catch (err) {
+      restore();
+      // Address and identity errors live back on step 1.
+      const step1Fields = ['firstName','lastName','email','phone','line1','line2',
+                           'provinceCode','cityCode','barangayCode','address'];
+      if (err.details?.field && step1Fields.includes(err.details.field)) setStep(1);
+      if (!markFieldError(form, err.details, err.message)) {
+        showAlert(alertBox, err.message);
+      }
+    }
+  });
+</script>
+
+</body>
+</html>
