@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+
+# Local env — NEVER commit real keys. See .env.example for the required names.
+.env
+.env.local
+.env*.local
+
+# Vercel
+.vercel/
+
+# PSGC source data (~5 MB). Re-downloaded on demand by tools/build-psgc.py;
+# only the generated assets/data/psgc/ output is committed and served.
+tools/psgc-src/
+
+# OS noise
+.DS_Store
+Thumbs.db
