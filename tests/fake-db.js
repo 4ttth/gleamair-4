@@ -168,6 +168,8 @@ export const Collections = {
   loginAttempts: () => collection('loginAttempts'),
   services:      () => collection('services'),
   servicePriceHistory: () => collection('servicePriceHistory'),
+  geocache:      () => collection('geocache'),
+  apiLimits:     () => collection('apiLimits'),
 };
 
 export async function nextSequence(db, name) {

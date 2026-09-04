@@ -81,7 +81,44 @@ const offlinePage = async (browser, opts) => {
   await page.locator('.unit-row').nth(1).locator('[data-u="type"]').selectOption('Window Type');
   await page.locator('.unit-row').nth(1).locator('[data-u="count"]').fill('1');
   console.log('\n--- map pin ---');
-  check('no pin set initially', (await page.locator('#pinReadout').textContent()).includes('No pin set'));
+  /* The customer registered in Bangkal, Abucay, Bataan — roughly 25 km from
+     Gleamair's office in Olongapo. The map must open on their barangay, not
+     on the office, so the pin only needs nudging. */
+  await page.waitForFunction(
+    () => !document.getElementById('pinReadout').textContent.includes('Finding your location'),
+    { timeout: 15000 });
+  const autoReadout = await page.locator('#pinReadout').textContent();
+  check('map auto-pins from the saved address: ' + autoReadout.trim(),
+    /Bangkal/.test(autoReadout), autoReadout);
+
+  const centred = await page.evaluate(() => {
+    const marker = document.querySelector('.leaflet-marker-icon');
+    return !!marker;
+  });
+  check('marker dropped without the customer touching anything', centred);
+
+  console.log('\n--- map search ---');
+  await page.fill('#mapSearch', 'ab');
+  await page.click('#mapSearchBtn');
+  await page.waitForSelector('#mapResults:not([hidden])', { timeout: 8000 });
+  check('a too-short search is refused before it is sent',
+    (await page.locator('#mapResults').textContent()).includes('three characters'));
+
+  await page.fill('#mapSearch', 'SM City Olongapo');
+  await page.click('#mapSearchBtn');
+  await page.waitForSelector('#mapResults button', { timeout: 10000 });
+  const firstResult = await page.locator('#mapResults button').first().textContent();
+  check('search returns a place: ' + firstResult.trim(), /SM City Olongapo/.test(firstResult), firstResult);
+
+  await page.locator('#mapResults button').first().click();
+  await page.waitForFunction(
+    () => document.getElementById('pinReadout').textContent.includes('14.83'), { timeout: 8000 });
+  check('choosing a result moves the pin there',
+    (await page.locator('#pinReadout').textContent()).includes('14.83'),
+    await page.locator('#pinReadout').textContent());
+  check('the result list closes once a place is chosen',
+    await page.locator('#mapResults').isHidden());
+
   const box = await page.locator('#pinMap').boundingBox();
   await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
   await page.waitForFunction(() => document.getElementById('pinReadout').textContent.includes('Pinned at'), { timeout: 8000 });

@@ -14,6 +14,7 @@ export const unauthorized = (msg = 'You are not signed in.') => new ApiError(401
 export const forbidden    = (msg = 'You do not have access to this.') => new ApiError(403, msg);
 export const notFound     = (msg = 'Not found.') => new ApiError(404, msg);
 export const conflict     = (msg, details) => new ApiError(409, msg, details);
+export const tooMany      = (msg = 'Too many requests. Please wait a moment.') => new ApiError(429, msg);
 
 export function json(res, status, payload) {
   res.statusCode = status;

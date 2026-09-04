@@ -2,7 +2,9 @@
 
 End-to-end checks driven through a real browser against `tests/devserver.mjs`,
 which runs the actual API handlers against an in-memory database with PayMongo
-stubbed. No keys, database or network access are needed.
+and the geocoder stubbed. No keys, database or network access are needed — the
+dev server answers map lookups from a six-entry gazetteer, which is why the
+booking map pins Abucay and a search for "SM City Olongapo" finds it.
 
 Playwright is deliberately **not** a dependency in `package.json` — its
 postinstall downloads ~150 MB of browsers, which would slow every Vercel build
@@ -17,7 +19,7 @@ node --import ./tests/loader.mjs tests/devserver.mjs
 
 # terminal 2
 node tests/browser/flow.test.cjs        # registration: address, phone, password
-node tests/browser/customer.test.cjs    # dashboard, booking, map pin, payment
+node tests/browser/customer.test.cjs    # dashboard, booking, map pin + search, payment
 node tests/browser/admin.test.cjs       # roles, assignment, dispatch map
 node tests/browser/redirect.test.cjs   # ?next= cannot become XSS or open redirect
 node tests/browser/pricing.test.cjs     # admin re-prices a service; customer sees it

@@ -19,7 +19,9 @@
     api, ApiFailure, requireAuth, esc, peso, el, busy, showAlert, hideAlert,
   } from '/assets/js/portal.js';
   import { mountShell, icon, ICON } from '/assets/js/shell.js';
-  import { createMap, OLONGAPO } from '/assets/js/geo.js';
+  import {
+    createMap, resolveLocation, browserLocation, isPinnable, attachMapSearch, FALLBACK_LOCATION,
+  } from '/assets/js/geo.js';
 
   const user = await requireAuth({ roles: ['customer'] });
 
@@ -83,13 +85,21 @@
 
             <label class="label">Pin your exact location <span class="opt">(recommended)</span></label>
             <p class="hint" style="margin:0 0 10px">
-              Drag the marker to your gate or building entrance. This is what your technician
-              navigates to, so it beats a street address in a subdivision.
+              We start the marker at your saved address, or at your current position if you
+              have shared it. Nudge it onto your gate or building entrance — that is what your
+              technician navigates to, so it beats a street address in a subdivision.
             </p>
+            <div class="map-search">
+              <input class="input" id="mapSearch" type="search" autocomplete="off"
+                     placeholder="Search a landmark, street or subdivision"
+                     aria-label="Search the map for a place">
+              <button class="btn btn-outline btn-sm" type="button" id="mapSearchBtn">Search</button>
+            </div>
             <div class="map" id="pinMap"></div>
+            <div class="map-results" id="mapResults" hidden></div>
             <div class="row gap-sm mt-sm row-wrap center">
               <button class="btn btn-outline btn-sm" type="button" id="useGps">Use my current location</button>
-              <span class="muted-soft" style="font-size:.82rem" id="pinReadout">No pin set yet</span>
+              <span class="muted-soft" style="font-size:.82rem" id="pinReadout">Finding your location…</span>
             </div>
           </div>
         </section>
@@ -190,48 +200,120 @@
 
   /* ── Map pin ───────────────────────────────────────────────────────────── */
 
+  /* The map opens where the customer is, not where Gleamair is. Two sources
+     answer on load — the barangay on their account, geocoded server-side, and
+     the browser's position if they have already granted it — and the better of
+     the two wins. Either way the marker lands somewhere they recognise and
+     needs a nudge rather than a drag across the province.
+
+     Anything the customer does by hand outranks all of it: once `touched` is
+     set, a late-arriving lookup never moves their marker. */
+
   let pin = null;
+  let touched = false;
 
   // The pin is optional, so a map failure must never block the booking.
-  const map = createMap('pinMap', { center: OLONGAPO, zoom: 13 });
-  const marker = map ? window.L.marker(OLONGAPO, { draggable: true }).addTo(map) : null;
+  const START = [FALLBACK_LOCATION.lat, FALLBACK_LOCATION.lng];
+  const map = createMap('pinMap', { center: START, zoom: FALLBACK_LOCATION.zoom });
+  const marker = map ? window.L.marker(START, { draggable: true }).addTo(map) : null;
 
-  const setPin = (lat, lng, source = 'pin') => {
-    pin = { lat, lng, source };
+  const coords = (lat, lng) => `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+
+  function readout(text) { el('pinReadout').textContent = text; }
+
+  /**
+   * Moves the marker, and records it as the booking's pin unless `claim` says
+   * otherwise — a point we are only confident about to the province is worth
+   * opening the map on, but sending a technician to it would be worse than
+   * sending them none at all.
+   *
+   * `recentre` pans the map as well, which is right for a location we worked
+   * out for the customer and wrong for one they just placed themselves.
+   */
+  function setPin(lat, lng, source = 'pin', { zoom, recentre = false, label, claim = true } = {}) {
+    pin = claim ? { lat, lng, source } : null;
     marker?.setLatLng([lat, lng]);
-    el('pinReadout').textContent = `Pinned at ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-  };
+    if (recentre && map) map.setView([lat, lng], zoom ?? map.getZoom());
 
-  if (map) {
-    marker.on('dragend', () => {
-      const { lat, lng } = marker.getLatLng();
-      setPin(lat, lng, 'pin');
-    });
-    map.on('click', (e) => setPin(e.latlng.lat, e.latlng.lng, 'pin'));
-  } else {
-    el('useGps').textContent = 'Share my current location';
-    el('pinReadout').textContent = 'Map unavailable — you can still book.';
+    if (!claim) readout(`Showing ${label || 'your area'} — drag the marker to your exact location`);
+    else if (source === 'gps') readout(`Pinned at your current location (${coords(lat, lng)})`);
+    else if (source === 'address') readout(`Pinned at ${label || 'your saved address'} — drag the marker to your exact spot`);
+    else readout(`Pinned at ${coords(lat, lng)}`);
   }
 
-  el('useGps').addEventListener('click', () => {
+  if (map) {
+    // A click that lands on the marker never reaches the map's own click
+    // handler, so someone who clicks the pin to "confirm" it would otherwise
+    // set nothing at all. Take it as confirming where the marker already is.
+    marker.on('click', () => {
+      const { lat, lng } = marker.getLatLng();
+      touched = true;
+      setPin(lat, lng, 'pin');
+    });
+    marker.on('dragstart', () => { touched = true; });
+    marker.on('dragend', () => {
+      const { lat, lng } = marker.getLatLng();
+      touched = true;
+      setPin(lat, lng, 'pin');
+    });
+    map.on('click', (e) => {
+      touched = true;
+      setPin(e.latlng.lat, e.latlng.lng, 'pin');
+    });
+  } else {
+    el('useGps').textContent = 'Share my current location';
+    readout('Map unavailable — you can still book.');
+  }
+
+  /* Kicked off without awaiting: the rest of the form is usable while the
+     lookup runs, and a customer who grabs the marker first keeps their pin. */
+  resolveLocation(api, {
+    onLocation: (found) => {
+      if (touched) return;
+      setPin(found.lat, found.lng, found.source, {
+        zoom: found.zoom,
+        recentre: true,
+        label: found.label,
+        claim: isPinnable(found),
+      });
+    },
+  }).then((best) => {
+    // Nothing placed them: leave the marker on the office but claim no pin,
+    // so a booking never carries a location the customer never chose.
+    if (!touched && best.source === 'office' && map) {
+      pin = null;
+      readout('No pin set yet — drag the marker to your location');
+    }
+  });
+
+  /* Searching is for getting to the right neighbourhood; the pin still has to
+     be placed on the gate, so a chosen result moves the marker there and
+     counts as the customer's own. */
+  attachMapSearch(map, {
+    api,
+    input: el('mapSearch'),
+    button: el('mapSearchBtn'),
+    results: el('mapResults'),
+    onPick: ({ lat, lng }) => {
+      touched = true;
+      setPin(lat, lng, 'pin');
+    },
+  });
+
+  el('useGps').addEventListener('click', async () => {
     if (!navigator.geolocation) {
       return showAlert(el('pageAlert'), 'Your browser does not support location sharing. Drag the marker instead.', 'warn');
     }
+    touched = true; // an explicit ask outranks whatever the lookup is doing
     const restore = busy(el('useGps'), 'Locating…');
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        restore();
-        const { latitude, longitude } = position.coords;
-        setPin(latitude, longitude, 'gps');
-        map?.setView([latitude, longitude], 17);
-      },
-      () => {
-        restore();
-        showAlert(el('pageAlert'),
-          'We could not read your location. Please allow location access, or drag the marker to your address.', 'warn');
-      },
-      { enableHighAccuracy: true, timeout: 10000 }
-    );
+    const here = await browserLocation({ silent: false });
+    restore();
+
+    if (!here) {
+      return showAlert(el('pageAlert'),
+        'We could not read your location. Please allow location access, or drag the marker to your address.', 'warn');
+    }
+    setPin(here.lat, here.lng, 'gps', { zoom: here.zoom, recentre: true });
   });
 
   /* ── Submit ────────────────────────────────────────────────────────────── */

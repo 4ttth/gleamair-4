@@ -21,7 +21,7 @@
     attachPhoneInput, phoneValue, attachPasswordRules, passwordValid,
   } from '/assets/js/portal.js';
   import { mountShell, setHeading, icon, ICON } from '/assets/js/shell.js';
-  import { createMap, statusMarker, STATUS_COLOUR, OLONGAPO } from '/assets/js/geo.js';
+  import { createMap, statusMarker, attachMapSearch, STATUS_COLOUR, OLONGAPO } from '/assets/js/geo.js';
   import { attachAddressSelects } from '/assets/js/psgc.js';
 
   const user = await requireAuth({ roles: ['staff', 'admin', 'superadmin'] });
@@ -59,6 +59,10 @@
   });
 
   /* ── Data ───────────────────────────────────────────────────────────────── */
+
+  // The statuses the dispatch map is about: work that has been paid for and is
+  // waiting, running or done. Matches the map's own legend.
+  const MAPPED_STATUSES = ['paid', 'assigned', 'in_progress', 'completed'];
 
   let jobs = [];
   let technicians = [];
@@ -240,32 +244,57 @@
 
   function viewMap() {
     setHeading('Job map', 'Where paid jobs are located.');
-    const plotted = jobs.filter((j) => j.location?.lat != null);
+
+    /* Real work only. An admin's job list also holds bookings that were never
+       paid for and ones that were cancelled; plotting them here - and counting
+       them as jobs the customer "skipped the pin" on - reported a problem that
+       did not exist, since an abandoned checkout never reached the map. */
+    const dispatchable = jobs.filter((j) => MAPPED_STATUSES.includes(j.status));
+    const plotted = dispatchable.filter((j) => j.location?.lat != null);
 
     content.innerHTML = `
       ${alertBar}
       <div class="card">
         <div class="card-head">
           <h2>Dispatch map</h2>
-          <span class="muted-soft ml-auto">${plotted.length} of ${jobs.length} job${jobs.length === 1 ? '' : 's'} pinned</span>
+          <span class="muted-soft ml-auto">${plotted.length} of ${dispatchable.length} job${dispatchable.length === 1 ? '' : 's'} pinned</span>
         </div>
         <div class="card-pad">
+          <div class="map-search">
+            <input class="input" id="mapSearch" type="search" autocomplete="off"
+                   placeholder="Search a place — barangay, street or landmark"
+                   aria-label="Search the map for a place">
+            <button class="btn btn-outline btn-sm" type="button" id="mapSearchBtn">Search</button>
+          </div>
           <div class="map" id="jobMap"></div>
+          <div class="map-results" id="mapResults" hidden></div>
           <div class="map-legend mt-md">
             <span><i style="background:${STATUS_COLOUR.paid}"></i> Awaiting assignment</span>
             <span><i style="background:${STATUS_COLOUR.assigned}"></i> Assigned</span>
             <span><i style="background:${STATUS_COLOUR.in_progress}"></i> In progress</span>
             <span><i style="background:${STATUS_COLOUR.completed}"></i> Completed</span>
           </div>
-          ${plotted.length < jobs.length ? `
+          ${plotted.length < dispatchable.length ? `
             <p class="hint mt-sm">
-              ${jobs.length - plotted.length} job${jobs.length - plotted.length === 1 ? ' has' : 's have'}
-              no map pin — the customer skipped it during booking.
+              ${dispatchable.length - plotted.length} job${dispatchable.length - plotted.length === 1 ? ' has' : 's have'}
+              no map pin. Call the customer for directions, or read the service
+              address on the job card.
             </p>` : ''}
         </div>
       </div>`;
 
     const map = createMap('jobMap', { center: OLONGAPO, zoom: 11 });
+
+    // Searching is navigation only here — it moves the view, it never touches
+    // a job. Wired before the early return so it works on an empty map too.
+    attachMapSearch(map, {
+      api,
+      input: document.getElementById('mapSearch'),
+      button: document.getElementById('mapSearchBtn'),
+      results: document.getElementById('mapResults'),
+      zoom: 15,
+    });
+
     if (!map || !plotted.length) return;
 
     const group = [];

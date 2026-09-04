@@ -56,6 +56,8 @@ if you use preview deploys). Names are listed in `.env.example`.
 | `BOOTSTRAP_TOKEN` | `openssl rand -hex 32`. Delete after step 6. |
 | `PAYMONGO_MIN_AMOUNT` | Optional. Lowest price an admin may set, in centavos (default `100` = PHP 1.00). |
 | `PAYMONGO_MAX_AMOUNT` | Optional. Highest price an admin may set, in centavos (default `100000000`). |
+| `GEOCODER_CONTACT` | Optional but recommended. Site URL or ops email; identifies you to OpenStreetMap's geocoder. |
+| `GEOCODER_URL` | Optional. Only if you move off the public Nominatim service. |
 
 > **`PAYMONGO_METHODS` matters.** Every method listed must already be
 > *activated* on your PayMongo account, or creating a checkout session fails
@@ -261,6 +263,15 @@ PayMongo — they need a real transaction.
 
 Refund your own test payment afterwards — these are live charges.
 
+**Booking map**
+- [ ] The booking map opens on the customer's own barangay, not on Olongapo
+      (test with an account registered outside Zambales)
+- [ ] The readout under the map names that barangay
+- [ ] **Use my current location** moves the pin and zooms in
+- [ ] Searching a landmark lists results and choosing one moves the pin
+- [ ] After the first booking from a barangay, the `geocache` collection in
+      Atlas holds a row for it and the next booking from there is instant
+
 **Operations**
 - [ ] The paid job appears on `/app/admin` under *Awaiting assignment*
 - [ ] The job's pin appears on the Job Map
@@ -291,6 +302,26 @@ shows 200 in the PayMongo dashboard.** If it does not, the fix is to read the
 body from the request stream in a runtime that leaves it untouched (for
 example, moving just this one route to a Vercel Edge function, where `request`
 exposes `.text()`).
+
+**Booking map pins.** The map on `/app/book` opens where the customer is:
+`GET /api/geocode` turns the barangay on their account into coordinates, and
+the browser's own position takes over if they have already granted permission.
+Lookups go to OpenStreetMap's Nominatim, whose usage policy asks for an
+identifying User-Agent (`GEOCODER_CONTACT`) and for results to be cached —
+they are, in the `geocache` collection, keyed by PSGC code with a TTL, so a
+barangay is looked up once and every later booking from it is served from
+Atlas. If the geocoder is unreachable the route still answers `200` with
+`location: null`; the map falls back to Olongapo, claims no pin, and the
+customer drops one themselves. A booking is never blocked by any of this.
+To force a re-lookup after a bad result, delete that row from `geocache`.
+
+The same route answers `?q=` for the search box on both maps. Searches are
+cached in `geocache` under a `q:` key and quota'd per user in `apiLimits`
+(40 per 5 minutes, then `429`), because a search box is the one part of this
+that a person can hold down. If Nominatim ever rate-limits the deployment,
+those are the two knobs — `SEARCH_QUOTA` and `SEARCH_WINDOW_MS` in
+`api/_lib/geocode.js` — before considering `GEOCODER_URL` and a provider of
+your own.
 
 **Login redirects.** `/login?next=…` accepts only same-origin paths, enforced
 by `safeNext()` in `assets/js/portal.js`. Do not loosen it: the value is read

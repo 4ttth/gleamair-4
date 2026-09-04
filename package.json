@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "vercel dev",
     "build:psgc": "python3 tools/build-psgc.py",
-    "test": "node --import ./tests/loader.mjs tests/auth.test.mjs && node --import ./tests/loader.mjs tests/bookings.test.mjs && node --import ./tests/loader.mjs tests/pricing.test.mjs"
+    "test": "node --import ./tests/loader.mjs tests/auth.test.mjs && node --import ./tests/loader.mjs tests/bookings.test.mjs && node --import ./tests/loader.mjs tests/pricing.test.mjs && node --import ./tests/loader.mjs tests/geocode.test.mjs"
   },
   "dependencies": {
     "mongodb": "^6.12.0"

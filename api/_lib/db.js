@@ -55,6 +55,15 @@ async function ensureIndexes(db) {
       // Service pricing. _id is the service code, so uniqueness is free; the
       // history is only ever read newest-first for one service at a time.
       db.collection('servicePriceHistory').createIndex({ code: 1, version: -1 }),
+
+      // Geocoded localities and place searches. The TTL is what makes a stale
+      // or wrong point self-correcting: the row simply expires and is looked
+      // up again.
+      db.collection('geocache').createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 }),
+
+      // Per-user quota counters, expired by Mongo rather than by a sweep.
+      db.collection('apiLimits').createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 }),
+      db.collection('apiLimits').createIndex({ key: 1 }),
     ]);
   } catch (err) {
     // A racing cold start can collide here; never take the request down for it.
@@ -78,6 +87,8 @@ export const Collections = {
   loginAttempts: (db) => db.collection('loginAttempts'),
   services:      (db) => db.collection('services'),
   servicePriceHistory: (db) => db.collection('servicePriceHistory'),
+  geocache:      (db) => db.collection('geocache'),
+  apiLimits:     (db) => db.collection('apiLimits'),
 };
 
 /** Atomic per-name counter, used for human-readable booking references. */
