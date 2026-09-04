@@ -54,8 +54,8 @@ if you use preview deploys). Names are listed in `.env.example`.
 | `PAYMONGO_METHODS` | Start with `card`. See the warning below. |
 | `PUBLIC_BASE_URL` | Your **canonical** origin (see step 4) — no trailing slash |
 | `BOOTSTRAP_TOKEN` | `openssl rand -hex 32`. Delete after step 6. |
-| `PAYMONGO_MIN_AMOUNT` | Optional. Per-transaction floor in centavos (default `10000`). |
-| `PAYMONGO_MAX_AMOUNT` | Optional. Per-transaction ceiling in centavos (default `100000000`). |
+| `PAYMONGO_MIN_AMOUNT` | Optional. Lowest price an admin may set, in centavos (default `100` = PHP 1.00). |
+| `PAYMONGO_MAX_AMOUNT` | Optional. Highest price an admin may set, in centavos (default `100000000`). |
 
 > **`PAYMONGO_METHODS` matters.** Every method listed must already be
 > *activated* on your PayMongo account, or creating a checkout session fails
@@ -196,11 +196,14 @@ Two guards are worth knowing about:
 - **Concurrent edits.** Saving sends the version you were looking at. If
   someone else changed the price meanwhile, your save is refused rather than
   silently overwriting theirs — reload and reapply.
-- **Provider limits.** A price outside what PayMongo accepts per transaction is
-  rejected when you save it, not later at a customer's checkout. The bounds
-  default to PHP 100.00–PHP 1,000,000.00 and are overridable with
-  `PAYMONGO_MIN_AMOUNT` / `PAYMONGO_MAX_AMOUNT` (both in centavos) if your
-  account is configured differently.
+- **Price range.** Prices may be set from PHP 1.00 to PHP 1,000,000.00, and
+  anything outside that is refused when you save it. PayMongo enforces its own
+  per-transaction minimum on top of this, which varies by payment method and
+  account — a price below it is refused at the customer's checkout with
+  *"priced below the minimum our payment provider accepts"*, and the fix is to
+  raise the price. If you know your account's real floor, set
+  `PAYMONGO_MIN_AMOUNT` (in centavos) to it so the admin form catches it
+  instead. `PAYMONGO_MAX_AMOUNT` sets the ceiling the same way.
 
 Prices can also be read and set over the API:
 
@@ -215,6 +218,22 @@ curl -X PATCH https://gleamaire.com/api/services/PMS \
 ```
 
 Amounts are in **centavos** — PHP 750.00 is `75000`.
+
+### "Online payment is not configured yet"
+
+A customer sees this when a booking cannot reach PayMongo at all. It means one
+of two environment variables is missing from the deployment:
+
+| Missing | Effect |
+|---|---|
+| `PAYMONGO_SECRET_KEY` | No checkout session can be created. |
+| `PUBLIC_BASE_URL` | No return URLs can be built, so no session is created. |
+
+Both produce the same message to the customer, on purpose. To see **which** one
+it is, open **Service Pricing** in the ops dashboard as an admin — a banner
+there names the missing variable. Add it under **Settings → Environment
+Variables** and **redeploy**: Vercel only injects environment variables at build
+time, so adding one without redeploying changes nothing.
 
 ---
 

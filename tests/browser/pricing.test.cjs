@@ -104,6 +104,24 @@ const signIn = async (page, email, password, landing) => {
   check('new price shown on the pricing screen', (await admin.textContent('body')).includes('750.50'));
   check('change attributed to the admin', (await admin.textContent('body')).includes('Pia Admin'));
 
+  console.log('\n=== Admin: PHP 1.00 is a price the form accepts ===');
+  await admin.click('[data-price="PMS"]');
+  await admin.waitForSelector('#pTotal');
+  await admin.fill('#pTotal', '1.00');
+  await admin.fill('#pDown', '1.00');
+  await admin.click('#pSave');
+  await admin.waitForFunction(() => !document.querySelector('.modal-backdrop'), { timeout: 10000 });
+  const oneRow = admin.locator('tr', { has: admin.locator('[data-price="PMS"]') });
+  check('PHP 1.00 saved from the form', (await oneRow.textContent()).includes('₱1.00'), await oneRow.textContent());
+
+  // Put it back to something the rest of this test can reason about.
+  await admin.click('[data-price="PMS"]');
+  await admin.waitForSelector('#pTotal');
+  await admin.fill('#pTotal', '750.50');
+  await admin.fill('#pDown', '400.25');
+  await admin.click('#pSave');
+  await admin.waitForFunction(() => !document.querySelector('.modal-backdrop'), { timeout: 10000 });
+
   console.log('\n=== Admin: rejects an impossible price ===');
   await admin.click('[data-price="PMS"]');
   await admin.waitForSelector('#pTotal');

@@ -21,26 +21,56 @@ const API = 'https://api.paymongo.com/v1';
    the price was set. Pricing changes are validated against these bounds at the
    moment they are saved so an admin is told immediately instead.
 
-   The defaults are PayMongo's published per-transaction limits for card and
-   e-wallet payments. If your account is configured differently, override them
-   with PAYMONGO_MIN_AMOUNT / PAYMONGO_MAX_AMOUNT rather than editing this. */
+   The floor is PHP 1.00 so admins can price freely, including token amounts
+   for a live end-to-end payment test. Note that PayMongo enforces its own
+   per-transaction minimum on top of this, which varies by payment method and
+   by account - if it rejects a charge as too small, that comes back as a
+   provider error at checkout and the fix is to raise the price. Override
+   either bound with PAYMONGO_MIN_AMOUNT / PAYMONGO_MAX_AMOUNT (in centavos)
+   rather than editing this. */
 const envAmount = (name, fallback) => {
   const n = Number(process.env[name]);
   return Number.isInteger(n) && n > 0 ? n : fallback;
 };
 
-export const MIN_CHARGE = envAmount('PAYMONGO_MIN_AMOUNT', 10_000);      // PHP 100.00
+export const MIN_CHARGE = envAmount('PAYMONGO_MIN_AMOUNT', 100);         // PHP 1.00
 export const MAX_CHARGE = envAmount('PAYMONGO_MAX_AMOUNT', 100_000_000); // PHP 1,000,000.00
+
+/**
+ * Which payment settings are missing, if any.
+ *
+ * Both of these fail with the same message to the customer ("not configured
+ * yet"), which is right for them and useless for whoever has to fix it. This
+ * reports the difference to an admin, and only ever reports PRESENCE - never
+ * any part of a key's value.
+ */
+export function paymentConfigStatus() {
+  const missing = [];
+  if (!process.env.PAYMONGO_SECRET_KEY) missing.push('PAYMONGO_SECRET_KEY');
+  if (!(process.env.PUBLIC_BASE_URL || '').trim()) missing.push('PUBLIC_BASE_URL');
+
+  const warnings = [];
+  if (!process.env.PAYMONGO_WEBHOOK_SECRET) {
+    // Not fatal to taking a payment, but fatal to ever confirming one.
+    warnings.push('PAYMONGO_WEBHOOK_SECRET is not set, so paid bookings will not be confirmed automatically.');
+  }
+  return { configured: missing.length === 0, missing, warnings };
+}
 
 export const pesos = (centavos) =>
   (centavos / 100).toLocaleString('en-PH', { style: 'currency', currency: 'PHP' });
 
+/** Raised when a payment setting is missing. The customer sees a message they
+    can act on; the missing variable is named in the log, and reported to
+    admins through /api/services. */
+function notConfigured(missing) {
+  console.error(`[paymongo] ${missing.join(', ')} not set - cannot take payments`);
+  return new ApiError(503, 'Online payment is not configured yet. Please contact us to book.');
+}
+
 function authHeader() {
   const key = process.env.PAYMONGO_SECRET_KEY;
-  if (!key) {
-    console.error('[paymongo] PAYMONGO_SECRET_KEY is not set');
-    throw new ApiError(503, 'Online payment is not configured yet. Please contact us to book.');
-  }
+  if (!key) throw notConfigured(['PAYMONGO_SECRET_KEY']);
   return `Basic ${Buffer.from(`${key}:`).toString('base64')}`;
 }
 
@@ -90,6 +120,14 @@ async function call(path, { method = 'POST', body } = {}) {
         'The selected payment methods are not activated on our payment account yet. Please contact us to book.'
       );
     }
+    // We allow prices down to PHP 1.00, but PayMongo enforces its own minimum
+    // per payment method. Name the cause so the fix is obvious.
+    if (response.status === 400 && /amount/i.test(String(detail)) && /(minimum|too small|at least|greater)/i.test(String(detail))) {
+      throw new ApiError(
+        503,
+        'This service is priced below the minimum our payment provider accepts. Please contact us to book.'
+      );
+    }
     throw new ApiError(502, `Payment provider error: ${detail}`);
   }
 
@@ -106,11 +144,8 @@ async function call(path, { method = 'POST', body } = {}) {
  * Returns { id, checkoutUrl }.
  */
 export async function createCheckoutSession({ booking, customer, service, amounts }) {
-  const base = (process.env.PUBLIC_BASE_URL || '').replace(/\/+$/, '');
-  if (!base) {
-    console.error('[paymongo] PUBLIC_BASE_URL is not set');
-    throw new ApiError(503, 'Online payment is not configured yet. Please contact us to book.');
-  }
+  const base = (process.env.PUBLIC_BASE_URL || '').trim().replace(/\/+$/, '');
+  if (!base) throw notConfigured(['PUBLIC_BASE_URL']);
 
   const money = amounts ?? booking.amounts ?? {};
   const downpayment = money.downpayment;

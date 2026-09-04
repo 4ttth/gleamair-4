@@ -12,7 +12,9 @@ import { fileURLToPath } from 'node:url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const PORT = Number(process.env.PORT || 4321);
 
-process.env.PAYMONGO_SECRET_KEY = 'sk_test_devserver';
+// Set GLEAM_NO_KEY=1 to run without a key and see what a misconfigured
+// deployment looks like (the banner on the Service Pricing screen).
+if (!process.env.GLEAM_NO_KEY) process.env.PAYMONGO_SECRET_KEY = 'sk_test_devserver';
 process.env.PAYMONGO_WEBHOOK_SECRET = 'whsk_devserver';
 process.env.PUBLIC_BASE_URL = `http://localhost:${PORT}`;
 process.env.BOOTSTRAP_TOKEN = 'dev-bootstrap-token';
