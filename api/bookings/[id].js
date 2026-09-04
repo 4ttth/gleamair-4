@@ -163,10 +163,16 @@ async function post(req, res) {
       throw badRequest('This booking was cancelled. Please create a new one.');
     }
 
-    const service = serviceFor(booking.service);
+    const service = await serviceFor(db, booking.service);
     if (!service) throw badRequest('That service is no longer available.');
 
-    const checkout = await createCheckoutSession({ booking, customer: user, service });
+    // Deliberately the booking's OWN amounts, not the catalogue's current
+    // ones. This customer booked at a quoted price; re-issuing their payment
+    // link must not silently charge them a price set after they booked. The
+    // service row is read only for its name.
+    const checkout = await createCheckoutSession({
+      booking, customer: user, service, amounts: booking.amounts,
+    });
     await Collections.bookings(db).updateOne(
       { _id: booking._id },
       { $set: { 'payment.checkoutSessionId': checkout.id, updatedAt: new Date() } }

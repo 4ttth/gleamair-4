@@ -11,17 +11,26 @@ import { ApiError } from './http.js';
 
 const API = 'https://api.paymongo.com/v1';
 
-/** Service pricing, in centavos. PayMongo works exclusively in centavos, and
-    integer arithmetic avoids the rounding errors floats introduce with money. */
-export const PRICING = {
-  PMS: {
-    code: 'PMS',
-    name: 'Preventive Maintenance Service',
-    total: 50_000,       // PHP 500.00
-    downpayment: 25_000, // PHP 250.00
-    currency: 'PHP',
-  },
+/* PayMongo works exclusively in centavos, and integer arithmetic avoids the
+   rounding errors floats introduce with money. Prices themselves are no longer
+   defined here — they live in the database so an admin can change them at any
+   time. See api/_lib/services.js.
+
+   PayMongo rejects a charge outside its per-transaction limits, and that
+   rejection surfaces at checkout, in front of a paying customer, long after
+   the price was set. Pricing changes are validated against these bounds at the
+   moment they are saved so an admin is told immediately instead.
+
+   The defaults are PayMongo's published per-transaction limits for card and
+   e-wallet payments. If your account is configured differently, override them
+   with PAYMONGO_MIN_AMOUNT / PAYMONGO_MAX_AMOUNT rather than editing this. */
+const envAmount = (name, fallback) => {
+  const n = Number(process.env[name]);
+  return Number.isInteger(n) && n > 0 ? n : fallback;
 };
+
+export const MIN_CHARGE = envAmount('PAYMONGO_MIN_AMOUNT', 10_000);      // PHP 100.00
+export const MAX_CHARGE = envAmount('PAYMONGO_MAX_AMOUNT', 100_000_000); // PHP 1,000,000.00
 
 export const pesos = (centavos) =>
   (centavos / 100).toLocaleString('en-PH', { style: 'currency', currency: 'PHP' });
@@ -89,25 +98,55 @@ async function call(path, { method = 'POST', body } = {}) {
 
 /**
  * Creates a hosted Checkout Session for a booking's down payment.
+ *
+ * `amounts` is the booking's OWN snapshot, not the current catalogue price.
+ * Re-issuing a checkout link for an existing booking must charge what that
+ * customer was quoted, even if an admin has re-priced the service since.
+ *
  * Returns { id, checkoutUrl }.
  */
-export async function createCheckoutSession({ booking, customer, service }) {
+export async function createCheckoutSession({ booking, customer, service, amounts }) {
   const base = (process.env.PUBLIC_BASE_URL || '').replace(/\/+$/, '');
   if (!base) {
     console.error('[paymongo] PUBLIC_BASE_URL is not set');
     throw new ApiError(503, 'Online payment is not configured yet. Please contact us to book.');
   }
 
+  const money = amounts ?? booking.amounts ?? {};
+  const downpayment = money.downpayment;
+  const total = money.total;
+  const currency = money.currency || service.currency || 'PHP';
+
+  // Prices are editable at runtime now, so the amount reaching this request is
+  // no longer a compile-time constant. Refuse to send a charge PayMongo would
+  // reject, or - far worse - one it would silently accept as wrong.
+  if (!Number.isInteger(downpayment) || !Number.isInteger(total)) {
+    console.error(`[paymongo] non-integer amounts for ${booking.reference}:`, JSON.stringify(money));
+    throw new ApiError(500, 'This service is not priced correctly. Please contact us to book.');
+  }
+  if (downpayment < MIN_CHARGE || downpayment > MAX_CHARGE) {
+    console.error(`[paymongo] ${booking.reference} down payment ${downpayment} is outside PayMongo's limits`);
+    throw new ApiError(500, 'This service is not priced correctly. Please contact us to book.');
+  }
+  if (downpayment > total) {
+    console.error(`[paymongo] ${booking.reference} down payment ${downpayment} exceeds total ${total}`);
+    throw new ApiError(500, 'This service is not priced correctly. Please contact us to book.');
+  }
+
+  const balance = total - downpayment;
+
   const payload = {
     data: {
       attributes: {
         line_items: [
           {
-            currency: service.currency,
-            amount: service.downpayment,
+            currency,
+            amount: downpayment,
             name: `${service.name} - Reservation Down Payment`,
             quantity: 1,
-            description: `Down payment for booking ${booking.reference}. Balance of ${pesos(service.total - service.downpayment)} is payable on completion of service.`,
+            description: balance > 0
+              ? `Down payment for booking ${booking.reference}. Balance of ${pesos(balance)} is payable on completion of service.`
+              : `Payment in full for booking ${booking.reference}. Nothing further is payable on completion.`,
           },
         ],
         payment_method_types: methods(),
@@ -129,6 +168,9 @@ export async function createCheckoutSession({ booking, customer, service }) {
           bookingId: String(booking._id),
           customerId: String(customer._id),
           service: service.code,
+          // Which catalogue price this charge came from, so a payment can
+          // still be traced back to the figures in force when it was made.
+          priceVersion: String(money.priceVersion ?? service.version ?? ''),
         },
       },
     },

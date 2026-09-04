@@ -14,8 +14,8 @@ app/                      Signed-in area
   booking-complete.html     Customer: payment return / confirmation
   admin.html                Staff, admin and superadmin operations
 api/                      Vercel serverless functions
-  _lib/                     db, http, auth, validation, paymongo, bookings
-  auth/, bookings/, users/, webhooks/, bootstrap.js
+  _lib/                     db, http, auth, validation, paymongo, bookings, services
+  auth/, bookings/, services/, users/, webhooks/, bootstrap.js
 assets/
   css/app.css               Portal design system
   js/                       portal.js, shell.js, psgc.js, geo.js, data-loader.js
@@ -59,8 +59,11 @@ npm test          # 79 API tests, no network or database required
   PayMongo's hosted page, so no key is needed in the browser. Payment is
   confirmed by a signature-verified webhook, with the return page able to
   reconcile directly if that webhook is delayed.
-- **Money** is handled as integer centavos throughout. PMS is PHP 500.00 with a
-  PHP 250.00 down payment (placeholder values, set in `api/_lib/paymongo.js`).
+- **Money** is handled as integer centavos throughout. Prices are set at runtime
+  by an admin from **Service Pricing** in the ops dashboard, stored in the
+  `services` collection and read fresh on every booking — see
+  `api/_lib/services.js`. A change applies to the next booking; existing
+  bookings keep the amounts their customer was quoted.
 - **Staff visibility** is deliberately narrow: customer name, unit details and
   map pin only. Widen it with `STAFF_SEES_CONTACT` in `api/_lib/bookings.js`.
 - **Maps** use Leaflet and OpenStreetMap — no API key, no billing account. The

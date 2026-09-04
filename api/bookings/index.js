@@ -4,10 +4,11 @@
 
 import { ObjectId } from 'mongodb';
 import { Collections, getDb, nextSequence } from '../_lib/db.js';
-import { badRequest, forbidden, ok, readJson, route } from '../_lib/http.js';
+import { badRequest, conflict, forbidden, ok, readJson, route } from '../_lib/http.js';
 import { requireUser } from '../_lib/auth.js';
 import { createCheckoutSession } from '../_lib/paymongo.js';
 import { scopeBooking, serviceFor } from '../_lib/bookings.js';
+import { publicService } from '../_lib/services.js';
 import * as V from '../_lib/validate.js';
 
 const LIST_LIMIT = 200;
@@ -58,14 +59,29 @@ async function create(req, res) {
   }
 
   const body = await readJson(req);
-  const service = serviceFor(V.string(body.service, 'Service', { max: 20 }).toUpperCase());
-  if (!service) throw badRequest('That service is not available for online booking yet.', { field: 'service' });
+  const db = await getDb();
+
+  // Read the price at the moment of booking rather than from a constant, so an
+  // admin's change is live for the very next customer through this route.
+  const service = await serviceFor(db, V.string(body.service, 'Service', { max: 20 }).toUpperCase());
+  if (!service || service.bookable !== true || service.total == null || service.downpayment == null) {
+    throw badRequest('That service is not available for online booking yet.', { field: 'service' });
+  }
+
+  // The customer clicked a button showing a price. If it changed between the
+  // page loading and the click, stop and show them the new one rather than
+  // charging a figure they never agreed to.
+  if (body.priceVersion !== undefined && Number(body.priceVersion) !== service.version) {
+    throw conflict('The price of this service changed while you were booking. Please review the new total and try again.', {
+      field: 'priceVersion',
+      service: publicService(service),
+    });
+  }
 
   const units = V.units(body.units);
   const location = V.location(body.location);
   const notes = V.string(body.notes, 'Notes', { max: 600, required: false });
 
-  const db = await getDb();
   const seq = await nextSequence(db, 'booking');
   const reference = `${service.code}-${String(seq).padStart(6, '0')}`;
 
@@ -86,11 +102,14 @@ async function create(req, res) {
     units,
     location,
     notes,
+    // Snapshot, not a reference. A later price change must never alter what
+    // this customer was quoted, what they paid, or what is still owed.
     amounts: {
       total: service.total,
       downpayment: service.downpayment,
       balance: service.total - service.downpayment,
       currency: service.currency,
+      priceVersion: service.version,
     },
     payment: { provider: 'paymongo', status: 'pending', checkoutSessionId: null, paymentIntentId: null },
     status: 'awaiting_payment',
@@ -110,7 +129,7 @@ async function create(req, res) {
 
   let checkout;
   try {
-    checkout = await createCheckoutSession({ booking, customer: user, service });
+    checkout = await createCheckoutSession({ booking, customer: user, service, amounts: booking.amounts });
   } catch (err) {
     // Don't strand an unpayable booking in the list if PayMongo rejects us.
     await Collections.bookings(db).deleteOne({ _id: booking._id });

@@ -34,13 +34,16 @@
   });
 
   /* Services. Only PMS is bookable; the rest advertise what is coming and use
-     images already in the repository. */
+     images already in the repository.
+
+     Presentation (blurb, image) lives here; the PRICE does not - it is set by
+     an admin at runtime and merged in below, so a change shows up on the next
+     load of this page rather than the next deploy. */
   const SERVICES = [
     {
       code: 'PMS', name: 'Preventive Maintenance Service',
       blurb: 'Scheduled cleaning, inspection and servicing to keep your air conditioning units running efficiently and prevent breakdowns.',
       image: '/assets/images/products/Aircon Preventive Maintenance.jpeg',
-      price: 50000, downpayment: 25000, available: true,
     },
     {
       code: 'INSTALL', name: 'Aircon Supply & Installation',
@@ -61,6 +64,23 @@
       available: false,
     },
   ];
+
+  /* Merge the live catalogue in by code. A service is offered online only if
+     the server says it is bookable AND has a price - never on this page's say-so. */
+  async function withLivePricing(list) {
+    let live = [];
+    try {
+      live = (await api.get('/api/services')).services || [];
+    } catch {
+      // A price we cannot confirm is a price we must not advertise: the cards
+      // fall back to "not yet available online" rather than a stale figure.
+    }
+    return list.map((s) => {
+      const p = live.find((x) => x.code === s.code);
+      return { ...s, price: p?.total ?? null, downpayment: p?.downpayment ?? null,
+               available: p?.bookable === true };
+    });
+  }
 
   const serviceCard = (s) => `
     <article class="svc ${s.available ? 'available' : 'soon'}">
@@ -98,6 +118,10 @@
       }</td>
     </tr>`;
 
+  // Populated from /api/services on every load, so a re-priced service shows
+  // its new figures without a redeploy.
+  let priced = SERVICES.map((s) => ({ ...s, available: false, price: null, downpayment: null }));
+
   function render(bookings) {
     const active = bookings.filter((b) => !['completed', 'cancelled'].includes(b.status));
     const paidTotal = bookings
@@ -125,7 +149,7 @@
       </div>
 
       <h2 class="page-title mb-md" style="font-size:1.2rem">Services</h2>
-      <div class="grid grid-auto mb-lg">${SERVICES.map(serviceCard).join('')}</div>
+      <div class="grid grid-auto mb-lg">${priced.map(serviceCard).join('')}</div>
 
       <div class="card" id="bookingsCard">
         <div class="card-head"><h2>My bookings</h2></div>
@@ -180,7 +204,11 @@
 
   async function load() {
     try {
-      const data = await api.get('/api/bookings');
+      const [data, withPrices] = await Promise.all([
+        api.get('/api/bookings'),
+        withLivePricing(SERVICES),
+      ]);
+      priced = withPrices;
       render(data.bookings || []);
     } catch (err) {
       content.innerHTML = '<div class="alert error"></div>';
@@ -217,6 +245,10 @@
   }
 
   await load();
+
+  // Prices change while people are looking at this page; pick them up when the
+  // tab is brought back to the front rather than showing a stale figure.
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) load(); });
 </script>
 
 </body>

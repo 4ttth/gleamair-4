@@ -46,6 +46,8 @@ const handlers = {
   'bookings/:id':     (await import('../api/bookings/[id].js')).default,
   'users':            (await import('../api/users/index.js')).default,
   'users/:id':        (await import('../api/users/[id].js')).default,
+  'services':         (await import('../api/services/index.js')).default,
+  'services/:id':     (await import('../api/services/[code].js')).default,
   'webhooks/paymongo':(await import('../api/webhooks/paymongo.js')).default,
   'bootstrap':        (await import('../api/bootstrap.js')).default,
 };
@@ -64,7 +66,9 @@ function apiRoute(pathname) {
   const joined = parts.join('/');
   if (handlers[joined]) return { handler: handlers[joined], query: {} };
   if (parts.length === 2 && handlers[`${parts[0]}/:id`]) {
-    return { handler: handlers[`${parts[0]}/:id`], query: { id: parts[1] } };
+    // Vercel names the param after the file ([id].js vs [code].js); supply both
+    // so one dev-server route table serves either.
+    return { handler: handlers[`${parts[0]}/:id`], query: { id: parts[1], code: parts[1] } };
   }
   return null;
 }
@@ -88,7 +92,7 @@ const server = http.createServer(async (req, res) => {
 <title>Fake PayMongo Checkout</title>
 <body style="font-family:system-ui;max-width:520px;margin:60px auto;padding:24px;border:1px solid #ddd;border-radius:12px">
 <h1 style="font-size:20px">Fake PayMongo checkout</h1>
-<p>Stand-in for the hosted PayMongo page. Booking <b>${ref}</b>, down payment <b>PHP 250.00</b>.</p>
+<p>Stand-in for the hosted PayMongo page. Booking <b>${ref}</b>.</p>
 <p><a id="pay" href="/app/booking-complete?ref=${encodeURIComponent(ref)}">Simulate successful payment</a></p>
 <p><a href="/app/dashboard?payment=cancelled&ref=${encodeURIComponent(ref)}">Simulate cancelled payment</a></p>
 </body>`);

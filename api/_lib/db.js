@@ -51,6 +51,10 @@ async function ensureIndexes(db) {
       // Login throttling records expire by themselves.
       db.collection('loginAttempts').createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 }),
       db.collection('loginAttempts').createIndex({ key: 1 }),
+
+      // Service pricing. _id is the service code, so uniqueness is free; the
+      // history is only ever read newest-first for one service at a time.
+      db.collection('servicePriceHistory').createIndex({ code: 1, version: -1 }),
     ]);
   } catch (err) {
     // A racing cold start can collide here; never take the request down for it.
@@ -72,6 +76,8 @@ export const Collections = {
   bookings:      (db) => db.collection('bookings'),
   counters:      (db) => db.collection('counters'),
   loginAttempts: (db) => db.collection('loginAttempts'),
+  services:      (db) => db.collection('services'),
+  servicePriceHistory: (db) => db.collection('servicePriceHistory'),
 };
 
 /** Atomic per-name counter, used for human-readable booking references. */

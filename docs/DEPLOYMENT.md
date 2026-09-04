@@ -54,6 +54,8 @@ if you use preview deploys). Names are listed in `.env.example`.
 | `PAYMONGO_METHODS` | Start with `card`. See the warning below. |
 | `PUBLIC_BASE_URL` | Your **canonical** origin (see step 4) — no trailing slash |
 | `BOOTSTRAP_TOKEN` | `openssl rand -hex 32`. Delete after step 6. |
+| `PAYMONGO_MIN_AMOUNT` | Optional. Per-transaction floor in centavos (default `10000`). |
+| `PAYMONGO_MAX_AMOUNT` | Optional. Per-transaction ceiling in centavos (default `100000000`). |
 
 > **`PAYMONGO_METHODS` matters.** Every method listed must already be
 > *activated* on your PayMongo account, or creating a checkout session fails
@@ -169,6 +171,50 @@ absent the route returns 404.
 
 Sign in at `/login` and create your staff and admin accounts from
 **User Management**.
+
+## 7. Service pricing
+
+Prices are **not** in the code. They live in the `services` collection and are
+edited from **Service Pricing** in the ops dashboard by any admin or superadmin.
+On first run the collection is seeded with the values the site previously had
+hardcoded (PMS at PHP 500.00 total, PHP 250.00 to reserve); after that the
+database is authoritative and a redeploy never overwrites what you have set.
+
+A change takes effect on the **next** booking — the customer dashboard, the
+booking page and the amount sent to PayMongo all read the same live figure.
+
+What a change does *not* do is re-price anything that already exists. Every
+booking stores the amounts it was quoted, so:
+
+- a booking awaiting payment still owes the amount its customer agreed to, and
+  its PayMongo checkout link keeps charging that;
+- a paid booking's history stays truthful;
+- the balance a technician collects on site is the one on the job card.
+
+Two guards are worth knowing about:
+
+- **Concurrent edits.** Saving sends the version you were looking at. If
+  someone else changed the price meanwhile, your save is refused rather than
+  silently overwriting theirs — reload and reapply.
+- **Provider limits.** A price outside what PayMongo accepts per transaction is
+  rejected when you save it, not later at a customer's checkout. The bounds
+  default to PHP 100.00–PHP 1,000,000.00 and are overridable with
+  `PAYMONGO_MIN_AMOUNT` / `PAYMONGO_MAX_AMOUNT` (both in centavos) if your
+  account is configured differently.
+
+Prices can also be read and set over the API:
+
+```bash
+# Read the catalogue (public)
+curl -s https://gleamaire.com/api/services
+
+# Change a price (admin session cookie required; version comes from the read)
+curl -X PATCH https://gleamaire.com/api/services/PMS \
+  -H "Content-Type: application/json" -b "gleam_session=..." \
+  -d '{"total": 75000, "downpayment": 40000, "version": 1}'
+```
+
+Amounts are in **centavos** — PHP 750.00 is `75000`.
 
 ---
 
