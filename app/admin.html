@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en-PH">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Operations | Gleamair Enterprises</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/x-icon" href="/assets/images/other/favicon_io/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/vendor/leaflet/leaflet.css">
+<link rel="stylesheet" href="/assets/css/app.css">
+</head>
+<body>
+
+<script src="/assets/vendor/leaflet/leaflet.js"></script>
+
+<script type="module">
+  import {
+    api, requireAuth, esc, peso, formatDate, busy, showAlert, hideAlert, el,
+    STATUS_LABELS, STATUS_TONE, ROLE_LABELS, unitSummary, initials,
+    attachPhoneInput, phoneValue, attachPasswordRules, passwordValid,
+  } from '/assets/js/portal.js';
+  import { mountShell, setHeading, icon, ICON } from '/assets/js/shell.js';
+  import { createMap, statusMarker, STATUS_COLOUR, OLONGAPO } from '/assets/js/geo.js';
+  import { attachAddressSelects } from '/assets/js/psgc.js';
+
+  const user = await requireAuth({ roles: ['staff', 'admin', 'superadmin'] });
+  const isStaff = user.role === 'staff';
+  const isSuper = user.role === 'superadmin';
+  const canManageJobs = !isStaff;
+
+  /* ── Navigation, scoped to role ─────────────────────────────────────────
+     Staff get only the map and their own jobs, per the brief. Admins add the
+     operational modules; superadmins add user management. */
+  const items = isStaff
+    ? [
+        { id: 'map',  label: 'Job Map',  icon: 'map' },
+        { id: 'jobs', label: 'My Jobs',  icon: 'wrench' },
+      ]
+    : [
+        { id: 'overview', label: 'Overview',  icon: 'grid' },
+        { id: 'jobs',     label: 'PMS Jobs',  icon: 'wrench' },
+        { id: 'map',      label: 'Job Map',   icon: 'map' },
+        ...(isSuper ? [{ section: 'Administration', id: 'users', label: 'User Management', icon: 'users' }] : []),
+        { section: 'Business modules', id: 'crm',        label: 'CRM',                  icon: 'heart',     soon: true },
+        { id: 'hr',        label: 'HR Management',      icon: 'users',     soon: true },
+        { id: 'payroll',   label: 'Payroll & Accounting', icon: 'wallet',  soon: true },
+        { id: 'marketing', label: 'Marketing',          icon: 'megaphone', soon: true },
+        { id: 'attendance',label: 'Attendance Tracking', icon: 'clock',    soon: true },
+      ];
+
+  const content = mountShell({
+    user,
+    active: isStaff ? 'map' : 'overview',
+    title: isStaff ? 'Job Map' : 'Operations overview',
+    subtitle: isStaff ? 'Jobs assigned across the team.' : 'Preventive maintenance bookings and dispatch.',
+    items,
+  });
+
+  /* ── Data ───────────────────────────────────────────────────────────────── */
+
+  let jobs = [];
+  let technicians = [];
+  let people = [];
+
+  async function loadJobs() {
+    jobs = (await api.get('/api/bookings')).bookings || [];
+  }
+
+  async function loadTechnicians() {
+    if (!canManageJobs) return;
+    technicians = (await api.get('/api/users?role=staff,admin,superadmin')).users || [];
+  }
+
+  async function loadPeople() {
+    if (!isSuper) return;
+    people = (await api.get('/api/users')).users || [];
+  }
+
+  /* ── Shared renderers ───────────────────────────────────────────────────── */
+
+  const badge = (status) =>
+    `<span class="badge ${STATUS_TONE[status] || 'grey'}">${esc(STATUS_LABELS[status] || status)}</span>`;
+
+  const alertBar = '<div class="alert error" id="pageAlert" hidden></div>';
+
+  function jobRow(job) {
+    return `
+      <tr>
+        <td class="row-title mono">${esc(job.reference)}</td>
+        <td>${esc(job.customerName || '—')}
+          ${job.city ? `<div class="muted-soft" style="font-size:.82rem">${esc([job.city, job.province].filter(Boolean).join(', '))}</div>` : ''}
+          ${job.address ? `<div class="muted-soft" style="font-size:.82rem">${esc([job.address.cityName, job.address.provinceName].filter(Boolean).join(', '))}</div>` : ''}
+        </td>
+        <td>${esc(unitSummary(job.units))}</td>
+        <td>${badge(job.status)}</td>
+        <td class="nowrap">${esc(job.assignedStaffName || '—')}</td>
+        <td class="nowrap">${esc(formatDate(job.scheduledAt, { withTime: true }))}</td>
+        <td class="nowrap">
+          ${canManageJobs
+            ? `<button class="btn btn-outline btn-sm" data-manage="${esc(job.reference)}">Manage</button>`
+            : (String(job.assignedStaffId) === String(user.id)
+                ? `<button class="btn btn-outline btn-sm" data-progress="${esc(job.reference)}">Update</button>`
+                : '<span class="muted-soft">—</span>')}
+        </td>
+      </tr>`;
+  }
+
+  function jobsTable(list, emptyText) {
+    if (!list.length) {
+      return `<div class="empty">${icon(ICON.wrench)}<h3>Nothing here yet</h3><p>${esc(emptyText)}</p></div>`;
+    }
+    return `
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr>
+            <th>Reference</th><th>Customer</th><th>Units</th><th>Status</th>
+            <th>Technician</th><th>Scheduled</th><th></th>
+          </tr></thead>
+          <tbody>${list.map(jobRow).join('')}</tbody>
+        </table>
+      </div>`;
+  }
+
+  /* ── Views ──────────────────────────────────────────────────────────────── */
+
+  const MODULES = [
+    { name: 'CRM',                   blurb: 'Leads, opportunities and customer history.' },
+    { name: 'HR Management',         blurb: 'Employee records, leave and onboarding.' },
+    { name: 'Payroll & Accounting',  blurb: 'Payroll runs, invoices and reconciliation.' },
+    { name: 'Marketing',             blurb: 'Campaigns, mailing lists and promotions.' },
+    { name: 'Attendance Tracking',   blurb: 'Time-in, time-out and timesheet approval.' },
+  ];
+
+  function viewOverview() {
+    setHeading('Operations overview', 'Preventive maintenance bookings and dispatch.');
+
+    const unassigned = jobs.filter((j) => j.status === 'paid');
+    const active = jobs.filter((j) => ['assigned', 'in_progress'].includes(j.status));
+    const done = jobs.filter((j) => j.status === 'completed');
+    const collected = jobs
+      .filter((j) => j.payment?.status === 'paid')
+      .reduce((sum, j) => sum + (j.amounts?.downpayment || 0), 0);
+
+    content.innerHTML = `
+      ${alertBar}
+      <div class="grid grid-4 mb-lg">
+        <div class="stat"><div class="label">Awaiting assignment</div>
+          <div class="value${unassigned.length ? ' gold' : ''}">${unassigned.length}</div>
+          <div class="foot">Paid, no technician yet</div></div>
+        <div class="stat"><div class="label">Active jobs</div><div class="value">${active.length}</div>
+          <div class="foot">Assigned or in progress</div></div>
+        <div class="stat"><div class="label">Completed</div><div class="value">${done.length}</div>
+          <div class="foot">All time</div></div>
+        <div class="stat"><div class="label">Down payments collected</div>
+          <div class="value gold" style="font-size:1.8rem">${peso(collected)}</div>
+          <div class="foot">Via PayMongo</div></div>
+      </div>
+
+      <div class="card mb-lg">
+        <div class="card-head"><h2>Jobs awaiting assignment</h2>
+          <button class="btn btn-ghost btn-sm ml-auto" data-goto="jobs">View all jobs</button></div>
+        ${jobsTable(unassigned, 'Every paid booking has a technician assigned.')}
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h2>Business modules</h2></div>
+        <div class="card-pad">
+          <p class="muted mb-md" style="font-size:.9rem">
+            These modules are planned for the Gleamair operations platform. The PMS workflow above is live today.
+          </p>
+          <div class="grid grid-3">
+            ${MODULES.map((m) => `
+              <div class="card card-pad" style="box-shadow:none;background:var(--surface-alt)">
+                <div class="row between center mb-sm">
+                  <strong style="font-size:.95rem">${esc(m.name)}</strong>
+                  <span class="badge grey no-dot">Coming soon</span>
+                </div>
+                <div class="muted" style="font-size:.85rem">${esc(m.blurb)}</div>
+              </div>`).join('')}
+          </div>
+        </div>
+      </div>`;
+
+    content.querySelector('[data-goto="jobs"]')?.addEventListener('click', () => show('jobs'));
+    wireJobButtons();
+  }
+
+  function viewJobs() {
+    const mine = isStaff ? jobs.filter((j) => String(j.assignedStaffId) === String(user.id)) : jobs;
+    setHeading(isStaff ? 'My jobs' : 'PMS jobs',
+      isStaff ? 'Jobs assigned to you.' : 'Every preventive maintenance booking.');
+
+    content.innerHTML = `
+      ${alertBar}
+      ${isStaff ? `
+        <div class="alert info">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          <div>You can see the customer's name, their unit details and the job location.
+          Contact details are held by the office — call the office if you need them.</div>
+        </div>` : ''}
+
+      ${!isStaff ? `
+        <div class="card card-pad mb-md">
+          <div class="row gap-sm row-wrap center">
+            <label class="label" style="margin:0" for="statusFilter">Filter by status</label>
+            <select class="select" id="statusFilter" style="max-width:230px">
+              <option value="">All statuses</option>
+              ${Object.entries(STATUS_LABELS).map(([k, v]) => `<option value="${k}">${esc(v)}</option>`).join('')}
+            </select>
+            <span class="muted-soft ml-auto" id="jobCount">${mine.length} job${mine.length === 1 ? '' : 's'}</span>
+          </div>
+        </div>` : ''}
+
+      <div class="card" id="jobsCard">
+        ${jobsTable(mine, isStaff ? 'No jobs are assigned to you right now.' : 'No bookings have been made yet.')}
+      </div>`;
+
+    el('statusFilter')?.addEventListener('change', (e) => {
+      const value = e.target.value;
+      const filtered = value ? jobs.filter((j) => j.status === value) : jobs;
+      el('jobsCard').innerHTML = jobsTable(filtered, 'No jobs match that status.');
+      el('jobCount').textContent = `${filtered.length} job${filtered.length === 1 ? '' : 's'}`;
+      wireJobButtons();
+    });
+
+    wireJobButtons();
+  }
+
+  function viewMap() {
+    setHeading('Job map', 'Where paid jobs are located.');
+    const plotted = jobs.filter((j) => j.location?.lat != null);
+
+    content.innerHTML = `
+      ${alertBar}
+      <div class="card">
+        <div class="card-head">
+          <h2>Dispatch map</h2>
+          <span class="muted-soft ml-auto">${plotted.length} of ${jobs.length} job${jobs.length === 1 ? '' : 's'} pinned</span>
+        </div>
+        <div class="card-pad">
+          <div class="map" id="jobMap"></div>
+          <div class="map-legend mt-md">
+            <span><i style="background:${STATUS_COLOUR.paid}"></i> Awaiting assignment</span>
+            <span><i style="background:${STATUS_COLOUR.assigned}"></i> Assigned</span>
+            <span><i style="background:${STATUS_COLOUR.in_progress}"></i> In progress</span>
+            <span><i style="background:${STATUS_COLOUR.completed}"></i> Completed</span>
+          </div>
+          ${plotted.length < jobs.length ? `
+            <p class="hint mt-sm">
+              ${jobs.length - plotted.length} job${jobs.length - plotted.length === 1 ? ' has' : 's have'}
+              no map pin — the customer skipped it during booking.
+            </p>` : ''}
+        </div>
+      </div>`;
+
+    const map = createMap('jobMap', { center: OLONGAPO, zoom: 11 });
+    if (!map || !plotted.length) return;
+
+    const group = [];
+    for (const job of plotted) {
+      const marker = statusMarker(job.location.lat, job.location.lng, STATUS_COLOUR[job.status] || '#7c8aa5');
+      marker.addTo(map).bindPopup(`
+        <div style="min-width:190px">
+          <strong>${esc(job.reference)}</strong><br>
+          ${esc(job.customerName || '')}<br>
+          <span style="color:#4a5b78">${esc(unitSummary(job.units))}</span><br>
+          <span style="color:#4a5b78">${esc(STATUS_LABELS[job.status] || job.status)}</span>
+          ${job.assignedStaffName ? `<br><span style="color:#4a5b78">Tech: ${esc(job.assignedStaffName)}</span>` : ''}
+          ${job.scheduledAt ? `<br><span style="color:#4a5b78">${esc(formatDate(job.scheduledAt, { withTime: true }))}</span>` : ''}
+        </div>`);
+      group.push([job.location.lat, job.location.lng]);
+    }
+    if (group.length > 1) map.fitBounds(group, { padding: [40, 40] });
+    else map.setView(group[0], 15);
+  }
+
+  function viewUsers() {
+    setHeading('User management', 'Create and remove accounts.');
+    const counts = people.reduce((acc, p) => { acc[p.role] = (acc[p.role] || 0) + 1; return acc; }, {});
+
+    content.innerHTML = `
+      ${alertBar}
+      <div class="grid grid-4 mb-lg">
+        ${['customer', 'staff', 'admin', 'superadmin'].map((r) => `
+          <div class="stat"><div class="label">${esc(ROLE_LABELS[r])}s</div>
+            <div class="value">${counts[r] || 0}</div></div>`).join('')}
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h2>All accounts</h2>
+          <button class="btn btn-primary btn-sm ml-auto" id="addUser">${icon(ICON.plus)} New account</button>
+        </div>
+        <div class="table-wrap">
+          <table class="data">
+            <thead><tr><th>Name</th><th>Email</th><th>Mobile</th><th>Role</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              ${people.map((p) => `
+                <tr>
+                  <td><div class="row center gap-sm">
+                    <span class="avatar${p.role === 'customer' ? '' : ' gold'}" style="width:30px;height:30px;font-size:.72rem">${esc(initials(p.firstName, p.lastName))}</span>
+                    <span class="row-title">${esc(p.fullName)}</span>
+                  </div></td>
+                  <td>${esc(p.email)}</td>
+                  <td class="nowrap">${esc(p.phone)}</td>
+                  <td><span class="badge ${p.role === 'superadmin' ? 'gold' : p.role === 'customer' ? 'grey' : 'info'}">${esc(ROLE_LABELS[p.role])}</span></td>
+                  <td>${p.active ? '<span class="badge ok">Active</span>' : '<span class="badge danger">Disabled</span>'}</td>
+                  <td class="nowrap">
+                    ${String(p.id) === String(user.id)
+                      ? '<span class="muted-soft">This is you</span>'
+                      : `<button class="btn btn-ghost btn-sm" data-deluser="${esc(p.id)}" data-name="${esc(p.fullName)}">Delete</button>`}
+                  </td>
+                </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>`;
+
+    el('addUser').addEventListener('click', openUserModal);
+
+    content.querySelectorAll('[data-deluser]').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        if (!confirm(`Delete ${btn.dataset.name}? Their bookings are kept, but the account is removed permanently.`)) return;
+        const restore = busy(btn, 'Deleting…');
+        try {
+          await api.del(`/api/users/${encodeURIComponent(btn.dataset.deluser)}`);
+          await Promise.all([loadPeople(), loadTechnicians()]);
+          viewUsers();
+        } catch (err) {
+          restore();
+          showAlert(el('pageAlert'), err.message);
+        }
+      });
+    });
+  }
+
+  /* ── Modals ─────────────────────────────────────────────────────────────── */
+
+  function modal(html) {
+    const backdrop = document.createElement('div');
+    backdrop.className = 'modal-backdrop';
+    backdrop.innerHTML = `<div class="modal">${html}</div>`;
+    document.body.appendChild(backdrop);
+
+    const close = () => backdrop.remove();
+    backdrop.addEventListener('click', (e) => { if (e.target === backdrop) close(); });
+    backdrop.querySelectorAll('[data-close]').forEach((b) => b.addEventListener('click', close));
+    document.addEventListener('keydown', function onKey(e) {
+      if (e.key === 'Escape') { close(); document.removeEventListener('keydown', onKey); }
+    });
+    return { node: backdrop, close };
+  }
+
+  function openManageModal(reference) {
+    const job = jobs.find((j) => j.reference === reference);
+    if (!job) return;
+
+    const localValue = job.scheduledAt
+      ? new Date(new Date(job.scheduledAt).getTime() - new Date().getTimezoneOffset() * 60000)
+          .toISOString().slice(0, 16)
+      : '';
+
+    const m = modal(`
+      <div class="modal-head">
+        <h2>Manage ${esc(job.reference)}</h2>
+        <button class="icon-btn" data-close aria-label="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="alert error" id="modalAlert" hidden></div>
+
+        <div class="grid grid-2 mb-lg" style="gap:12px">
+          <div><div class="label">Customer</div><div>${esc(job.customerName || '—')}</div></div>
+          <div><div class="label">Mobile</div><div>${esc(job.customerPhone || '—')}</div></div>
+          <div class="full"><div class="label">Service address</div>
+            <div>${esc(job.address
+              ? [job.address.line1, job.address.line2, job.address.barangayName, job.address.cityName, job.address.provinceName].filter(Boolean).join(', ')
+              : '—')}</div></div>
+          <div class="full"><div class="label">Units</div><div>${esc(unitSummary(job.units))}</div></div>
+          ${job.notes ? `<div class="full"><div class="label">Customer notes</div><div>${esc(job.notes)}</div></div>` : ''}
+          <div><div class="label">Down payment</div><div>${esc(peso(job.amounts?.downpayment))} ${job.payment?.status === 'paid' ? '<span class="badge ok">Paid</span>' : '<span class="badge warn">Unpaid</span>'}</div></div>
+          <div><div class="label">Balance due on site</div><div>${esc(peso(job.amounts?.balance))}</div></div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="field">
+          <label class="label" for="mTech">Assign technician</label>
+          <select class="select" id="mTech">
+            <option value="">Unassigned</option>
+            ${technicians.map((t) => `<option value="${esc(t.id)}"${String(t.id) === String(job.assignedStaffId) ? ' selected' : ''}>${esc(t.fullName)} — ${esc(ROLE_LABELS[t.role])}</option>`).join('')}
+          </select>
+        </div>
+
+        <div class="field">
+          <label class="label" for="mWhen">Scheduled date &amp; time</label>
+          <input class="input" type="datetime-local" id="mWhen" value="${esc(localValue)}">
+        </div>
+
+        <div class="field">
+          <label class="label" for="mStatus">Status</label>
+          <select class="select" id="mStatus">
+            ${Object.entries(STATUS_LABELS).map(([k, v]) => `<option value="${k}"${k === job.status ? ' selected' : ''}>${esc(v)}</option>`).join('')}
+          </select>
+        </div>
+
+        <div class="field" style="margin:0">
+          <label class="label" for="mNotes">Internal notes</label>
+          <textarea class="textarea" id="mNotes" maxlength="600">${esc(job.notes || '')}</textarea>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" data-close>Cancel</button>
+        <button class="btn btn-primary" id="mSave">Save changes</button>
+      </div>`);
+
+    el('mSave').addEventListener('click', async () => {
+      const restore = busy(el('mSave'), 'Saving…');
+      try {
+        await api.patch(`/api/bookings/${encodeURIComponent(job.reference)}`, {
+          assignedStaffId: el('mTech').value || null,
+          scheduledAt: el('mWhen').value ? new Date(el('mWhen').value).toISOString() : null,
+          status: el('mStatus').value,
+          notes: el('mNotes').value.trim(),
+        });
+        m.close();
+        await loadJobs();
+        show(currentView);
+      } catch (err) {
+        restore();
+        showAlert(el('modalAlert'), err.message);
+      }
+    });
+  }
+
+  function openProgressModal(reference) {
+    const job = jobs.find((j) => j.reference === reference);
+    if (!job) return;
+
+    const m = modal(`
+      <div class="modal-head"><h2>Update ${esc(job.reference)}</h2>
+        <button class="icon-btn" data-close aria-label="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="alert error" id="modalAlert" hidden></div>
+        <div class="grid grid-2 mb-lg" style="gap:12px">
+          <div><div class="label">Customer</div><div>${esc(job.customerName || '—')}</div></div>
+          <div><div class="label">Area</div><div>${esc([job.city, job.province].filter(Boolean).join(', ') || '—')}</div></div>
+          <div class="full"><div class="label">Units</div><div>${esc(unitSummary(job.units))}</div></div>
+        </div>
+        <div class="field" style="margin:0">
+          <label class="label" for="sStatus">Job status</label>
+          <select class="select" id="sStatus">
+            <option value="in_progress"${job.status === 'in_progress' ? ' selected' : ''}>In progress</option>
+            <option value="completed"${job.status === 'completed' ? ' selected' : ''}>Completed</option>
+          </select>
+          <div class="hint">Collect the ${esc(peso(job.amounts?.balance))} balance on completion.</div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" data-close>Cancel</button>
+        <button class="btn btn-primary" id="sSave">Save</button>
+      </div>`);
+
+    el('sSave').addEventListener('click', async () => {
+      const restore = busy(el('sSave'), 'Saving…');
+      try {
+        await api.patch(`/api/bookings/${encodeURIComponent(job.reference)}`, { status: el('sStatus').value });
+        m.close();
+        await loadJobs();
+        show(currentView);
+      } catch (err) {
+        restore();
+        showAlert(el('modalAlert'), err.message);
+      }
+    });
+  }
+
+  function openUserModal() {
+    const m = modal(`
+      <div class="modal-head"><h2>New account</h2>
+        <button class="icon-btn" data-close aria-label="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="alert error" id="modalAlert" hidden></div>
+        <form id="userForm" novalidate>
+          <div class="field" data-field="role">
+            <label class="label" for="uRole">Role</label>
+            <select class="select" id="uRole">
+              <option value="staff">Staff — map and job details only</option>
+              <option value="admin">Admin — full operations access</option>
+              <option value="superadmin">Superadmin — can manage accounts</option>
+              <option value="customer">Customer — books services</option>
+            </select>
+            <div class="err"></div>
+          </div>
+          <div class="grid grid-2" style="gap:0 12px">
+            <div class="field" data-field="firstName">
+              <label class="label" for="uFirst">First name</label>
+              <input class="input" id="uFirst" required><div class="err"></div>
+            </div>
+            <div class="field" data-field="lastName">
+              <label class="label" for="uLast">Last name</label>
+              <input class="input" id="uLast" required><div class="err"></div>
+            </div>
+          </div>
+          <div class="field" data-field="email">
+            <label class="label" for="uEmail">Email address</label>
+            <input class="input" type="email" id="uEmail" required><div class="err"></div>
+          </div>
+          <div class="field" data-field="phone">
+            <label class="label" for="uPhone">Mobile number</label>
+            <div class="phone-wrap"><span class="prefix">+63</span>
+              <input class="input" type="tel" id="uPhone" inputmode="numeric" placeholder="917 123 4567" required></div>
+            <div class="err"></div>
+          </div>
+
+          <div id="uAddress" class="hidden">
+            <div class="divider"></div>
+            <div class="field" data-field="line1">
+              <label class="label" for="uLine1">Address line 1</label>
+              <input class="input" id="uLine1"><div class="err"></div>
+            </div>
+            <div class="field" data-field="line2">
+              <label class="label" for="uLine2">Address line 2 <span class="opt">(optional)</span></label>
+              <input class="input" id="uLine2">
+            </div>
+            <div class="field" data-field="provinceCode">
+              <label class="label" for="uProvince">Province</label>
+              <select class="select" id="uProvince"></select><div class="err"></div>
+            </div>
+            <div class="field" data-field="cityCode">
+              <label class="label" for="uCity">City / Municipality</label>
+              <select class="select" id="uCity" disabled></select><div class="err"></div>
+            </div>
+            <div class="field" data-field="barangayCode">
+              <label class="label" for="uBarangay">Barangay</label>
+              <select class="select" id="uBarangay" disabled></select><div class="err"></div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+          <div class="field" data-field="password" style="margin:0">
+            <label class="label" for="uPassword">Temporary password</label>
+            <div class="pw-wrap"><input class="input" type="password" id="uPassword" required></div>
+            <ul class="pw-rules" id="uPwRules"></ul>
+            <div class="hint">Share this with them and ask them to change it after signing in.</div>
+            <div class="err"></div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" data-close>Cancel</button>
+        <button class="btn btn-primary" id="uSave">Create account</button>
+      </div>`);
+
+    attachPhoneInput(el('uPhone'));
+    attachPasswordRules(el('uPassword'), el('uPwRules'));
+
+    // Only customers need a service address.
+    let addressCtl = null;
+    el('uRole').addEventListener('change', () => {
+      const isCustomer = el('uRole').value === 'customer';
+      el('uAddress').classList.toggle('hidden', !isCustomer);
+      if (isCustomer && !addressCtl) {
+        addressCtl = attachAddressSelects({
+          province: el('uProvince'), city: el('uCity'), barangay: el('uBarangay'),
+          onError: (msg) => showAlert(el('modalAlert'), msg),
+        });
+      }
+    });
+
+    el('uSave').addEventListener('click', async () => {
+      hideAlert(el('modalAlert'));
+      if (!passwordValid(el('uPassword').value)) {
+        return showAlert(el('modalAlert'), 'The password must be at least 8 characters and include a number and a special character.');
+      }
+      const role = el('uRole').value;
+      const payload = {
+        role,
+        firstName: el('uFirst').value.trim(),
+        lastName: el('uLast').value.trim(),
+        email: el('uEmail').value.trim(),
+        phone: phoneValue(el('uPhone')),
+        password: el('uPassword').value,
+      };
+      if (role === 'customer') {
+        payload.address = {
+          line1: el('uLine1').value.trim(),
+          line2: el('uLine2').value.trim(),
+          ...(addressCtl ? addressCtl.value() : {}),
+        };
+      }
+
+      const restore = busy(el('uSave'), 'Creating…');
+      try {
+        await api.post('/api/users', payload);
+        m.close();
+        // Refresh technicians as well: a new staff member must be assignable
+        // immediately, not only after a page reload.
+        await Promise.all([loadPeople(), loadTechnicians()]);
+        viewUsers();
+      } catch (err) {
+        restore();
+        showAlert(el('modalAlert'), err.message);
+      }
+    });
+  }
+
+  function wireJobButtons() {
+    content.querySelectorAll('[data-manage]').forEach((b) =>
+      b.addEventListener('click', () => openManageModal(b.dataset.manage)));
+    content.querySelectorAll('[data-progress]').forEach((b) =>
+      b.addEventListener('click', () => openProgressModal(b.dataset.progress)));
+  }
+
+  /* ── Router ─────────────────────────────────────────────────────────────── */
+
+  let currentView = isStaff ? 'map' : 'overview';
+
+  function show(view) {
+    currentView = view;
+    if (view === 'overview' && !isStaff) return viewOverview();
+    if (view === 'jobs') return viewJobs();
+    if (view === 'map') return viewMap();
+    if (view === 'users' && isSuper) return viewUsers();
+    return isStaff ? viewMap() : viewOverview();
+  }
+
+  window.addEventListener('shell:navigate', async (e) => {
+    const view = e.detail;
+    if (view === 'users' && isSuper && !people.length) await loadPeople();
+    show(view);
+  });
+
+  try {
+    await Promise.all([loadJobs(), loadTechnicians()]);
+    show(currentView);
+  } catch (err) {
+    content.innerHTML = '<div class="alert error"></div>';
+    showAlert(content.firstElementChild, err.message);
+  }
+</script>
+
+</body>
+</html>

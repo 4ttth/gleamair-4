@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en-PH">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Dashboard | Gleamair Enterprises</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/x-icon" href="/assets/images/other/favicon_io/favicon.ico">
+<link rel="apple-touch-icon" href="/assets/images/other/favicon_io/apple-touch-icon.png">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/app.css">
+</head>
+<body>
+
+<script type="module">
+  import {
+    api, requireAuth, esc, peso, formatDate, busy, showAlert,
+    STATUS_LABELS, STATUS_TONE, unitSummary, ApiFailure,
+  } from '/assets/js/portal.js';
+  import { mountShell, setHeading, icon, ICON } from '/assets/js/shell.js';
+
+  const user = await requireAuth({ roles: ['customer'] });
+
+  const content = mountShell({
+    user,
+    active: 'overview',
+    title: `Welcome back, ${user.firstName}`,
+    subtitle: 'Book a service and follow its progress here.',
+    items: [
+      { id: 'overview', label: 'Dashboard',   icon: 'grid' },
+      { id: 'bookings', label: 'My Bookings', icon: 'calendar' },
+      { section: 'Account', id: 'details', label: 'My Details', icon: 'users' },
+    ],
+  });
+
+  /* Services. Only PMS is bookable; the rest advertise what is coming and use
+     images already in the repository. */
+  const SERVICES = [
+    {
+      code: 'PMS', name: 'Preventive Maintenance Service',
+      blurb: 'Scheduled cleaning, inspection and servicing to keep your air conditioning units running efficiently and prevent breakdowns.',
+      image: '/assets/images/products/Aircon Preventive Maintenance.jpeg',
+      price: 50000, downpayment: 25000, available: true,
+    },
+    {
+      code: 'INSTALL', name: 'Aircon Supply & Installation',
+      blurb: 'Unit selection, supply and professional installation for residential and commercial spaces.',
+      image: '/assets/images/products/Aircon Supply & Installation.jpg',
+      available: false,
+    },
+    {
+      code: 'VENT', name: 'Roof Ventilation',
+      blurb: 'Wind-driven and solar roof ventilators to cut heat build-up and improve air movement.',
+      image: '/assets/images/products/Ventilation.png',
+      available: false,
+    },
+    {
+      code: 'SOLAR', name: 'Solar Lighting',
+      blurb: 'Solar-powered lighting and daylighting systems for lower running costs.',
+      image: '/assets/images/products/SolarLighting.png',
+      available: false,
+    },
+  ];
+
+  const serviceCard = (s) => `
+    <article class="svc ${s.available ? 'available' : 'soon'}">
+      <div class="svc-media">
+        <img src="${encodeURI(s.image)}" alt="${esc(s.name)}" loading="lazy">
+        <span class="ribbon${s.available ? '' : ' grey'}">${s.available ? 'Available now' : 'Coming soon'}</span>
+      </div>
+      <div class="svc-body">
+        <h3>${esc(s.name)}</h3>
+        <p>${esc(s.blurb)}</p>
+        ${s.available ? `
+          <div class="svc-price">
+            <span class="amt">${peso(s.price)}</span>
+            <span class="per">per service · ${peso(s.downpayment)} to reserve</span>
+          </div>
+          <a class="btn btn-primary btn-block mt-sm" href="/app/book?service=${encodeURIComponent(s.code)}">
+            ${icon(ICON.plus)} Book this service
+          </a>`
+        : `<button class="btn btn-outline btn-block mt-sm" disabled>Not yet available online</button>`}
+      </div>
+    </article>`;
+
+  const bookingRow = (b) => `
+    <tr>
+      <td class="row-title mono">${esc(b.reference)}</td>
+      <td>${esc(b.serviceName)}<div class="muted-soft" style="font-size:.82rem">${esc(unitSummary(b.units))}</div></td>
+      <td><span class="badge ${STATUS_TONE[b.status] || 'grey'}">${esc(STATUS_LABELS[b.status] || b.status)}</span></td>
+      <td class="nowrap">${esc(formatDate(b.scheduledAt, { withTime: true }))}</td>
+      <td class="nowrap">${esc(peso(b.amounts?.downpayment))}</td>
+      <td class="nowrap">${
+        b.status === 'awaiting_payment'
+          ? `<button class="btn btn-primary btn-sm" data-pay="${esc(b.reference)}">Pay now</button>
+             <button class="btn btn-ghost btn-sm" data-cancel="${esc(b.reference)}">Cancel</button>`
+          : '<span class="muted-soft">—</span>'
+      }</td>
+    </tr>`;
+
+  function render(bookings) {
+    const active = bookings.filter((b) => !['completed', 'cancelled'].includes(b.status));
+    const paidTotal = bookings
+      .filter((b) => b.payment?.status === 'paid')
+      .reduce((sum, b) => sum + (b.amounts?.downpayment || 0), 0);
+
+    const cancelled = new URLSearchParams(location.search).get('payment') === 'cancelled';
+
+    content.innerHTML = `
+      ${cancelled ? `
+        <div class="alert warn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <div><strong>Payment was cancelled.</strong> Your booking is saved and unpaid — use <strong>Pay now</strong> below to complete your reservation.</div>
+        </div>` : ''}
+
+      <div class="alert error" id="pageAlert" hidden></div>
+
+      <div class="grid grid-3 mb-lg">
+        <div class="stat"><div class="label">Active bookings</div><div class="value">${active.length}</div>
+          <div class="foot">${active.length === 1 ? '1 service in progress' : 'Services in progress'}</div></div>
+        <div class="stat"><div class="label">Total bookings</div><div class="value">${bookings.length}</div>
+          <div class="foot">Since you joined</div></div>
+        <div class="stat"><div class="label">Reservations paid</div><div class="value gold">${peso(paidTotal)}</div>
+          <div class="foot">Down payments received</div></div>
+      </div>
+
+      <h2 class="page-title mb-md" style="font-size:1.2rem">Services</h2>
+      <div class="grid grid-auto mb-lg">${SERVICES.map(serviceCard).join('')}</div>
+
+      <div class="card" id="bookingsCard">
+        <div class="card-head"><h2>My bookings</h2></div>
+        ${bookings.length ? `
+          <div class="table-wrap">
+            <table class="data">
+              <thead><tr>
+                <th>Reference</th><th>Service</th><th>Status</th>
+                <th>Scheduled</th><th>Down payment</th><th></th>
+              </tr></thead>
+              <tbody>${bookings.map(bookingRow).join('')}</tbody>
+            </table>
+          </div>`
+        : `<div class="empty">
+             ${icon(ICON.calendar)}
+             <h3>No bookings yet</h3>
+             <p>Choose Preventive Maintenance Service above to reserve your first visit.</p>
+           </div>`}
+      </div>`;
+
+    wireActions();
+  }
+
+  function wireActions() {
+    content.querySelectorAll('[data-pay]').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const restore = busy(btn, 'Redirecting…');
+        try {
+          const data = await api.post(`/api/bookings/${encodeURIComponent(btn.dataset.pay)}`, { action: 'pay' });
+          location.href = data.checkoutUrl;
+        } catch (err) {
+          restore();
+          showAlert(document.getElementById('pageAlert'), err.message);
+        }
+      });
+    });
+
+    content.querySelectorAll('[data-cancel]').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        if (!confirm('Cancel this unpaid booking? This cannot be undone.')) return;
+        const restore = busy(btn, 'Cancelling…');
+        try {
+          await api.patch(`/api/bookings/${encodeURIComponent(btn.dataset.cancel)}`, { status: 'cancelled' });
+          load();
+        } catch (err) {
+          restore();
+          showAlert(document.getElementById('pageAlert'), err.message);
+        }
+      });
+    });
+  }
+
+  async function load() {
+    try {
+      const data = await api.get('/api/bookings');
+      render(data.bookings || []);
+    } catch (err) {
+      content.innerHTML = '<div class="alert error"></div>';
+      showAlert(content.firstElementChild, err.message);
+    }
+  }
+
+  window.addEventListener('shell:navigate', (e) => {
+    if (e.detail === 'bookings') {
+      document.getElementById('bookingsCard')?.scrollIntoView({ behavior: 'smooth' });
+    }
+    if (e.detail === 'details') showDetails();
+  });
+
+  function showDetails() {
+    setHeading('My details', 'The address we dispatch technicians to.');
+    const a = user.address || {};
+    content.innerHTML = `
+      <div class="card card-pad" style="max-width:640px">
+        <div class="grid grid-2">
+          <div><div class="label">Name</div><div>${esc(user.fullName)}</div></div>
+          <div><div class="label">Email</div><div>${esc(user.email)}</div></div>
+          <div><div class="label">Mobile</div><div>${esc(user.phone)}</div></div>
+          <div><div class="label">Account type</div><div>Customer</div></div>
+          <div class="full"><div class="label">Service address</div>
+            <div>${esc([a.line1, a.line2, a.barangayName, a.cityName, a.provinceName].filter(Boolean).join(', ') || '—')}</div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <p class="muted" style="font-size:.88rem">
+          Need to change these details? <a href="/contact.html">Contact us</a> and we will update them for you.
+        </p>
+      </div>`;
+  }
+
+  await load();
+</script>
+
+</body>
+</html>

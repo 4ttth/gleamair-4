@@ -63,6 +63,9 @@
   .nav-links a:hover, .nav-links a.active { color: var(--gold-light); background: rgba(201,162,39,0.08); }
   .nav-cta { background: var(--gold) !important; color: var(--blue-dark) !important; font-weight: 700 !important; border-radius: 2px !important; }
   .nav-cta:hover { background: var(--gold-light) !important; }
+  .nav-login { border: 1.5px solid rgba(201,162,39,0.55) !important; border-radius: 2px !important; color: var(--gold-light) !important; font-weight: 600 !important; display: inline-flex !important; align-items: center; gap: 6px; }
+  .nav-login:hover { background: rgba(201,162,39,0.14) !important; border-color: var(--gold) !important; }
+  .nav-login svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
   .hamburger { display: none; flex-direction: column; justify-content: center; gap: 5px; background: none; border: none; cursor: pointer; padding: 8px; z-index: 1100; }
   .hamburger span { display: block; width: 24px; height: 2px; background: var(--white); border-radius: 2px; transition: transform 0.3s, opacity 0.3s; }
   .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
@@ -140,6 +143,7 @@
     .nav-links.open { display: flex; }
     .nav-links a { padding: 14px 16px; font-size: 14px; }
     .nav-cta { text-align: center; margin-top: 8px; }
+    .nav-login { justify-content: center; margin-top: 8px; }
     .nav-dropdown { width: 100%; }
     .nav-dropdown-trigger { justify-content: stretch; width: 100%; }
     .nav-dropdown-trigger > a { flex: 1; text-align: left; }
@@ -185,6 +189,7 @@
       </div>
     </div>
     <a href="grow-with-us.html" class="active">Grow with us</a>
+    <a href="login.html" class="nav-login"><svg viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>Login</a>
     <a href="contact.html" class="nav-cta">Contact Us</a>
   </div>
 </nav>
