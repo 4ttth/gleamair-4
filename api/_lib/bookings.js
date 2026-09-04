@@ -1,7 +1,8 @@
 /* Shared booking helpers: role-scoped shaping and payment reconciliation. */
 
 import { Collections } from './db.js';
-import { PRICING, retrieveCheckoutSession } from './paymongo.js';
+import { retrieveCheckoutSession } from './paymongo.js';
+import { getService } from './services.js';
 
 /**
  * Staff are intentionally limited to the customer's NAME, the UNIT DETAILS and
@@ -113,4 +114,6 @@ export async function markPaid(db, booking, { paymentIntentId, method, amount } 
   return result?.value ?? result ?? (await Collections.bookings(db).findOne({ _id: booking._id }));
 }
 
-export const serviceFor = (code) => PRICING[code] ?? null;
+/** Reads the service straight from the database on every call, so a price an
+    admin changed a second ago is the price the next booking is charged. */
+export const serviceFor = (db, code) => getService(db, code);

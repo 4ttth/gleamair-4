@@ -52,8 +52,10 @@ if you use preview deploys). Names are listed in `.env.example`.
 | `PAYMONGO_SECRET_KEY` | Your **newly rotated** live secret key |
 | `PAYMONGO_WEBHOOK_SECRET` | Set in step 5 below (`whsk_...`) |
 | `PAYMONGO_METHODS` | Start with `card`. See the warning below. |
-| `PUBLIC_BASE_URL` | `https://www.gleamaire.com` — no trailing slash |
+| `PUBLIC_BASE_URL` | Your **canonical** origin (see step 4) — no trailing slash |
 | `BOOTSTRAP_TOKEN` | `openssl rand -hex 32`. Delete after step 6. |
+| `PAYMONGO_MIN_AMOUNT` | Optional. Per-transaction floor in centavos (default `10000`). |
+| `PAYMONGO_MAX_AMOUNT` | Optional. Per-transaction ceiling in centavos (default `100000000`). |
 
 > **`PAYMONGO_METHODS` matters.** Every method listed must already be
 > *activated* on your PayMongo account, or creating a checkout session fails
@@ -67,6 +69,29 @@ Redeploy after adding variables — Vercel only injects them at build time.
 **Settings → Domains** → add `gleamaire.com` and `www.gleamaire.com`, then
 point your DNS at Vercel as instructed there.
 
+Vercel serves **one** of the two as the canonical domain and answers the other
+with a `308` redirect to it. Note which one it marked as the primary — that is
+the origin every URL below must use.
+
+This matters more than it looks. A redirect is only followed by clients that
+choose to follow it, and the two most important non-browser callers do not:
+
+- `curl` does not follow redirects unless you pass `-L`, so a `POST` to the
+  redirecting host does nothing and prints `Redirecting...`.
+- PayMongo does not follow redirects when delivering webhooks, so a webhook
+  registered on the redirecting host is **never delivered** and no payment is
+  ever confirmed.
+
+Check which host is canonical before continuing:
+
+```bash
+curl -sI https://www.gleamaire.com/ | head -n 3
+```
+
+A `200` means that host is canonical. A `301`/`308` plus a `location:` header
+means it is not — use the host in `location:` for `PUBLIC_BASE_URL`, for the
+PayMongo webhook URL, and for the bootstrap call.
+
 Serving the site and the API from one origin is deliberate: the session cookie
 is `HttpOnly; Secure; SameSite=Strict`, which means it is never exposed to
 JavaScript and never sent cross-site. Splitting the API onto a subdomain would
@@ -77,7 +102,9 @@ force a weaker cookie policy.
 The webhook is what actually marks a booking paid. Without it, customers are
 charged and their booking sits unconfirmed until someone opens the return page.
 
-Create it with your **rotated** secret key:
+Create it with your **rotated** secret key. The `url` must be your canonical
+domain from step 4 — PayMongo does not follow redirects, so registering the
+redirecting host means no payment is ever confirmed:
 
 ```bash
 export PAYMONGO_SECRET_KEY='your-rotated-secret-key'
@@ -106,8 +133,13 @@ A fresh database has no accounts, and only a superadmin can create staff. This
 route exists solely to break that deadlock, and refuses to run once any
 superadmin exists.
 
+Use your canonical domain from step 4. `-i` shows the status code and `-L`
+follows a redirect if you got the host wrong — `--post308` keeps it a `POST`
+rather than silently retrying as a `GET`:
+
 ```bash
-curl -X POST https://www.gleamaire.com/api/bootstrap \
+curl -i -L --post301 --post302 --post303 --post307 --post308 \
+  -X POST https://gleamaire.com/api/bootstrap \
   -H "Content-Type: application/json" \
   -d '{
     "token": "YOUR_BOOTSTRAP_TOKEN",
@@ -118,11 +150,71 @@ curl -X POST https://www.gleamaire.com/api/bootstrap \
   }'
 ```
 
+Read the response before moving on — the route reports every failure as JSON,
+and a silent one means it never ran:
+
+| Response | Meaning |
+|---|---|
+| `200` with `"ok": true` | The superadmin was created. |
+| `Redirecting...` / `308` | You used the non-canonical host. See step 4. |
+| `403 Invalid bootstrap token.` | `token` does not match `BOOTSTRAP_TOKEN`. |
+| `404 Not found.` | `BOOTSTRAP_TOKEN` is unset, or you did not redeploy after adding it. |
+| `409 A superadmin already exists.` | Already done. Sign in instead. |
+| `400 Password must ...` | 8+ characters, one number, one special character. |
+
+If the account does not appear in the `users` collection in Atlas, the request
+never reached the function — signing in will report *Email or password is
+incorrect*, because there is no such user.
+
 Then **delete `BOOTSTRAP_TOKEN`** from Vercel and redeploy. With the variable
 absent the route returns 404.
 
 Sign in at `/login` and create your staff and admin accounts from
 **User Management**.
+
+## 7. Service pricing
+
+Prices are **not** in the code. They live in the `services` collection and are
+edited from **Service Pricing** in the ops dashboard by any admin or superadmin.
+On first run the collection is seeded with the values the site previously had
+hardcoded (PMS at PHP 500.00 total, PHP 250.00 to reserve); after that the
+database is authoritative and a redeploy never overwrites what you have set.
+
+A change takes effect on the **next** booking — the customer dashboard, the
+booking page and the amount sent to PayMongo all read the same live figure.
+
+What a change does *not* do is re-price anything that already exists. Every
+booking stores the amounts it was quoted, so:
+
+- a booking awaiting payment still owes the amount its customer agreed to, and
+  its PayMongo checkout link keeps charging that;
+- a paid booking's history stays truthful;
+- the balance a technician collects on site is the one on the job card.
+
+Two guards are worth knowing about:
+
+- **Concurrent edits.** Saving sends the version you were looking at. If
+  someone else changed the price meanwhile, your save is refused rather than
+  silently overwriting theirs — reload and reapply.
+- **Provider limits.** A price outside what PayMongo accepts per transaction is
+  rejected when you save it, not later at a customer's checkout. The bounds
+  default to PHP 100.00–PHP 1,000,000.00 and are overridable with
+  `PAYMONGO_MIN_AMOUNT` / `PAYMONGO_MAX_AMOUNT` (both in centavos) if your
+  account is configured differently.
+
+Prices can also be read and set over the API:
+
+```bash
+# Read the catalogue (public)
+curl -s https://gleamaire.com/api/services
+
+# Change a price (admin session cookie required; version comes from the read)
+curl -X PATCH https://gleamaire.com/api/services/PMS \
+  -H "Content-Type: application/json" -b "gleam_session=..." \
+  -d '{"total": 75000, "downpayment": 40000, "version": 1}'
+```
+
+Amounts are in **centavos** — PHP 750.00 is `75000`.
 
 ---
 

@@ -41,7 +41,8 @@
         { id: 'overview', label: 'Overview',  icon: 'grid' },
         { id: 'jobs',     label: 'PMS Jobs',  icon: 'wrench' },
         { id: 'map',      label: 'Job Map',   icon: 'map' },
-        ...(isSuper ? [{ section: 'Administration', id: 'users', label: 'User Management', icon: 'users' }] : []),
+        { section: 'Administration', id: 'pricing', label: 'Service Pricing', icon: 'wallet' },
+        ...(isSuper ? [{ id: 'users', label: 'User Management', icon: 'users' }] : []),
         { section: 'Business modules', id: 'crm',        label: 'CRM',                  icon: 'heart',     soon: true },
         { id: 'hr',        label: 'HR Management',      icon: 'users',     soon: true },
         { id: 'payroll',   label: 'Payroll & Accounting', icon: 'wallet',  soon: true },
@@ -62,6 +63,8 @@
   let jobs = [];
   let technicians = [];
   let people = [];
+  let services = [];
+  let priceLimits = { min: 10000, max: 100000000 };
 
   async function loadJobs() {
     jobs = (await api.get('/api/bookings')).bookings || [];
@@ -70,6 +73,12 @@
   async function loadTechnicians() {
     if (!canManageJobs) return;
     technicians = (await api.get('/api/users?role=staff,admin,superadmin')).users || [];
+  }
+
+  async function loadServices() {
+    const data = await api.get('/api/services');
+    services = data.services || [];
+    if (data.limits) priceLimits = data.limits;
   }
 
   async function loadPeople() {
@@ -332,6 +341,173 @@
           showAlert(el('pageAlert'), err.message);
         }
       });
+    });
+  }
+
+  /* ── Service pricing ─────────────────────────────────────────────────────
+     What Gleamair charges, editable here rather than in the source. A change
+     applies to the NEXT booking; bookings that already exist keep the amounts
+     their customer was quoted. */
+
+  function viewPricing() {
+    setHeading('Service pricing', 'What customers are charged. Changes apply to new bookings immediately.');
+
+    content.innerHTML = `
+      ${alertBar}
+      <div class="card">
+        <div class="card-head"><h2>Services</h2></div>
+        <div class="table-wrap">
+          <table class="data">
+            <thead><tr>
+              <th>Service</th><th>Total price</th><th>Down payment</th>
+              <th>Balance on completion</th><th>Online booking</th><th>Last changed</th><th></th>
+            </tr></thead>
+            <tbody>
+              ${services.map((s) => `
+                <tr>
+                  <td><span class="row-title">${esc(s.name)}</span><br><span class="muted-soft">${esc(s.code)}</span></td>
+                  <td class="nowrap">${s.total == null ? '<span class="muted-soft">Not priced</span>' : esc(peso(s.total))}</td>
+                  <td class="nowrap">${s.downpayment == null ? '<span class="muted-soft">—</span>' : esc(peso(s.downpayment))}</td>
+                  <td class="nowrap">${s.balance == null ? '<span class="muted-soft">—</span>' : esc(peso(s.balance))}</td>
+                  <td>${s.bookable ? '<span class="badge ok">Open</span>' : '<span class="badge grey">Closed</span>'}</td>
+                  <td class="nowrap">${s.updatedBy
+                      ? `${esc(formatDate(s.updatedAt, { withTime: true }))}<br><span class="muted-soft">${esc(s.updatedBy.name)}</span>`
+                      : '<span class="muted-soft">Never</span>'}</td>
+                  <td class="nowrap"><button class="btn btn-ghost btn-sm" data-price="${esc(s.code)}">Edit price</button></td>
+                </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+        <div class="card-pad">
+          <p class="hint" style="margin:0">
+            A price change takes effect on the next booking. Bookings already made keep the
+            amounts their customer was quoted, and anything already paid is never re-charged.
+          </p>
+        </div>
+      </div>`;
+
+    content.querySelectorAll('[data-price]').forEach((btn) =>
+      btn.addEventListener('click', () => openPricingModal(btn.dataset.price)));
+  }
+
+  async function openPricingModal(code) {
+    const svc = services.find((s) => s.code === code);
+    if (!svc) return;
+
+    // Read the service fresh so the version we edit against is current, and so
+    // the history shown is up to date.
+    let history = [];
+    try {
+      const data = await api.get(`/api/services/${encodeURIComponent(code)}`);
+      Object.assign(svc, data.service);
+      history = data.history || [];
+    } catch { /* fall back to the list copy */ }
+
+    // Amounts are held in centavos; the form works in pesos.
+    const toPeso = (c) => (c == null ? '' : (c / 100).toFixed(2));
+
+    const m = modal(`
+      <div class="modal-head"><h2>${esc(svc.name)}</h2>
+        <button class="icon-btn" data-close aria-label="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="alert error" id="modalAlert" hidden></div>
+        <div class="grid grid-2" style="gap:12px">
+          <div class="field" style="margin:0">
+            <label class="label" for="pTotal">Total price (PHP)</label>
+            <input class="input" id="pTotal" type="number" step="0.01" min="0" value="${esc(toPeso(svc.total))}">
+          </div>
+          <div class="field" style="margin:0">
+            <label class="label" for="pDown">Down payment to reserve (PHP)</label>
+            <input class="input" id="pDown" type="number" step="0.01" min="0" value="${esc(toPeso(svc.downpayment))}">
+          </div>
+        </div>
+        <div class="row between mt-sm">
+          <span class="muted">Balance on completion</span>
+          <strong id="pBalance">—</strong>
+        </div>
+        <div class="divider"></div>
+        <label class="row center gap-sm" for="pBookable" style="cursor:pointer">
+          <input type="checkbox" id="pBookable"${svc.bookable ? ' checked' : ''}>
+          <span>Offer this service for online booking</span>
+        </label>
+        <p class="hint" style="margin-top:6px">
+          Payments must be between ${esc(peso(priceLimits.min))} and ${esc(peso(priceLimits.max))} —
+          the limits our payment provider accepts per transaction.
+        </p>
+        ${history.length ? `
+          <div class="divider"></div>
+          <div class="label">Recent changes</div>
+          <ul class="muted-soft" style="font-size:.85rem;margin:6px 0 0;padding-left:18px">
+            ${history.slice(0, 5).map((h) => `
+              <li>${esc(formatDate(h.at, { withTime: true }))} —
+                  ${h.from.total == null ? 'unpriced' : esc(peso(h.from.total))} →
+                  ${h.to.total == null ? 'unpriced' : esc(peso(h.to.total))}
+                  <span class="muted-soft">by ${esc(h.by?.name || 'unknown')}</span></li>`).join('')}
+          </ul>` : ''}
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" data-close>Cancel</button>
+        <button class="btn btn-primary" id="pSave">Save price</button>
+      </div>`);
+
+    // Peso input -> centavos, without the floating-point drift that
+    // multiplying by 100 introduces (5.55 * 100 is 554.9999...).
+    const toCentavos = (raw) => {
+      const text = String(raw).trim();
+      if (!text) return null;
+      if (!/^\d+(\.\d{1,2})?$/.test(text)) return NaN;
+      const [whole, frac = ''] = text.split('.');
+      return Number(whole) * 100 + Number(frac.padEnd(2, '0'));
+    };
+
+    const refreshBalance = () => {
+      const t = toCentavos(el('pTotal').value);
+      const d = toCentavos(el('pDown').value);
+      el('pBalance').textContent =
+        Number.isFinite(t) && Number.isFinite(d) && t != null && d != null && t >= d ? peso(t - d) : '—';
+    };
+    el('pTotal').addEventListener('input', refreshBalance);
+    el('pDown').addEventListener('input', refreshBalance);
+    refreshBalance();
+
+    el('pSave').addEventListener('click', async () => {
+      hideAlert(el('modalAlert'));
+      const total = toCentavos(el('pTotal').value);
+      const downpayment = toCentavos(el('pDown').value);
+      const bookable = el('pBookable').checked;
+
+      if (Number.isNaN(total) || Number.isNaN(downpayment)) {
+        return showAlert(el('modalAlert'), 'Enter amounts in pesos, with at most two decimal places.');
+      }
+      if (bookable && (total == null || downpayment == null)) {
+        return showAlert(el('modalAlert'), 'A service offered for online booking needs both a total and a down payment.');
+      }
+      if (total != null && downpayment != null && downpayment > total) {
+        return showAlert(el('modalAlert'), 'The down payment cannot be more than the total price.');
+      }
+
+      const restore = busy(el('pSave'), 'Saving…');
+      try {
+        await api.patch(`/api/services/${encodeURIComponent(code)}`, {
+          total, downpayment, bookable, version: svc.version,
+        });
+        await loadServices();
+        m.close();
+        viewPricing();
+      } catch (err) {
+        restore();
+        // Someone else saved first. Reload so the next attempt is against
+        // their figures rather than overwriting them.
+        if (err.status === 409) {
+          await loadServices();
+          showAlert(el('modalAlert'), err.message);
+          return;
+        }
+        showAlert(el('modalAlert'), err.message);
+      }
     });
   }
 
@@ -629,6 +805,7 @@
     if (view === 'overview' && !isStaff) return viewOverview();
     if (view === 'jobs') return viewJobs();
     if (view === 'map') return viewMap();
+    if (view === 'pricing' && !isStaff) return viewPricing();
     if (view === 'users' && isSuper) return viewUsers();
     return isStaff ? viewMap() : viewOverview();
   }
@@ -636,6 +813,9 @@
   window.addEventListener('shell:navigate', async (e) => {
     const view = e.detail;
     if (view === 'users' && isSuper && !people.length) await loadPeople();
+    // Always re-read pricing on entry: it is the one screen where showing a
+    // stale figure would have someone quote the wrong price.
+    if (view === 'pricing' && !isStaff) await loadServices();
     show(view);
   });
 

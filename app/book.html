@@ -16,14 +16,27 @@
 
 <script type="module">
   import {
-    api, requireAuth, esc, peso, el, busy, showAlert, hideAlert,
+    api, ApiFailure, requireAuth, esc, peso, el, busy, showAlert, hideAlert,
   } from '/assets/js/portal.js';
   import { mountShell, icon, ICON } from '/assets/js/shell.js';
   import { createMap, OLONGAPO } from '/assets/js/geo.js';
 
   const user = await requireAuth({ roles: ['customer'] });
 
-  const SERVICE = { code: 'PMS', name: 'Preventive Maintenance Service', total: 50000, downpayment: 25000 };
+  /* Pricing is set by an admin at runtime, so it is fetched rather than
+     compiled in. `version` is sent back with the booking: if the price moves
+     between this page loading and the customer pressing Pay, the server
+     refuses the booking rather than charging a figure never shown here. */
+  async function loadService() {
+    const { services } = await api.get('/api/services');
+    const found = (services || []).find((s) => s.code === 'PMS');
+    if (!found || !found.bookable) {
+      throw new ApiFailure('Online booking for this service is temporarily unavailable. Please contact Gleamair to book.');
+    }
+    return found;
+  }
+
+  let SERVICE = await loadService();
   const UNIT_TYPES = ['Split Type', 'Window Type', 'Cassette Type', 'Floor Standing', 'Ducted / Centralized', 'Portable'];
   const HORSEPOWER = ['0.5', '0.75', '1.0', '1.5', '2.0', '2.5', '3.0', '4.0', '5.0+'];
 
@@ -99,7 +112,7 @@
         <div class="card-pad">
           <div class="row between" style="margin-bottom:8px">
             <span class="muted">${esc(SERVICE.name)}</span>
-            <strong>${peso(SERVICE.total)}</strong>
+            <strong id="sumTotal">${peso(SERVICE.total)}</strong>
           </div>
           <div class="row between muted" style="margin-bottom:8px;font-size:.9rem">
             <span>Units</span><span id="unitTotal">0</span>
@@ -107,14 +120,16 @@
           <div class="divider" style="margin:14px 0"></div>
           <div class="row between" style="margin-bottom:6px">
             <strong>Pay now to reserve</strong>
-            <strong style="color:var(--gold);font-size:1.15rem">${peso(SERVICE.downpayment)}</strong>
+            <strong id="sumDown" style="color:var(--gold);font-size:1.15rem">${peso(SERVICE.downpayment)}</strong>
           </div>
           <div class="row between muted" style="font-size:.88rem">
-            <span>Balance on completion</span><span>${peso(SERVICE.total - SERVICE.downpayment)}</span>
+            <span>Balance on completion</span><span id="sumBalance">${peso(SERVICE.balance)}</span>
           </div>
 
+          <div class="alert" id="priceNotice" hidden style="margin-top:12px"></div>
+
           <button class="btn btn-primary btn-block btn-lg mt-lg" type="button" id="payBtn">
-            Pay ${peso(SERVICE.downpayment)} &amp; reserve
+            Pay <span id="payAmount">${peso(SERVICE.downpayment)}</span> &amp; reserve
           </button>
           <p class="hint" style="text-align:center;margin-top:10px">
             You will be taken to PayMongo's secure checkout. Gleamair never sees your card details.
@@ -241,13 +256,53 @@
         units,
         location: pin,
         notes: el('notes').value.trim(),
+        priceVersion: SERVICE.version,
       });
       location.href = data.checkoutUrl;
     } catch (err) {
       restore();
+      // 409 means the price moved under us. Show the new one and let the
+      // customer decide, rather than sending them to a checkout for an amount
+      // this page never displayed.
+      if (err.status === 409 && err.details?.service) {
+        applyPrice(err.details.service, true);
+        return showAlert(el('pageAlert'), err.message);
+      }
       showAlert(el('pageAlert'), err.message);
     }
   });
+
+  /* ── Keeping the displayed price current ───────────────────────────────── */
+
+  function applyPrice(next, announce) {
+    const changed = next.total !== SERVICE.total || next.downpayment !== SERVICE.downpayment;
+    SERVICE = next;
+    el('sumTotal').textContent = peso(next.total);
+    el('sumDown').textContent = peso(next.downpayment);
+    el('sumBalance').textContent = peso(next.balance);
+    el('payAmount').textContent = peso(next.downpayment);
+
+    const notice = el('priceNotice');
+    if (changed || announce) {
+      notice.textContent = 'This service has just been re-priced. The figures above are current.';
+      notice.hidden = false;
+    }
+    return changed;
+  }
+
+  async function refreshPrice() {
+    try {
+      applyPrice(await loadService());
+    } catch {
+      // A failed refresh must never blank out a price the customer is reading.
+    }
+  }
+
+  // Re-check when the tab comes back to the foreground, and on a slow tick
+  // while it is open, so a price change reaches an already-open page.
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) refreshPrice(); });
+  window.addEventListener('focus', refreshPrice);
+  setInterval(() => { if (!document.hidden) refreshPrice(); }, 60_000);
 </script>
 
 <style>

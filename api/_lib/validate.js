@@ -90,6 +90,30 @@ export function password(value) {
   return value;
 }
 
+/**
+ * A money amount in centavos. Prices are set by hand in an admin form now, so
+ * this is the guard between a typo and a real charge: whole centavos only,
+ * inside the range the payment provider will accept.
+ */
+export function centavos(value, field, { min = 0, max = Number.MAX_SAFE_INTEGER } = {}) {
+  if (value === null) return null;
+  if (value === '' || value === undefined) {
+    throw badRequest(`${field} is required.`, { field });
+  }
+  // A string of digits is what an <input> gives us; anything else is a mistake.
+  const n = typeof value === 'string' ? Number(value.trim()) : value;
+  if (typeof n !== 'number' || !Number.isFinite(n)) {
+    throw badRequest(`${field} must be a number.`, { field });
+  }
+  if (!Number.isInteger(n)) {
+    throw badRequest(`${field} must be a whole number of centavos.`, { field });
+  }
+  const peso = (c) => (c / 100).toLocaleString('en-PH', { style: 'currency', currency: 'PHP' });
+  if (n < min) throw badRequest(`${field} must be at least ${peso(min)}.`, { field });
+  if (n > max) throw badRequest(`${field} must be ${peso(max)} or less.`, { field });
+  return n;
+}
+
 export function role(value, { allowed = ROLES } = {}) {
   const raw = str(value, 'Role', { max: 20 }).toLowerCase();
   if (!allowed.includes(raw)) {

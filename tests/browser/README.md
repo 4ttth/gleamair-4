@@ -20,7 +20,12 @@ node tests/browser/flow.test.cjs        # registration: address, phone, password
 node tests/browser/customer.test.cjs    # dashboard, booking, map pin, payment
 node tests/browser/admin.test.cjs       # roles, assignment, dispatch map
 node tests/browser/redirect.test.cjs   # ?next= cannot become XSS or open redirect
+node tests/browser/pricing.test.cjs     # admin re-prices a service; customer sees it
 ```
+
+`pricing.test.cjs` is standalone — it creates its own accounts and does not
+need the other suites. It changes the PMS price, so run it **last**: the other
+suites assert the seeded PHP 500.00.
 
 `redirect.test.cjs` only needs the customer from `flow.test.cjs`. It is a
 genuine regression test: reverting `safeNext()` in `assets/js/portal.js` makes

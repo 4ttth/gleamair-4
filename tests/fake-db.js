@@ -6,7 +6,12 @@ import { ObjectId } from 'mongodb';
 
 const store = new Map();
 const coll = (n) => { if (!store.has(n)) store.set(n, []); return store.get(n); };
-export function resetDb() { store.clear(); }
+export function resetDb() {
+  store.clear();
+  // Service seeding is memoised per process; clearing the store without
+  // clearing that flag would leave every later test with no catalogue.
+  globalThis.__gleamairServicesSeeded = false;
+}
 export function dump(n) { return coll(n); }
 
 const eq = (a, b) => {
@@ -161,6 +166,8 @@ export const Collections = {
   bookings:      () => collection('bookings'),
   counters:      () => collection('counters'),
   loginAttempts: () => collection('loginAttempts'),
+  services:      () => collection('services'),
+  servicePriceHistory: () => collection('servicePriceHistory'),
 };
 
 export async function nextSequence(db, name) {
