@@ -9,7 +9,7 @@ import { getDb } from '../_lib/db.js';
 import { ok, route } from '../_lib/http.js';
 import { currentUser } from '../_lib/auth.js';
 import { adminService, listServices, publicService } from '../_lib/services.js';
-import { MAX_CHARGE, MIN_CHARGE } from '../_lib/paymongo.js';
+import { MAX_CHARGE, MIN_CHARGE, paymentConfigStatus } from '../_lib/paymongo.js';
 import { ROLE_RANK } from '../_lib/validate.js';
 
 async function list(req, res) {
@@ -24,7 +24,12 @@ async function list(req, res) {
     services: docs.map(isAdmin ? adminService : publicService),
     // The bounds the admin form validates against, so it can say no before
     // the request is made rather than after.
-    ...(isAdmin ? { limits: { min: MIN_CHARGE, max: MAX_CHARGE, currency: 'PHP' } } : {}),
+    ...(isAdmin ? {
+      limits: { min: MIN_CHARGE, max: MAX_CHARGE, currency: 'PHP' },
+      // Whether payments can actually be taken. Presence of settings only -
+      // no key material ever leaves the server.
+      payments: paymentConfigStatus(),
+    } : {}),
   });
 }
 

@@ -97,8 +97,8 @@ check('staff cannot change a price -> 403', r.statusCode === 403, r.body);
 console.log('\n=== 3. Validation ===');
 r = await patchPrice(adminToken, { total: 60000, downpayment: 90000, version: 1 });
 check('down payment above total -> 400', r.statusCode === 400, r.body);
-r = await patchPrice(adminToken, { total: 60000, downpayment: 500, version: 1 });
-check('down payment below PayMongo minimum -> 400', r.statusCode === 400, r.body);
+r = await patchPrice(adminToken, { total: 60000, downpayment: 50, version: 1 });
+check('down payment below the PHP 1.00 floor -> 400', r.statusCode === 400, r.body);
 r = await patchPrice(adminToken, { total: 500.75, downpayment: 25000, version: 1 });
 check('fractional centavos -> 400', r.statusCode === 400, r.body);
 r = await patchPrice(adminToken, { total: -50000, downpayment: 25000, version: 1 });
@@ -180,12 +180,48 @@ r = await call(serviceOne, { method: 'GET', url: '/api/services/PMS', query: { c
 check('staff cannot read the audit trail -> 403', r.statusCode === 403, r.body);
 
 r = await call(services, { method: 'GET', url: '/api/services', ...sess(adminToken) });
-check('admin list includes the spend limits', r.body?.limits?.min === 10000, r.body?.limits);
+check('admin list includes the spend limits', r.body?.limits?.min === 100, r.body?.limits);
+check('admin list reports payment configuration', r.body?.payments?.configured === true, r.body?.payments);
 
 r = await call(services, { method: 'GET', url: '/api/services', ...sess(custToken) });
 check('a customer still sees no audit trail', r.body.services.find((s) => s.code === 'PMS')?.updatedBy === undefined);
 
-console.log('\n=== 10. Unknown services ===');
+console.log('\n=== 10. PHP 1.00 is a sellable price ===');
+r = await call(services, { method: 'GET', url: '/api/services', ...sess(adminToken) });
+let v = r.body.services.find((s) => s.code === 'PMS').version;
+r = await patchPrice(adminToken, { total: 100, downpayment: 100, version: v });
+check('admin can price a service at PHP 1.00', r.statusCode === 200, r.body);
+check('total is PHP 1.00', r.body?.service?.total === 100, r.body?.service);
+check('nothing is left owing', r.body?.service?.balance === 0, r.body?.service);
+
+r = await call(bookings, { method: 'POST', ...sess(custToken), body: { service: 'PMS', units: UNITS } });
+check('a PHP 1.00 service can be booked', r.statusCode === 200, r.body);
+check('PayMongo is charged 100 centavos', lastAmount() === 100, lastCheckout()?.line_items);
+check('paid-in-full wording, not a balance', /in full/.test(lastCheckout()?.line_items?.[0]?.description || ''),
+      lastCheckout()?.line_items?.[0]?.description);
+
+r = await patchPrice(adminToken, { total: 100, downpayment: 99, version: v + 1 });
+check('below PHP 1.00 is still refused -> 400', r.statusCode === 400, r.body);
+
+console.log('\n=== 11. Missing payment settings are named, not guessed ===');
+const savedBase = process.env.PUBLIC_BASE_URL;
+delete process.env.PUBLIC_BASE_URL;
+r = await call(services, { method: 'GET', url: '/api/services', ...sess(adminToken) });
+check('admin is told payments are off', r.body?.payments?.configured === false, r.body?.payments);
+check('and told exactly which setting is missing',
+      r.body?.payments?.missing?.includes('PUBLIC_BASE_URL'), r.body?.payments);
+check('the webhook secret is flagged separately', r.body?.payments?.warnings?.length === 1, r.body?.payments);
+
+r = await call(services, { method: 'GET', url: '/api/services', ...sess(custToken) });
+check('a customer is never told about the configuration', r.body?.payments === undefined, r.body);
+
+r = await call(bookings, { method: 'POST', ...sess(custToken), body: { service: 'PMS', units: UNITS } });
+check('booking without PUBLIC_BASE_URL fails cleanly -> 503', r.statusCode === 503, r.body);
+check('customer sees the contact-us message',
+      /not configured yet/.test(r.body?.error || ''), r.body);
+process.env.PUBLIC_BASE_URL = savedBase;
+
+console.log('\n=== 12. Unknown services ===');
 r = await call(serviceOne, { method: 'PATCH', url: '/api/services/NOPE', query: { code: 'NOPE' },
   ...sess(adminToken), body: { total: 50000, downpayment: 25000, version: 1 } });
 check('pricing an unknown service -> 404', r.statusCode === 404, r.body);

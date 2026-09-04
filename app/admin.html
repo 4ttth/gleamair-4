@@ -64,7 +64,8 @@
   let technicians = [];
   let people = [];
   let services = [];
-  let priceLimits = { min: 10000, max: 100000000 };
+  let priceLimits = { min: 100, max: 100000000 };
+  let paymentStatus = null;
 
   async function loadJobs() {
     jobs = (await api.get('/api/bookings')).bookings || [];
@@ -79,6 +80,7 @@
     const data = await api.get('/api/services');
     services = data.services || [];
     if (data.limits) priceLimits = data.limits;
+    paymentStatus = data.payments || null;
   }
 
   async function loadPeople() {
@@ -352,8 +354,30 @@
   function viewPricing() {
     setHeading('Service pricing', 'What customers are charged. Changes apply to new bookings immediately.');
 
+    // A price is only worth setting if a payment can actually be taken. Both
+    // missing settings produce the same message to the customer, so say here
+    // which one it is rather than making someone read the deploy logs.
+    const configBanner = !paymentStatus ? '' : (
+      !paymentStatus.configured ? `
+        <div class="alert error" style="margin-bottom:16px">
+          <div>
+            <strong>Online payments are switched off.</strong>
+            Customers trying to book see &ldquo;Online payment is not configured yet&rdquo;.
+            Set ${paymentStatus.missing.map((v) => `<code>${esc(v)}</code>`).join(' and ')}
+            in your Vercel project (Settings &rarr; Environment Variables) and redeploy —
+            Vercel only injects these at build time.
+          </div>
+        </div>`
+      : paymentStatus.warnings?.length ? `
+        <div class="alert warn" style="margin-bottom:16px">
+          <div><strong>Payments work, but confirmation does not.</strong>
+          ${paymentStatus.warnings.map((w) => esc(w)).join(' ')}</div>
+        </div>`
+      : '');
+
     content.innerHTML = `
       ${alertBar}
+      ${configBanner}
       <div class="card">
         <div class="card-head"><h2>Services</h2></div>
         <div class="table-wrap">
