@@ -303,6 +303,26 @@ body from the request stream in a runtime that leaves it untouched (for
 example, moving just this one route to a Vercel Edge function, where `request`
 exposes `.text()`).
 
+**Twelve functions, and no more.** Vercel's Hobby plan builds at most twelve
+Serverless Functions per deployment, and every `.js` file under `api/` is one
+of them — `api/_lib/` does not count, because Vercel ignores files and folders
+whose name starts with an underscore. The project sits at exactly twelve:
+
+```bash
+find api -name '*.js' -not -path 'api/_lib/*' | wc -l   # must be <= 12
+```
+
+A thirteenth file fails the build before anything runs, with
+*"No more than 12 Serverless Functions can be added to a Deployment on the
+Hobby plan"*. That is a build error, not a code error, and no amount of
+re-deploying fixes it. To add an endpoint, either serve it from a file that
+already exists, or fold two related routes into one and point the freed path at
+it with a `rewrites` entry in `vercel.json` — that is exactly what
+`/api/users/:id` does: it has no file, and the rewrite hands it to
+`api/users/index.js` with the id as a query parameter. Rewrites are consulted
+only when nothing in the filesystem matched, so a path that does have a file is
+never affected. Upgrading the project to a Pro team lifts the limit instead.
+
 **Booking map pins.** The map on `/app/book` opens where the customer is:
 `GET /api/geocode` turns the barangay on their account into coordinates, and
 the browser's own position takes over if they have already granted permission.

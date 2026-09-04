@@ -29,7 +29,7 @@ const me         = (await import('../api/auth/me.js')).default;
 const bookings   = (await import('../api/bookings/index.js')).default;
 const bookingOne = (await import('../api/bookings/[id].js')).default;
 const usersIdx   = (await import('../api/users/index.js')).default;
-const userOne    = (await import('../api/users/[id].js')).default;
+const userOne    = (await import('../api/users/index.js')).default;
 const webhook    = (await import('../api/webhooks/paymongo.js')).default;
 const bootstrap  = (await import('../api/bootstrap.js')).default;
 
@@ -199,6 +199,20 @@ check('customer cannot cancel a PAID booking', r.statusCode === 400, r.body);
 
 console.log('\n=== 10. Superadmin guards ===');
 const superId = (await call(me, { method: 'GET', ...sess(superTok) })).body.user.id;
+
+/* /api/users and /api/users/:id share one Serverless Function - see the
+   rewrite in vercel.json - so the id has to come from the query the rewrite
+   builds. Without one, an edit or a delete must not fall through to something
+   that acts on a different account, or on all of them. */
+r = await call(userOne, { method: 'PATCH', url: '/api/users', ...sess(superTok), body: { active: false }});
+check('PATCH with no account id -> 404, never a blind write', r.statusCode === 404, r.body);
+r = await call(userOne, { method: 'DELETE', url: '/api/users', ...sess(superTok) });
+check('DELETE with no account id -> 404', r.statusCode === 404, r.body);
+r = await call(userOne, { method: 'PATCH', ...sess(superTok), query: { id: 'not-an-objectid' }, body: { active: false }});
+check('PATCH with a malformed id -> 404', r.statusCode === 404, r.body);
+r = await call(userOne, { method: 'GET', url: '/api/users', ...sess(superTok) });
+check('the collection still lists on the same function', Array.isArray(r.body?.users), r.body);
+
 r = await call(userOne, { method: 'DELETE', ...sess(superTok), query: { id: superId }});
 check('superadmin cannot delete SELF', r.statusCode === 403, r.body);
 r = await call(userOne, { method: 'PATCH', ...sess(superTok), query: { id: superId }, body: { role: 'customer' }});

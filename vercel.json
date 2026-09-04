@@ -5,6 +5,9 @@
   "functions": {
     "api/**/*.js": { "memory": 512, "maxDuration": 15 }
   },
+  "rewrites": [
+    { "source": "/api/users/:id", "destination": "/api/users?id=:id" }
+  ],
   "headers": [
     {
       "source": "/assets/data/psgc/(.*)",

@@ -25,7 +25,7 @@ const logout   = (await import('../api/auth/logout.js')).default;
 const bookings = (await import('../api/bookings/index.js')).default;
 const bookingOne = (await import('../api/bookings/[id].js')).default;
 const usersIdx = (await import('../api/users/index.js')).default;
-const userOne  = (await import('../api/users/[id].js')).default;
+const userOne  = (await import('../api/users/index.js')).default;
 const webhook  = (await import('../api/webhooks/paymongo.js')).default;
 const bootstrap = (await import('../api/bootstrap.js')).default;
 

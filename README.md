@@ -13,8 +13,9 @@ app/                      Signed-in area
   book.html                 Customer: PMS booking + map pin -> PayMongo
   booking-complete.html     Customer: payment return / confirmation
   admin.html                Staff, admin and superadmin operations
-api/                      Vercel serverless functions
-  _lib/                     db, http, auth, validation, paymongo, bookings, services
+api/                      Vercel serverless functions (12 max on Hobby — see
+                          docs/DEPLOYMENT.md before adding a file here)
+  _lib/                     db, http, auth, validation, paymongo, bookings, services, geocode
   auth/, bookings/, services/, users/, webhooks/, bootstrap.js, geocode.js
 assets/
   css/app.css               Portal design system
@@ -42,7 +43,7 @@ To run against real services instead, use `vercel dev` with the environment
 variables from `.env.example`.
 
 ```bash
-npm test          # 191 API tests, no network or database required
+npm test          # 205 API tests, no network or database required
 ```
 
 ## How it works

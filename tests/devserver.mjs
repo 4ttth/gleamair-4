@@ -68,7 +68,8 @@ const handlers = {
   'bookings':         (await import('../api/bookings/index.js')).default,
   'bookings/:id':     (await import('../api/bookings/[id].js')).default,
   'users':            (await import('../api/users/index.js')).default,
-  'users/:id':        (await import('../api/users/[id].js')).default,
+  // One file serves both, matching the rewrite in vercel.json.
+  'users/:id':        (await import('../api/users/index.js')).default,
   'services':         (await import('../api/services/index.js')).default,
   'services/:id':     (await import('../api/services/[code].js')).default,
   'geocode':          (await import('../api/geocode.js')).default,
