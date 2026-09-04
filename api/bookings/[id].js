@@ -5,7 +5,7 @@
              { action: 'sync' } reconcile payment straight from PayMongo */
 
 import { ObjectId } from 'mongodb';
-import { Collections, getDb } from '../_lib/db.js';
+import { Collections, getDb, unwrapUpdated } from '../_lib/db.js';
 import { badRequest, forbidden, notFound, ok, readJson, route } from '../_lib/http.js';
 import { requireUser } from '../_lib/auth.js';
 import { createCheckoutSession } from '../_lib/paymongo.js';
@@ -133,7 +133,7 @@ async function patch(req, res) {
   const updated = await Collections.bookings(db).findOneAndUpdate(
     { _id: booking._id }, { $set: set }, { returnDocument: 'after' }
   );
-  const doc = updated?.value ?? updated ?? (await Collections.bookings(db).findOne({ _id: booking._id }));
+  const doc = unwrapUpdated(updated) ?? (await Collections.bookings(db).findOne({ _id: booking._id }));
 
   return ok(res, { booking: scopeBooking(doc, user) });
 }

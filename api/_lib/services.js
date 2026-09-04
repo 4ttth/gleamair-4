@@ -15,7 +15,7 @@
       impossible price is rejected here rather than at checkout, in front of a
       customer. */
 
-import { Collections } from './db.js';
+import { Collections, unwrapUpdated } from './db.js';
 import { badRequest, conflict, notFound } from './http.js';
 import { MAX_CHARGE, MIN_CHARGE } from './paymongo.js';
 import * as V from './validate.js';
@@ -165,7 +165,7 @@ export async function updateServicePricing(db, code, patch, actor) {
     { returnDocument: 'after' }
   );
 
-  const updated = result?.value ?? result;
+  const updated = unwrapUpdated(result);
   if (!updated) {
     // The guard matched nothing, so the version moved under us.
     const fresh = await getService(db, code);

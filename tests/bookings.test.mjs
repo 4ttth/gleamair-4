@@ -219,4 +219,46 @@ r = await call(bookings, { method: 'GET', ...sess(superTok) });
 check('booking survives technician deletion', (r.body?.bookings ?? []).length === 1, r.body);
 check('assignment detached, not cascaded', r.body?.bookings?.[0]?.assignedStaffId === null, r.body?.bookings?.[0]);
 
+console.log('\n=== 11. References run consecutively while a payment is pending ===');
+// Regression: nextSequence unwrapped the driver-6 findOneAndUpdate result as
+// though it were the driver-4 `{ value: doc }` wrapper, so it silently fell
+// back to 1 on every call. Two customers booking one after the other - the
+// first still sitting in PayMongo's hosted checkout - both got -000001.
+const seqOf = (reference) => Number(String(reference).split('-')[1]);
+const firstSeq = seqOf(ref);
+const PIN = { lat: 14.8386, lng: 120.2842, source: 'pin' };
+
+r = await call(bookings, { method: 'POST', ...sess(custTok), body: { service: 'PMS', units: UNITS, location: PIN }});
+const pendingRef = r.body?.booking?.reference;
+check('a second booking is created', r.statusCode === 200, r.body);
+check('it is awaiting payment', r.body?.booking?.status === 'awaiting_payment', r.body?.booking?.status);
+check('its reference follows the first', seqOf(pendingRef) === firstSeq + 1, { ref, pendingRef });
+
+// Another customer books while the one above is still unpaid.
+r = await call(bookings, { method: 'POST', ...sess(cust2Tok), body: { service: 'PMS', units: UNITS, location: PIN }});
+const otherRef = r.body?.booking?.reference;
+check('another customer can book behind a pending payment', r.statusCode === 200, r.body);
+check('their reference is the next number, not a repeat', seqOf(otherRef) === firstSeq + 2, { pendingRef, otherRef });
+check('no two bookings share a reference', new Set([ref, pendingRef, otherRef]).size === 3, [ref, pendingRef, otherRef]);
+
+r = await call(bookingOne, { method: 'GET', ...sess(custTok), query: { id: pendingRef } });
+check('the pending booking keeps the number it was given', r.body?.booking?.reference === pendingRef, r.body?.booking);
+check('and is still unpaid', r.body?.booking?.payment?.status === 'pending', r.body?.booking?.payment);
+
+// A checkout PayMongo rejects must not hand its number back to the next
+// customer - the reference is spent the moment it is issued.
+const liveFetch = globalThis.fetch;
+globalThis.fetch = async (url, init) => {
+  if (String(url).includes('/checkout_sessions') && init?.method === 'POST') {
+    return new Response(JSON.stringify({ errors: [{ detail: 'declined by test' }] }), { status: 400 });
+  }
+  return liveFetch(url, init);
+};
+r = await call(bookings, { method: 'POST', ...sess(custTok), body: { service: 'PMS', units: UNITS, location: PIN }});
+check('a booking whose checkout fails is refused', r.statusCode >= 400, r.statusCode);
+globalThis.fetch = liveFetch;
+
+r = await call(bookings, { method: 'POST', ...sess(custTok), body: { service: 'PMS', units: UNITS, location: PIN }});
+check('the failed booking\'s number is not reused', seqOf(r.body?.booking?.reference) === firstSeq + 4, r.body?.booking?.reference);
+
 summary();

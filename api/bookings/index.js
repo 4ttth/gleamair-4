@@ -13,6 +13,51 @@ import * as V from '../_lib/validate.js';
 
 const LIST_LIMIT = 200;
 const STAFF_VISIBLE_STATUSES = ['paid', 'assigned', 'in_progress', 'completed'];
+const REFERENCE_ATTEMPTS = 5;
+
+/**
+ * Takes the next number from the counter and inserts the booking under it.
+ *
+ * The counter is consumed at creation and never handed back, so a booking left
+ * awaiting payment - or one whose payment later fails - keeps the reference it
+ * was given and the next customer through gets the following number.
+ *
+ * The retry covers the case where the collection already holds the reference
+ * the counter just issued, which happens after a restored backup or when rows
+ * predate a counter fix. Bumping to the next number clears that by itself
+ * rather than failing the booking in front of a paying customer.
+ */
+async function insertWithReference(db, booking, code) {
+  let lastTaken = null;
+
+  for (let attempt = 1; attempt <= REFERENCE_ATTEMPTS; attempt++) {
+    const seq = await nextSequence(db, 'booking');
+    booking.reference = `${code}-${String(seq).padStart(6, '0')}`;
+
+    // The unique index is the real guard, but it only protects a database it
+    // managed to build on - and it cannot build on a collection that already
+    // holds duplicates. Look first, so the counter walks past legacy rows even
+    // there; the catch below still covers losing the race to another request.
+    const taken = await Collections.bookings(db).findOne(
+      { reference: booking.reference }, { projection: { _id: 1 } }
+    );
+    if (!taken) {
+      try {
+        const inserted = await Collections.bookings(db).insertOne(booking);
+        booking._id = inserted.insertedId;
+        return booking;
+      } catch (err) {
+        if (err?.code !== 11000) throw err;
+      }
+    }
+    lastTaken = booking.reference;
+    console.warn(`[bookings] reference ${lastTaken} is already taken - advancing the counter`);
+  }
+
+  throw new Error(
+    `[bookings] no free reference for ${code} after ${REFERENCE_ATTEMPTS} attempts (last tried ${lastTaken})`
+  );
+}
 
 async function list(req, res) {
   const user = await requireUser(req);
@@ -82,12 +127,10 @@ async function create(req, res) {
   const location = V.location(body.location);
   const notes = V.string(body.notes, 'Notes', { max: 600, required: false });
 
-  const seq = await nextSequence(db, 'booking');
-  const reference = `${service.code}-${String(seq).padStart(6, '0')}`;
-
   const now = new Date();
   const booking = {
-    reference,
+    // Assigned by insertWithReference below, once the counter has issued one.
+    reference: null,
     service: service.code,
     serviceName: service.name,
     customerId: user._id,
@@ -124,8 +167,7 @@ async function create(req, res) {
     odooSaleOrderId: null,
   };
 
-  const inserted = await Collections.bookings(db).insertOne(booking);
-  booking._id = inserted.insertedId;
+  await insertWithReference(db, booking, service.code);
 
   let checkout;
   try {
