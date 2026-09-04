@@ -4,6 +4,15 @@
 
 import { ObjectId } from 'mongodb';
 
+// The counter logic is the real thing, not a copy: a stand-in that unwrapped
+// driver results differently from api/_lib/db.js is exactly what let every
+// booking reference come out as 000001 in production with a green test run.
+// Set before the import so db.js's cold-start check stays quiet; nothing here
+// ever opens a connection.
+process.env.MONGODB_URI ??= 'mongodb://fake.invalid/gleamair';
+const realDb = await import('../api/_lib/db.js');
+export const { nextSequence, unwrapUpdated } = realDb;
+
 const store = new Map();
 const coll = (n) => { if (!store.has(n)) store.set(n, []); return store.get(n); };
 export function resetDb() {
@@ -122,6 +131,9 @@ function collection(name) {
       for (const d of rows) if (matches(d, query)) { applyUpdate(d, update); n++; }
       return { modifiedCount: n };
     },
+    // Driver >=5 returns the document itself, not a `{ value: doc }` wrapper.
+    // Mirror that exactly - the wrapper shape is what the code under test has
+    // to cope with, so faking the old one hides real bugs.
     async findOneAndUpdate(query, update, opts = {}) {
       const hit = rows.find((d) => matches(d, query));
       if (!hit) {
@@ -130,10 +142,10 @@ function collection(name) {
         for (const [k, v] of Object.entries(query)) if (typeof v !== 'object') doc[k] = v;
         applyUpdate(doc, update);
         rows.push(doc);
-        return { value: project(structuredClone2(doc), opts.projection) };
+        return project(structuredClone2(doc), opts.projection);
       }
       applyUpdate(hit, update);
-      return { value: project(structuredClone2(hit), opts.projection) };
+      return project(structuredClone2(hit), opts.projection);
     },
     async deleteOne(query) {
       const i = rows.findIndex((d) => matches(d, query));
@@ -169,10 +181,3 @@ export const Collections = {
   services:      () => collection('services'),
   servicePriceHistory: () => collection('servicePriceHistory'),
 };
-
-export async function nextSequence(db, name) {
-  const res = await collection('counters').findOneAndUpdate(
-    { _id: name }, { $inc: { value: 1 } }, { upsert: true, returnDocument: 'after' }
-  );
-  return res?.value?.value ?? 1;
-}

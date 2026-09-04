@@ -80,12 +80,38 @@ export const Collections = {
   servicePriceHistory: (db) => db.collection('servicePriceHistory'),
 };
 
-/** Atomic per-name counter, used for human-readable booking references. */
+/**
+ * findOneAndUpdate changed shape across driver majors: <=4 wrapped the document
+ * as `{ value: <doc|null>, lastErrorObject, ok }`, while >=5 (this project pins
+ * ^6) returns the document itself. Detect the wrapper by its metadata keys, not
+ * by the presence of a `value` field - the counters documents store their tally
+ * in a field of exactly that name, and reading `res.value.value` off a driver-6
+ * result silently yielded `undefined`, which is what made every booking
+ * reference come out as 000001.
+ */
+export function unwrapUpdated(res) {
+  if (!res) return null;
+  if ('lastErrorObject' in res || 'ok' in res) return res.value ?? null;
+  return res;
+}
+
+/** Atomic per-name counter, used for human-readable booking references.
+    Every call consumes a number, so a booking that is awaiting payment, failed
+    or was abandoned still holds its own reference and the next customer gets
+    the following one. */
 export async function nextSequence(db, name) {
-  const res = await Collections.counters(db).findOneAndUpdate(
-    { _id: name },
-    { $inc: { value: 1 } },
-    { upsert: true, returnDocument: 'after' }
+  const doc = unwrapUpdated(
+    await Collections.counters(db).findOneAndUpdate(
+      { _id: name },
+      { $inc: { value: 1 } },
+      { upsert: true, returnDocument: 'after' }
+    )
   );
-  return (res?.value ?? res)?.value ?? 1;
+  const seq = doc?.value;
+  // Never fall back to a constant: handing out a number the counter did not
+  // issue is how two bookings end up sharing a reference.
+  if (!Number.isInteger(seq) || seq < 1) {
+    throw new Error(`[db] counter "${name}" returned no usable sequence (got ${JSON.stringify(doc)})`);
+  }
+  return seq;
 }

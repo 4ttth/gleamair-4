@@ -1,6 +1,6 @@
 /* Shared booking helpers: role-scoped shaping and payment reconciliation. */
 
-import { Collections } from './db.js';
+import { Collections, unwrapUpdated } from './db.js';
 import { retrieveCheckoutSession } from './paymongo.js';
 import { getService } from './services.js';
 
@@ -111,7 +111,7 @@ export async function markPaid(db, booking, { paymentIntentId, method, amount } 
   );
   // findOneAndUpdate returns null when the guard matched nothing, i.e. it was
   // already paid - re-read so callers always get a document back.
-  return result?.value ?? result ?? (await Collections.bookings(db).findOne({ _id: booking._id }));
+  return unwrapUpdated(result) ?? (await Collections.bookings(db).findOne({ _id: booking._id }));
 }
 
 /** Reads the service straight from the database on every call, so a price an

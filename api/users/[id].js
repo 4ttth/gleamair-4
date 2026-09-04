@@ -7,7 +7,7 @@
    only account able to create replacements. */
 
 import { ObjectId } from 'mongodb';
-import { Collections, getDb } from '../_lib/db.js';
+import { Collections, getDb, unwrapUpdated } from '../_lib/db.js';
 import { badRequest, conflict, forbidden, notFound, ok, readJson, route } from '../_lib/http.js';
 import { destroyUserSessions, hashPassword, publicUser, requireRole } from '../_lib/auth.js';
 import * as V from '../_lib/validate.js';
@@ -68,7 +68,7 @@ async function patch(req, res) {
   const updated = await Collections.users(db).findOneAndUpdate(
     { _id: id }, { $set: set }, { returnDocument: 'after', projection: { passwordHash: 0 } }
   );
-  const doc = updated?.value ?? updated ?? (await Collections.users(db).findOne({ _id: id }, { projection: { passwordHash: 0 } }));
+  const doc = unwrapUpdated(updated) ?? (await Collections.users(db).findOne({ _id: id }, { projection: { passwordHash: 0 } }));
 
   // A demotion, deactivation or password change must take effect now, not
   // whenever the target's existing cookie happens to expire.
