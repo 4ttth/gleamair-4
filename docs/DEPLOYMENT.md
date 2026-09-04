@@ -52,7 +52,7 @@ if you use preview deploys). Names are listed in `.env.example`.
 | `PAYMONGO_SECRET_KEY` | Your **newly rotated** live secret key |
 | `PAYMONGO_WEBHOOK_SECRET` | Set in step 5 below (`whsk_...`) |
 | `PAYMONGO_METHODS` | Start with `card`. See the warning below. |
-| `PUBLIC_BASE_URL` | `https://www.gleamaire.com` — no trailing slash |
+| `PUBLIC_BASE_URL` | Your **canonical** origin (see step 4) — no trailing slash |
 | `BOOTSTRAP_TOKEN` | `openssl rand -hex 32`. Delete after step 6. |
 
 > **`PAYMONGO_METHODS` matters.** Every method listed must already be
@@ -67,6 +67,29 @@ Redeploy after adding variables — Vercel only injects them at build time.
 **Settings → Domains** → add `gleamaire.com` and `www.gleamaire.com`, then
 point your DNS at Vercel as instructed there.
 
+Vercel serves **one** of the two as the canonical domain and answers the other
+with a `308` redirect to it. Note which one it marked as the primary — that is
+the origin every URL below must use.
+
+This matters more than it looks. A redirect is only followed by clients that
+choose to follow it, and the two most important non-browser callers do not:
+
+- `curl` does not follow redirects unless you pass `-L`, so a `POST` to the
+  redirecting host does nothing and prints `Redirecting...`.
+- PayMongo does not follow redirects when delivering webhooks, so a webhook
+  registered on the redirecting host is **never delivered** and no payment is
+  ever confirmed.
+
+Check which host is canonical before continuing:
+
+```bash
+curl -sI https://www.gleamaire.com/ | head -n 3
+```
+
+A `200` means that host is canonical. A `301`/`308` plus a `location:` header
+means it is not — use the host in `location:` for `PUBLIC_BASE_URL`, for the
+PayMongo webhook URL, and for the bootstrap call.
+
 Serving the site and the API from one origin is deliberate: the session cookie
 is `HttpOnly; Secure; SameSite=Strict`, which means it is never exposed to
 JavaScript and never sent cross-site. Splitting the API onto a subdomain would
@@ -77,7 +100,9 @@ force a weaker cookie policy.
 The webhook is what actually marks a booking paid. Without it, customers are
 charged and their booking sits unconfirmed until someone opens the return page.
 
-Create it with your **rotated** secret key:
+Create it with your **rotated** secret key. The `url` must be your canonical
+domain from step 4 — PayMongo does not follow redirects, so registering the
+redirecting host means no payment is ever confirmed:
 
 ```bash
 export PAYMONGO_SECRET_KEY='your-rotated-secret-key'
@@ -106,8 +131,13 @@ A fresh database has no accounts, and only a superadmin can create staff. This
 route exists solely to break that deadlock, and refuses to run once any
 superadmin exists.
 
+Use your canonical domain from step 4. `-i` shows the status code and `-L`
+follows a redirect if you got the host wrong — `--post308` keeps it a `POST`
+rather than silently retrying as a `GET`:
+
 ```bash
-curl -X POST https://www.gleamaire.com/api/bootstrap \
+curl -i -L --post301 --post302 --post303 --post307 --post308 \
+  -X POST https://gleamaire.com/api/bootstrap \
   -H "Content-Type: application/json" \
   -d '{
     "token": "YOUR_BOOTSTRAP_TOKEN",
@@ -117,6 +147,22 @@ curl -X POST https://www.gleamaire.com/api/bootstrap \
     "password": "choose-a-strong-one-1!"
   }'
 ```
+
+Read the response before moving on — the route reports every failure as JSON,
+and a silent one means it never ran:
+
+| Response | Meaning |
+|---|---|
+| `200` with `"ok": true` | The superadmin was created. |
+| `Redirecting...` / `308` | You used the non-canonical host. See step 4. |
+| `403 Invalid bootstrap token.` | `token` does not match `BOOTSTRAP_TOKEN`. |
+| `404 Not found.` | `BOOTSTRAP_TOKEN` is unset, or you did not redeploy after adding it. |
+| `409 A superadmin already exists.` | Already done. Sign in instead. |
+| `400 Password must ...` | 8+ characters, one number, one special character. |
+
+If the account does not appear in the `users` collection in Atlas, the request
+never reached the function — signing in will report *Email or password is
+incorrect*, because there is no such user.
 
 Then **delete `BOOTSTRAP_TOKEN`** from Vercel and redeploy. With the variable
 absent the route returns 404.
