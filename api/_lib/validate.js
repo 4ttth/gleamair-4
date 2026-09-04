@@ -176,7 +176,13 @@ export function units(value) {
   });
 }
 
-/** Optional map pin dropped by the customer during booking. */
+/* Where a booking's pin came from. 'address' is the one the customer did not
+   place by hand - it is the barangay their account is registered in, dropped
+   for them when the map opened - so it is worth telling apart from a pin they
+   dragged and from a GPS fix. */
+const PIN_SOURCES = ['gps', 'address', 'pin'];
+
+/** Optional map pin, dropped for or by the customer during booking. */
 export function location(value) {
   if (value == null) return null;
   if (typeof value !== 'object') throw badRequest('Location is invalid.', { field: 'location' });
@@ -189,6 +195,6 @@ export function location(value) {
   if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
     throw badRequest('Location is out of range.', { field: 'location' });
   }
-  const source = value.source === 'gps' ? 'gps' : 'pin';
+  const source = PIN_SOURCES.includes(value.source) ? value.source : 'pin';
   return { lat: Math.round(lat * 1e6) / 1e6, lng: Math.round(lng * 1e6) / 1e6, source };
 }

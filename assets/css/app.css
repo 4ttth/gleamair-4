@@ -701,6 +701,22 @@ table.data .row-title { font-weight: 600; }
 }
 .leaflet-container { font-family: 'Barlow', sans-serif !important; }
 
+/* Place search above a map. The result list sits in the flow rather than
+   floating over the map: an overlay would cover the very thing being searched
+   for, and on a phone it would cover most of it. */
+.map-search { display: flex; gap: 8px; margin-bottom: 10px; }
+.map-search .input { flex: 1; min-width: 0; }
+.map-results { margin-top: 10px; display: grid; gap: 4px; }
+.map-results button {
+  display: block; width: 100%; text-align: left; cursor: pointer;
+  padding: 9px 12px; font: inherit; font-size: 0.86rem; line-height: 1.35;
+  color: var(--text); background: var(--surface-alt);
+  border: 1px solid var(--border); border-radius: 8px;
+}
+.map-results button:hover,
+.map-results button:focus-visible { border-color: var(--border-strong); background: var(--surface); }
+.map-results .map-results-note { padding: 4px 2px; font-size: 0.82rem; color: var(--text-mid); }
+
 .map-legend { display: flex; flex-wrap: wrap; gap: 15px; font-size: 0.82rem; color: var(--text-mid); }
 .map-legend span { display: flex; align-items: center; gap: 6px; }
 .map-legend i { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }

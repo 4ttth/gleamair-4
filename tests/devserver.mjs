@@ -19,9 +19,30 @@ process.env.PAYMONGO_WEBHOOK_SECRET = 'whsk_devserver';
 process.env.PUBLIC_BASE_URL = `http://localhost:${PORT}`;
 process.env.BOOTSTRAP_TOKEN = 'dev-bootstrap-token';
 
+/* A tiny gazetteer standing in for Nominatim, so the booking map pins the
+   customer's barangay and the search box finds places, both with no outbound
+   request. Real coordinates, so pins land where these places actually are.
+   Matched on the start of the query, which is how both the address cascade
+   ("Bangkal, Abucay, Bataan") and a typed search ("SM City Olongapo") arrive. */
+const GAZETTEER = [
+  ['Bangkal, Abucay, Bataan', 14.7245, 120.5361],
+  ['Abucay, Bataan',          14.7269, 120.5347],
+  ['Bataan',                  14.6417, 120.4818],
+  ['SM City Olongapo',        14.8386, 120.2842],
+  ['Olongapo',                14.8292, 120.2828],
+  ['Subic Bay',               14.7942, 120.2711],
+];
+
 // Stand in for PayMongo so no real network call or charge happens locally.
 globalThis.fetch = async (url, init = {}) => {
   const u = String(url);
+  if (u.includes('nominatim') || u.includes('/search?')) {
+    const q = new URL(u).searchParams.get('q') || '';
+    const hit = GAZETTEER.find(([place]) => q.toLowerCase().startsWith(place.toLowerCase()));
+    return new Response(JSON.stringify(hit
+      ? [{ lat: String(hit[1]), lon: String(hit[2]), display_name: `${hit[0]}, Philippines` }]
+      : []), { status: 200 });
+  }
   if (u.includes('/checkout_sessions')) {
     if ((init.method || 'GET') === 'GET') {
       return new Response(JSON.stringify({ data: { id: 'cs_dev', attributes: {
@@ -50,6 +71,7 @@ const handlers = {
   'users/:id':        (await import('../api/users/[id].js')).default,
   'services':         (await import('../api/services/index.js')).default,
   'services/:id':     (await import('../api/services/[code].js')).default,
+  'geocode':          (await import('../api/geocode.js')).default,
   'webhooks/paymongo':(await import('../api/webhooks/paymongo.js')).default,
   'bootstrap':        (await import('../api/bootstrap.js')).default,
 };

@@ -15,7 +15,7 @@ app/                      Signed-in area
   admin.html                Staff, admin and superadmin operations
 api/                      Vercel serverless functions
   _lib/                     db, http, auth, validation, paymongo, bookings, services
-  auth/, bookings/, services/, users/, webhooks/, bootstrap.js
+  auth/, bookings/, services/, users/, webhooks/, bootstrap.js, geocode.js
 assets/
   css/app.css               Portal design system
   js/                       portal.js, shell.js, psgc.js, geo.js, data-loader.js
@@ -42,7 +42,7 @@ To run against real services instead, use `vercel dev` with the environment
 variables from `.env.example`.
 
 ```bash
-npm test          # 79 API tests, no network or database required
+npm test          # 191 API tests, no network or database required
 ```
 
 ## How it works
@@ -66,9 +66,22 @@ npm test          # 79 API tests, no network or database required
   bookings keep the amounts their customer was quoted.
 - **Staff visibility** is deliberately narrow: customer name, unit details and
   map pin only. Widen it with `STAFF_SEES_CONTACT` in `api/_lib/bookings.js`.
-- **Maps** use Leaflet and OpenStreetMap — no API key, no billing account. The
-  customer drops their own pin, so no geocoding service is involved. Every map
-  degrades gracefully; a booking is still completable without one.
+- **Maps** use Leaflet and OpenStreetMap — no API key, no billing account.
+  Every map degrades gracefully; a booking is still completable without one.
+- **The booking map opens on the customer**, not on the office. Two sources
+  race on page load: the barangay registered on their account, geocoded
+  server-side by `GET /api/geocode`, and the browser's own position if they
+  have already granted permission. The better of the two drops the pin and the
+  customer nudges it onto their gate. If neither answers, the map falls back to
+  Olongapo with no pin claimed, and the customer places one themselves.
+  Geocoded localities are cached in `geocache` with a TTL, so one lookup serves
+  every customer in that barangay and OpenStreetMap's usage policy is
+  respected — see `api/_lib/geocode.js`.
+- **Both maps can be searched.** Customers jump the booking map to a landmark
+  or subdivision instead of dragging the marker across a province; staff use
+  the same box to find a job's neighbourhood. Searches run on submit rather
+  than per keystroke, are cached, and are quota'd per user — all three are what
+  the geocoder's usage policy asks for.
 
 The schema reserves `odooPartnerId`, `odooUserId`, `odooTaskId` and
 `odooSaleOrderId` so the data can later be merged into Odoo as a sync rather

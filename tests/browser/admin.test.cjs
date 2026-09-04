@@ -103,6 +103,22 @@ const offlinePage = async (browser, opts) => {
   const markers = await sa.locator('.leaflet-marker-icon').count();
   check('job plotted on the map (' + markers + ')', markers >= 1, String(markers));
   check('legend rendered', await sa.locator('.map-legend').isVisible());
+
+  /* The map is about paid work. Bookings that were never paid for are not
+     jobs, so they must not be counted here — and must not be reported as a
+     customer having skipped their pin. */
+  const pinNote = await sa.locator('.card-pad .hint').count()
+    ? await sa.locator('.card-pad .hint').first().textContent() : '';
+  check('no phantom "missing pin" warning: ' + (pinNote.trim() || '(none)'),
+    !/no map pin/.test(pinNote), pinNote);
+
+  await sa.fill('#mapSearch', 'Subic Bay');
+  await sa.click('#mapSearchBtn');
+  await sa.waitForSelector('#mapResults button', { timeout: 10000 });
+  check('staff and admins can search the dispatch map',
+    /Subic Bay/.test(await sa.locator('#mapResults button').first().textContent()));
+  await sa.locator('#mapResults button').first().click();
+  check('the result list closes once a place is chosen', await sa.locator('#mapResults').isHidden());
   await sa.screenshot({ path: OUT + '/14-admin-map.png', fullPage: true });
 
   console.log('\n=== Staff role restrictions ===');
